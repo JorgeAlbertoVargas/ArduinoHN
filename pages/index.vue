@@ -1,5 +1,6 @@
 <template>
   <div class="landing-page">
+    <div class="watermark">EN CONSTRUCCIÓN</div>
     <!-- Hero Section -->
     <section class="hero">
       <div class="container hero-inner">
@@ -52,6 +53,21 @@
 .landing-page {
   display: flex;
   flex-direction: column;
+}
+/* Watermark */
+.watermark {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-size: 8rem;
+  font-weight: 900;
+  color: rgba(0, 0, 0, 0.04);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 9999;
+  user-select: none;
+  text-transform: uppercase;
 }
 /* Hero Section */
 .hero {
