@@ -1,0 +1,35 @@
+:root {
+  /* Arduino color palette */
+  --color-primary: #00979C; /* Teal */
+  --color-secondary: #005C5F; /* Dark Teal */
+  --color-accent: #E47128; /* Orange */
+  --color-dark: #212529;
+  --color-light: #F7F9F9;
+  
+  /* Backgrounds */
+  --bg-main: var(--color-light);
+  --bg-card: #FFFFFF;
+  
+  /* Text */
+  --text-main: var(--color-dark);
+  --text-muted: #6C757D;
+  
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+
+  /* Typography */
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg-main: #121212;
+  --bg-card: #1E1E1E;
+  --text-main: #FFFFFF;
+  --text-muted: #A0A0A0;
+  
+  --glass-bg: rgba(30, 30, 30, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
