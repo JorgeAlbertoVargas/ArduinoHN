@@ -10,6 +10,7 @@
     </div>
     <div v-else-if="error" class="text-center" style="padding: 2rem; color: #d9534f;">
       <p>Hubo un error cargando los proyectos. Verifica tus credenciales o esquema de NocoDB.</p>
+      <p>Detalle: {{ error.message || error }}</p>
     </div>
     <div v-else-if="projects.length === 0" class="text-center" style="padding: 2rem;">
       <p>No se encontraron proyectos. Asegúrate de agregar algunos en tu tabla de NocoDB.</p>
