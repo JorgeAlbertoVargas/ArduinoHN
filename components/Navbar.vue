@@ -13,12 +13,12 @@
       </div>
 
       <div class="nav-center search-bar-container">
-        <div class="search-bar">
-          <input type="text" placeholder="Buscar productos, proyectos..." class="search-input" />
-          <button class="search-btn">
+        <form class="search-bar" @submit.prevent="handleSearch">
+          <input v-model="searchQuery" type="text" placeholder="Buscar productos, proyectos..." class="search-input" />
+          <button type="submit" class="search-btn">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           </button>
-        </div>
+        </form>
       </div>
 
       <div class="nav-right">
@@ -48,12 +48,24 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import CartIcon from '~/components/CartIcon.vue';
 
 const isMobileMenuOpen = ref(false);
+const searchQuery = ref('');
+const router = useRouter();
 
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false;
+};
+
+const handleSearch = () => {
+  if (searchQuery.value.trim()) {
+    router.push({ path: '/store', query: { q: searchQuery.value.trim() } });
+    closeMobileMenu();
+  } else {
+    router.push({ path: '/store' });
+  }
 };
 </script>
 

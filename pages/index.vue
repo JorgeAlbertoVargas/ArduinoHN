@@ -1,22 +1,34 @@
 <template>
   <div class="landing-page">
-    <div class="watermark">EN CONSTRUCCIÓN</div>
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="container hero-inner">
-        <div class="hero-text">
-          <h1 class="hero-title">Automatización al alcance de todos</h1>
-          <p class="hero-subtitle">Descubre la plataforma de Hardware, Software e IIoT líder en Honduras para impulsar tus proyectos desde la idea hasta el mercado.</p>
-          <div class="hero-actions">
-            <NuxtLink to="/store" class="btn btn-primary btn-lg">Ir a la tienda</NuxtLink>
-            <NuxtLink to="/projects" class="btn btn-outline btn-lg">Descubrir proyectos</NuxtLink>
-          </div>
+    <!-- Hero Section (Apple Style) -->
+    <section class="apple-hero">
+      <div class="hero-bg-overlay"></div>
+      <div class="container hero-inner text-center">
+        <div class="hero-logo-wrapper">
+          <img src="/logo.png" alt="ArduinoHN Logo" class="hero-logo glow-effect" />
         </div>
-        <div class="hero-image-wrapper">
-          <img src="/hero-board.png" alt="Placa de desarrollo ArduinoHN" class="hero-image" />
+        
+        <h1 class="hero-title">ArduinoHN</h1>
+        <p class="hero-slogan">
+          Automatización <span class="dot">•</span> 
+          Innovación <span class="dot">•</span> 
+          Investigación & Desarrollo <span class="dot">•</span> 
+          Motivación <span class="dot">•</span> 
+          Líder Tecnológico
+        </p>
+        
+        <div class="hero-actions justify-center mt-4" style="display: flex; gap: 1rem;">
+          <NuxtLink to="/store" class="btn btn-primary btn-apple">Descubre la tienda</NuxtLink>
+          <button class="btn btn-outline btn-apple" @click="isVideoModalOpen = true">Ver Presentación</button>
         </div>
       </div>
     </section>
+
+    <VideoModal 
+      :is-open="isVideoModalOpen" 
+      video-url="promo" 
+      @close="isVideoModalOpen = false" 
+    />
 
     <!-- Ecosystem Section -->
     <section class="ecosystem">
@@ -26,19 +38,25 @@
         
         <div class="feature-grid">
           <div class="feature-card">
-            <div class="icon hardware-icon"></div>
+            <div class="icon hardware-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+            </div>
             <h3>Hardware</h3>
             <p>Placas, módulos y kits listos para la industria con componentes originales y fiables.</p>
             <NuxtLink to="/store" class="feature-link">Explorar Hardware &rarr;</NuxtLink>
           </div>
           <div class="feature-card">
-            <div class="icon software-icon"></div>
+            <div class="icon software-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            </div>
             <h3>Software</h3>
             <p>Bibliotecas, ejemplos de código y soluciones open-source para programar rápidamente.</p>
             <NuxtLink to="/projects" class="feature-link">Ver Código &rarr;</NuxtLink>
           </div>
           <div class="feature-card">
-            <div class="icon cloud-icon"></div>
+            <div class="icon cloud-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19A4.5 4.5 0 0 0 18 10h-1.26A8 8 0 1 0 3 16.29"></path><path d="M8 22h8"></path><path d="M12 16v6"></path></svg>
+            </div>
             <h3>Cloud & IIoT</h3>
             <p>Conecta tus dispositivos a la nube, monitorea en tiempo real y controla sensores a distancia.</p>
             <NuxtLink to="/blog" class="feature-link">Aprender más &rarr;</NuxtLink>
@@ -49,84 +67,119 @@
   </div>
 </template>
 
+<script setup lang="ts">
+import { ref } from 'vue';
+const isVideoModalOpen = ref(false);
+</script>
+
 <style scoped>
 .landing-page {
   display: flex;
   flex-direction: column;
 }
-/* Watermark */
-.watermark {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(-30deg);
-  font-size: 8rem;
-  font-weight: 900;
-  color: rgba(0, 0, 0, 0.04);
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 9999;
-  user-select: none;
-  text-transform: uppercase;
-}
-/* Hero Section */
-.hero {
-  background-color: #ffffff;
-  padding: 6rem 0;
+
+/* Hero Section (Apple Style) */
+.apple-hero {
+  position: relative;
+  background: linear-gradient(135deg, #f0f8ff 0%, #e0f2f1 100%);
+  padding: 8rem 0;
+  overflow: hidden;
   border-bottom: 1px solid rgba(0,0,0,0.05);
 }
-.hero-inner {
+
+.hero-bg-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80vw;
+  height: 80vw;
+  max-width: 800px;
+  max-height: 800px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(0,168,150,0.15) 0%, rgba(255,255,255,0) 70%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.apple-hero .hero-inner {
+  position: relative;
+  z-index: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 4rem;
-}
-.hero-text {
-  flex: 1;
-  max-width: 600px;
-}
-.hero-title {
-  font-size: 4rem;
-  font-weight: 800;
-  color: var(--color-dark);
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
-  letter-spacing: -1px;
-}
-.hero-subtitle {
-  font-size: 1.25rem;
-  color: var(--text-muted);
-  margin-bottom: 2.5rem;
-  line-height: 1.5;
-}
-.hero-actions {
-  display: flex;
-  gap: 1rem;
-}
-.hero-image-wrapper {
-  flex: 1;
-  display: flex;
   justify-content: center;
 }
-.hero-image {
-  max-width: 100%;
-  border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+
+.hero-logo-wrapper {
+  margin-bottom: 1.5rem;
+  position: relative;
 }
-.btn-lg {
-  padding: 12px 28px;
-  font-size: 1.1rem;
+
+.hero-logo {
+  height: 120px;
+  width: auto;
+  filter: brightness(0) saturate(100%) invert(42%) sepia(51%) saturate(2320%) hue-rotate(143deg) brightness(93%) contrast(101%);
+  animation: float 6s ease-in-out infinite;
 }
+
+.glow-effect {
+  filter: brightness(0) saturate(100%) invert(42%) sepia(51%) saturate(2320%) hue-rotate(143deg) brightness(93%) contrast(101%) drop-shadow(0 0 25px rgba(0, 168, 150, 0.6));
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.apple-hero .hero-title {
+  font-size: 5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  letter-spacing: -2px;
+}
+
+.hero-slogan {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #444;
+  max-width: 800px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.6;
+  letter-spacing: -0.5px;
+}
+
+.hero-slogan .dot {
+  color: var(--color-primary);
+  margin: 0 0.4rem;
+  opacity: 0.6;
+}
+
+.hero-actions.justify-center {
+  justify-content: center;
+}
+
+.mt-4 { margin-top: 1rem; }
+
+.btn-apple {
+  padding: 14px 32px;
+  font-size: 1.2rem;
+  border-radius: 30px;
+  font-weight: 600;
+  box-shadow: 0 10px 20px rgba(0, 168, 150, 0.2);
+  transition: all 0.3s ease;
+}
+.btn-apple:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 15px 25px rgba(0, 168, 150, 0.3);
+}
+
 .btn-outline {
   background-color: transparent;
   color: var(--color-primary);
   border: 2px solid var(--color-primary);
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: var(--font-family);
-  display: inline-block;
 }
 .btn-outline:hover {
   background-color: var(--color-primary);
@@ -167,12 +220,19 @@
   box-shadow: 0 12px 24px rgba(0,0,0,0.06);
 }
 .icon {
-  width: 48px;
-  height: 48px;
-  background-color: var(--color-primary);
-  border-radius: 8px;
+  width: 56px;
+  height: 56px;
+  background-color: rgba(0, 168, 150, 0.1);
+  color: var(--color-primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 1.5rem;
-  opacity: 0.1;
+}
+.icon svg {
+  width: 28px;
+  height: 28px;
 }
 .feature-card h3 {
   font-size: 1.5rem;

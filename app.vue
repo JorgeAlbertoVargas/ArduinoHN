@@ -6,6 +6,7 @@
       <NuxtPage />
     </main>
     <Footer />
+    <ChatbotWidget />
   </div>
 </template>
 
