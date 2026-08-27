@@ -33,7 +33,7 @@
     <div :class="['navbar-bottom', { 'mobile-open': isMobileMenuOpen }]">
       <div class="container">
         <nav class="nav-links">
-          <NuxtLink to="/store" @click="closeMobileMenu">Tienda</NuxtLink>
+          <NuxtLink to="/store" @click="closeMobileMenu">Tienda virtual</NuxtLink>
           <NuxtLink to="/deals" @click="closeMobileMenu">Ofertas del día</NuxtLink>
           <NuxtLink to="/coupons" @click="closeMobileMenu">Cupones</NuxtLink>
           <NuxtLink to="/projects" @click="closeMobileMenu">Proyectos</NuxtLink>

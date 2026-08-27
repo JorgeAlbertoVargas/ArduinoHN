@@ -1,7 +1,7 @@
 <template>
   <div class="container store-page">
     <div class="store-header text-center">
-      <h1>Tienda Virtual (Shopify + Local)</h1>
+      <h1>Tienda Virtual</h1>
       <p>Componentes y kits listos para potenciar tus proyectos en todo Honduras y el mundo.</p>
     </div>
     
