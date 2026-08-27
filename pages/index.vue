@@ -253,15 +253,28 @@ const isVideoModalOpen = ref(false);
 
 /* Responsive */
 @media (max-width: 768px) {
+  .apple-hero {
+    padding: 4rem 0;
+  }
   .hero-inner {
     flex-direction: column;
     text-align: center;
   }
-  .hero-actions {
-    justify-content: center;
+  .hero-actions.justify-center {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem !important;
   }
-  .hero-title {
-    font-size: 3rem;
+  .apple-hero .hero-title {
+    font-size: 2.8rem;
+  }
+  .hero-slogan {
+    font-size: 1.1rem;
+    padding: 0 1rem;
+  }
+  .btn-apple {
+    width: 100%;
+    max-width: 300px;
   }
 }
 .text-center { text-align: center; }
