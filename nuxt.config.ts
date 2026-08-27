@@ -15,5 +15,10 @@ export default defineNuxtConfig({
       nocodbOrderItemsTable: process.env.NOCODB_ORDER_ITEMS_TABLE,
       nocodbProductosTable: process.env.NOCODB_PRODUCTOS_TABLE
     }
+  },
+  nitro: {
+    prerender: {
+      failOnError: false
+    }
   }
 })
