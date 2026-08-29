@@ -330,36 +330,21 @@ const isVideoModalOpen = ref(false);
 }
 
 .dna-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 2rem;
   margin-top: 3rem;
 }
 
-/* Make it look like a 4-top, 3-bottom grid on large screens */
 @media (min-width: 1024px) {
-  .dna-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  .dna-card:nth-child(5) {
-    grid-column: 2 / span 1; /* Center the bottom row of 3 */
-  }
-}
-@media (min-width: 1200px) {
-  .dna-grid {
-    grid-template-columns: repeat(7, 1fr); /* Actually, 7 in a row is too much text. Let's force 4 then 3 */
-  }
-  .dna-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
   .dna-card {
-    flex: 0 1 23%; /* Approx 4 per row */
+    flex: 0 1 calc(25% - 1.5rem); /* Forces 4 cards per row, bottom 3 will center */
   }
 }
 
 .dna-card {
+  flex: 1 1 280px;
   background: var(--bg-card);
   padding: 2.5rem 1.5rem;
   border-radius: 16px;
