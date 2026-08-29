@@ -1,6 +1,5 @@
 import { useRuntimeConfig } from '#imports'
-import { fetchNocoDB, updateUser, findUserById } from './nocodb'
-import { fixNocoDBDate } from '../../utils/dateFormatter'
+import { fetchNocoDB, updateUser, findUserById, fixNocoDBDate } from './nocodb'
 
 export interface LoyaltyConfig {
   earnRate: number; // Lempiras to spend to earn 1 point

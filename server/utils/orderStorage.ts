@@ -1,6 +1,5 @@
 import { useRuntimeConfig } from '#imports'
-import { fetchNocoDB } from './nocodb'
-import { fixNocoDBDate } from '../../utils/dateFormatter'
+import { fetchNocoDB, fixNocoDBDate } from './nocodb'
 
 export interface OrderItem {
   sku: string;

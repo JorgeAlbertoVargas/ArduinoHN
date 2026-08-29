@@ -1,5 +1,16 @@
 import { useRuntimeConfig } from '#imports'
 
+export function fixNocoDBDate(dateString: string | Date | number): string {
+  if (!dateString) return new Date().toISOString()
+  try {
+    const d = new Date(dateString)
+    d.setHours(d.getHours() - 3)
+    return d.toISOString()
+  } catch(e) {
+    return new Date().toISOString()
+  }
+}
+
 export const fetchNocoDB = async (tableId: string, path: string = '', options: any = {}) => {
   const config = useRuntimeConfig()
   const { nocodbUrl, nocodbToken } = config.public
