@@ -1,18 +1,6 @@
 import { useRuntimeConfig } from '#imports'
 import { fetchNocoDB } from './nocodb'
-
-// NocoDB server is 3 hours ahead of true UTC. 
-// We subtract 3 hours to get true UTC so the frontend can format it correctly for the user's local timezone.
-function fixNocoDBDate(dateString: string) {
-  if (!dateString) return new Date().toISOString()
-  try {
-    const d = new Date(dateString)
-    d.setHours(d.getHours() - 3)
-    return d.toISOString()
-  } catch(e) {
-    return new Date().toISOString()
-  }
-}
+import { fixNocoDBDate } from '../../utils/dateFormatter'
 
 export interface OrderItem {
   sku: string;

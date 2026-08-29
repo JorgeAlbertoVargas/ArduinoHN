@@ -1,5 +1,6 @@
 import { useRuntimeConfig } from '#imports'
 import { fetchNocoDB, updateUser, findUserById } from './nocodb'
+import { fixNocoDBDate } from '../../utils/dateFormatter'
 
 export interface LoyaltyConfig {
   earnRate: number; // Lempiras to spend to earn 1 point
@@ -126,7 +127,7 @@ export const getUserLoyalty = async (userId: string | number): Promise<UserLoyal
     if (txResponse && txResponse.list) {
       transactions = txResponse.list.map((tx: any) => ({
         id: tx.Id,
-        date: tx.date,
+        date: fixNocoDBDate(tx.CreatedAt || tx.created_at || tx.date),
         orderId: tx.order_id,
         earnedPoints: tx.earned_points || 0,
         usedPoints: tx.used_points || 0
