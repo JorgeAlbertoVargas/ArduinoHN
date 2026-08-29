@@ -16,6 +16,8 @@
       </div>
       
       <form v-else class="auth-form" @submit.prevent="handleReset">
+        <div class="form-group">
+          <label for="password">Nueva Contraseña</label>
           <div class="input-wrapper">
             <input 
               id="password" 
