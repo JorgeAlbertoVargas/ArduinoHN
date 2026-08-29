@@ -35,20 +35,20 @@ export const getAllOrders = async (): Promise<Order[]> => {
       return response.list.map((row: any) => {
         let items = []
         try {
-          items = JSON.parse(row.items_summary)
+          items = JSON.parse(row['Items Summary'] || row.items_summary)
         } catch(e) {
           // Fallback if it's just a text string
-          items = [{ title: row.items_summary, quantity: 1, price: row.total_amount, sku: 'N/A' }]
+          items = [{ title: row['Items Summary'] || row.items_summary, quantity: 1, price: row['Total Amount'] || row.total_amount, sku: 'N/A' }]
         }
         
         return {
-          id: row.order_id,
+          id: row['Order ID'] || row.order_id,
           userId: 'N/A', // We don't have user_id in OrdersTable by default, but we can rely on transactions
-          date: row.created_at || new Date().toISOString(),
+          date: row.CreatedAt || row.created_at || new Date().toISOString(),
           items: items,
-          totalPrice: row.total_amount,
-          subtotal: row.total_amount, // Approximation
-          status: row.status
+          totalPrice: row['Total Amount'] || row.total_amount,
+          subtotal: row['Total Amount'] || row.total_amount, // Approximation
+          status: row.Status || row.status || 'Desconocido'
         }
       })
     }
@@ -79,17 +79,17 @@ export const getUserOrders = async (userId: string | number): Promise<Order[]> =
           const row = orderRes.list[0]
           let items = []
           try {
-            items = JSON.parse(row.items_summary)
+            items = JSON.parse(row['Items Summary'] || row.items_summary)
           } catch(e) {}
           
           orders.push({
-            id: row.order_id,
+            id: row['Order ID'] || row.order_id,
             userId: String(userId),
-            date: row.created_at,
+            date: row.CreatedAt || row.created_at || new Date().toISOString(),
             items: items,
-            totalPrice: row.total_amount,
-            subtotal: row.total_amount,
-            status: row.status
+            totalPrice: row['Total Amount'] || row.total_amount,
+            subtotal: row['Total Amount'] || row.total_amount,
+            status: row.Status || row.status || 'Desconocido'
           })
         }
       }
@@ -112,7 +112,7 @@ export const getOrderById = async (id: string): Promise<Order | undefined> => {
       const row = response.list[0]
       
       let items = []
-      try { items = JSON.parse(row.items_summary) } catch(e) {}
+      try { items = JSON.parse(row['Items Summary'] || row.items_summary) } catch(e) {}
       
       // 2. Fetch Loyalty Info for this order to get usedPoints/earnedPoints
       let loyalty: LoyaltyOrderData | undefined
@@ -120,7 +120,7 @@ export const getOrderById = async (id: string): Promise<Order | undefined> => {
       const txRes: any = await fetchNocoDB(config.public.nocodbLoyaltyTransactionsTable, `?where=(order_id,eq,${id})`)
       if (txRes && txRes.list && txRes.list.length > 0) {
         const tx = txRes.list[0]
-        userId = String(tx.user_id)
+        userId = String(tx.user_id || tx.user_id)
         loyalty = {
           usedPoints: tx.used_points,
           earnedPoints: tx.earned_points,
@@ -129,14 +129,14 @@ export const getOrderById = async (id: string): Promise<Order | undefined> => {
       }
 
       return {
-        id: row.order_id,
+        id: row['Order ID'] || row.order_id,
         userId: userId,
-        date: row.created_at,
+        date: row.CreatedAt || row.created_at || new Date().toISOString(),
         items: items,
-        totalPrice: row.total_amount,
-        subtotal: row.total_amount,
+        totalPrice: row['Total Amount'] || row.total_amount,
+        subtotal: row['Total Amount'] || row.total_amount,
         loyalty,
-        status: row.status
+        status: row.Status || row.status || 'Desconocido'
       }
     }
   } catch(error) {
