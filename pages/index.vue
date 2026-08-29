@@ -10,16 +10,6 @@
         
         <h1 class="hero-title">ArduinoHN</h1>
         
-        <div class="hero-acronym-inline">
-          <div class="acronym-item"><span class="letter">A</span> <span class="word">Automatización</span></div>
-          <div class="acronym-item"><span class="letter">R</span> <span class="word">Robótica</span></div>
-          <div class="acronym-item"><span class="letter">D</span> <span class="word">Desarrollo H&W</span></div>
-          <div class="acronym-item"><span class="letter">U</span> <span class="word">Universal Standards</span></div>
-          <div class="acronym-item"><span class="letter">I</span> <span class="word">Inteligencia Artificial</span></div>
-          <div class="acronym-item"><span class="letter">N</span> <span class="word">Novedoso</span></div>
-          <div class="acronym-item"><span class="letter">O</span> <span class="word">Originalidad</span></div>
-        </div>
-
         <p class="hero-slogan">
           Automatización <span class="dot">•</span> 
           Innovación <span class="dot">•</span> 
@@ -40,6 +30,73 @@
       video-url="promo" 
       @close="isVideoModalOpen = false" 
     />
+
+    <!-- Acronym DNA Section -->
+    <section class="acronym-dna">
+      <div class="container text-center">
+        <h2 class="section-title">El ADN de ARDUINOHN</h2>
+        <p class="section-subtitle">Lo que nos define en cada letra</p>
+        
+        <div class="dna-grid">
+          <div class="dna-card">
+            <div class="dna-icon-wrap">
+              <span class="dna-bg-letter">A</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dna-icon"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </div>
+            <h3>Automatización</h3>
+            <p>Automatización Industrial con PLCs y Microcontroladores.</p>
+          </div>
+          <div class="dna-card">
+            <div class="dna-icon-wrap">
+              <span class="dna-bg-letter">R</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dna-icon"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>
+            </div>
+            <h3>Robótica</h3>
+            <p>Robótica Móvil e Industrial.</p>
+          </div>
+          <div class="dna-card">
+            <div class="dna-icon-wrap">
+              <span class="dna-bg-letter">D</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dna-icon"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+            </div>
+            <h3>Desarrollo</h3>
+            <p>Desarrollo de hardware y Software.</p>
+          </div>
+          <div class="dna-card">
+            <div class="dna-icon-wrap">
+              <span class="dna-bg-letter">U</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dna-icon"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            </div>
+            <h3>Universalidad</h3>
+            <p>Universalidad en el uso de herramientas tecnológicas.</p>
+          </div>
+          <div class="dna-card">
+            <div class="dna-icon-wrap">
+              <span class="dna-bg-letter">I</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dna-icon"><path d="M12 2v4"></path><path d="M12 18v4"></path><path d="M4.93 4.93l2.83 2.83"></path><path d="M16.24 16.24l2.83 2.83"></path><path d="M2 12h4"></path><path d="M18 12h4"></path><path d="M4.93 19.07l2.83-2.83"></path><path d="M16.24 7.76l2.83-2.83"></path><circle cx="12" cy="12" r="4"></circle></svg>
+            </div>
+            <h3>Inteligencia Artificial</h3>
+            <p>Lenguaje Natural, Agentes Inteligentes.</p>
+          </div>
+          <div class="dna-card">
+            <div class="dna-icon-wrap">
+              <span class="dna-bg-letter">N</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dna-icon"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            </div>
+            <h3>Nuevas Tecnologías</h3>
+            <p>Tecnologías con IIoT para el Hogar Inteligente.</p>
+          </div>
+          <div class="dna-card">
+            <div class="dna-icon-wrap">
+              <span class="dna-bg-letter">O</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dna-icon"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a5 5 0 0 1 5 5c0 1.43-.8 2.59-1.54 3.44a5.22 5.22 0 0 0-1.46 3.56v2h-4v-2a5.22 5.22 0 0 0-1.46-3.56C7.8 10.59 7 9.43 7 7a5 5 0 0 1 5-5z"></path></svg>
+            </div>
+            <h3>Originalidad</h3>
+            <p>Originalidad en implementación de soluciones a medida.</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
 
 
@@ -154,37 +211,7 @@ const isVideoModalOpen = ref(false);
   letter-spacing: -2px;
 }
 
-.hero-acronym-inline {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 1.2rem;
-  max-width: 900px;
-  margin: 0 auto 1.5rem;
-  padding: 1rem 1.5rem;
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 10px 30px rgba(0, 168, 150, 0.05);
-}
 
-.acronym-item {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: var(--color-dark);
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.acronym-item .letter {
-  font-weight: 900;
-  color: var(--color-primary);
-  font-size: 1.3rem;
-}
 
 .hero-slogan {
   font-size: 1.4rem;
@@ -294,6 +321,111 @@ const isVideoModalOpen = ref(false);
 }
 .feature-link:hover {
   text-decoration: underline;
+}
+
+/* Acronym DNA Section */
+.acronym-dna {
+  padding: 5rem 0 6rem;
+  background-color: #ffffff;
+}
+
+.dna-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+/* Make it look like a 4-top, 3-bottom grid on large screens */
+@media (min-width: 1024px) {
+  .dna-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .dna-card:nth-child(5) {
+    grid-column: 2 / span 1; /* Center the bottom row of 3 */
+  }
+}
+@media (min-width: 1200px) {
+  .dna-grid {
+    grid-template-columns: repeat(7, 1fr); /* Actually, 7 in a row is too much text. Let's force 4 then 3 */
+  }
+  .dna-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .dna-card {
+    flex: 0 1 23%; /* Approx 4 per row */
+  }
+}
+
+.dna-card {
+  background: var(--bg-card);
+  padding: 2.5rem 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  transition: all 0.3s ease;
+  border: 1px solid var(--glass-border);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dna-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 151, 156, 0.12);
+  border-color: rgba(0, 151, 156, 0.3);
+}
+
+.dna-icon-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dna-bg-letter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 5rem;
+  font-weight: 900;
+  color: var(--color-primary);
+  opacity: 0.1;
+  line-height: 1;
+  z-index: 0;
+}
+
+.dna-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--color-primary);
+  z-index: 1;
+}
+
+.dna-card h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-dark);
+  margin-bottom: 0.75rem;
+  position: relative;
+  z-index: 1;
+}
+
+.dna-card p {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 
