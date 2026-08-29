@@ -28,7 +28,7 @@
         </thead>
         <tbody>
           <tr v-for="order in orders" :key="order.id">
-            <td>{{ new Date(order.date).toLocaleDateString() }} {{ new Date(order.date).toLocaleTimeString() }}</td>
+            <td>{{ formatHondurasDateTime(order.date) }}</td>
             <td class="order-id">#{{ order.id }}</td>
             <td>
               <span class="status-badge" :class="order.status.toLowerCase()">

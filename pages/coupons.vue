@@ -54,7 +54,7 @@
           </thead>
           <tbody>
             <tr v-for="tx in transactions" :key="tx.id">
-              <td>{{ new Date(tx.date).toLocaleDateString() }} {{ new Date(tx.date).toLocaleTimeString() }}</td>
+              <td>{{ formatHondurasDateTime(tx.date) }}</td>
               <td>
                 <NuxtLink :to="`/order/${tx.orderId}`" class="order-link">{{ tx.orderId }}</NuxtLink>
               </td>

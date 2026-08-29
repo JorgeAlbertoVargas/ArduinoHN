@@ -15,9 +15,9 @@
 
     <div v-else-if="order" class="invoice-card glass">
       <div class="invoice-header">
-        <div>
-          <h2>Orden #{{ order.id }}</h2>
-          <p class="date">{{ new Date(order.date).toLocaleDateString() }} {{ new Date(order.date).toLocaleTimeString() }}</p>
+        <div class="order-header-info">
+          <h2>Pedido #{{ order.id }}</h2>
+          <p class="date">{{ formatHondurasDateTime(order.date) }}</p>
         </div>
         <div class="status-badge" :class="order.status.toLowerCase()">
           {{ order.status }}

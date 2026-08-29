@@ -51,7 +51,7 @@
                 <div>{{ u.email }}</div>
               </td>
               <td class="text-muted small">
-                {{ u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A' }}
+                {{ u.created_at ? formatHondurasDate(u.created_at) : 'N/A' }}
               </td>
               <td>
                 <span :class="['badge', 'badge-' + (u.role || 'cliente')]">
