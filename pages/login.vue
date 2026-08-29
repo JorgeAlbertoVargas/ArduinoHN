@@ -174,13 +174,23 @@ const handleLogin = async () => {
 .form-control {
   width: 100%;
   padding: 12px 15px;
-  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   background-color: var(--bg-card);
   color: var(--text-main);
   border-radius: 8px;
   font-family: var(--font-family);
   font-size: 1rem;
   transition: border-color 0.3s, box-shadow 0.3s;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.form-control::placeholder {
+  color: #9ca3af;
+}
+
+:global([data-theme="dark"]) .form-control {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .pr-10 {
