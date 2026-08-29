@@ -186,12 +186,37 @@ const handleRegister = async () => {
   justify-content: center;
   padding: 40px 20px;
   background-color: var(--bg-main);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-container::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vmin;
+  height: 90vmin;
+  background-image: url('/logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+}
+
+:global([data-theme="dark"]) .auth-container::before {
+  opacity: 0.05;
 }
 
 .auth-card {
   width: 100%;
   max-width: 450px;
   padding: 40px;
+  position: relative;
+  z-index: 1;
 }
 
 .auth-header {
