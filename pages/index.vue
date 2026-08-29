@@ -9,6 +9,17 @@
         </div>
         
         <h1 class="hero-title">ArduinoHN</h1>
+        
+        <div class="hero-acronym-inline">
+          <div class="acronym-item"><span class="letter">A</span> <span class="word">Automatización</span></div>
+          <div class="acronym-item"><span class="letter">R</span> <span class="word">Robótica</span></div>
+          <div class="acronym-item"><span class="letter">D</span> <span class="word">Desarrollo H&W</span></div>
+          <div class="acronym-item"><span class="letter">U</span> <span class="word">Universal Standards</span></div>
+          <div class="acronym-item"><span class="letter">I</span> <span class="word">Inteligencia Artificial</span></div>
+          <div class="acronym-item"><span class="letter">N</span> <span class="word">Novedoso</span></div>
+          <div class="acronym-item"><span class="letter">O</span> <span class="word">Originalidad</span></div>
+        </div>
+
         <p class="hero-slogan">
           Automatización <span class="dot">•</span> 
           Innovación <span class="dot">•</span> 
@@ -29,6 +40,8 @@
       video-url="promo" 
       @close="isVideoModalOpen = false" 
     />
+
+
 
     <!-- Ecosystem Section -->
     <section class="ecosystem">
@@ -137,8 +150,40 @@ const isVideoModalOpen = ref(false);
   font-weight: 700;
   color: var(--color-primary);
   line-height: 1.1;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   letter-spacing: -2px;
+}
+
+.hero-acronym-inline {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  max-width: 900px;
+  margin: 0 auto 1.5rem;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 10px 30px rgba(0, 168, 150, 0.05);
+}
+
+.acronym-item {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--color-dark);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.acronym-item .letter {
+  font-weight: 900;
+  color: var(--color-primary);
+  font-size: 1.3rem;
 }
 
 .hero-slogan {
@@ -250,6 +295,8 @@ const isVideoModalOpen = ref(false);
 .feature-link:hover {
   text-decoration: underline;
 }
+
+
 
 /* Responsive */
 @media (max-width: 768px) {
