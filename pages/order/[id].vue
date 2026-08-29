@@ -69,10 +69,10 @@
               </td>
             </tr>
             <tr v-if="order.loyalty && order.loyalty.usedPoints > 0" class="discount-row">
-              <td colspan="3" class="text-right summary-label">Descuento por Puntos ({{ order.loyalty.usedPoints }} pts):</td>
+              <td colspan="3" class="text-right summary-label">- Descuento por Puntos ({{ order.loyalty.usedPoints }} pts):</td>
               <td>
                 <div class="accounting-cell">
-                  <span class="currency-symbol">- L.</span>
+                  <span class="currency-symbol">L.</span>
                   <span class="accounting-amount">{{ formatCurrency(Number(order.loyalty.pointsDiscountValue)).replace('L. ', '') }}</span>
                 </div>
               </td>
