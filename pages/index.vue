@@ -262,6 +262,8 @@ const isVideoModalOpen = ref(false);
 .ecosystem {
   padding: 6rem 0;
   background-color: var(--color-light);
+  position: relative;
+  overflow: hidden;
 }
 .section-title {
   font-size: 2.5rem;
@@ -327,6 +329,37 @@ const isVideoModalOpen = ref(false);
 .acronym-dna {
   padding: 5rem 0 6rem;
   background-color: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Watermark for both sections */
+.acronym-dna::before, .ecosystem::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150vmin;
+  height: 150vmin;
+  background-color: var(--color-primary);
+  -webkit-mask-image: url('/logo.png');
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-image: url('/logo.png');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure content is above watermark */
+.acronym-dna > .container, .ecosystem > .container {
+  position: relative;
+  z-index: 1;
 }
 
 .dna-grid {
