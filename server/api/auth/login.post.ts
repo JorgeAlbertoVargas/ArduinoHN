@@ -33,7 +33,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Generate JWT
-  const token = generateToken({
+  const token = await generateToken({
     id: user.Id || user.id,
     email: user.email,
     role: user.role

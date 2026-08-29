@@ -3,7 +3,7 @@ import { getLoyaltyConfig, saveLoyaltyConfig } from '../../utils/loyaltyStorage'
 import { getUserFromEvent } from '../../utils/jwt'
 
 export default defineEventHandler(async (event) => {
-  const user = getUserFromEvent(event)
+  const user = await getUserFromEvent(event)
   
   if (!user || (user as any).role !== 'admin') {
     throw createError({ statusCode: 403, statusMessage: 'Forbidden' })

@@ -3,7 +3,7 @@ import { getUserFromEvent } from '../../utils/jwt'
 import { findUserById } from '../../utils/nocodb'
 
 export default defineEventHandler(async (event) => {
-  const jwtUser = getUserFromEvent(event)
+  const jwtUser = await getUserFromEvent(event)
   
   if (!jwtUser) {
     throw createError({

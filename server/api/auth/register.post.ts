@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
     const user = Array.isArray(newUserRecord) ? newUserRecord[0] : newUserRecord
 
     // Generate JWT
-    const token = generateToken({
+    const token = await generateToken({
       id: user.Id || user.id,
       email: user.email,
       role: user.role

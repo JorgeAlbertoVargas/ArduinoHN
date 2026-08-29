@@ -4,7 +4,7 @@ import { getUserFromEvent } from '../../utils/jwt'
 
 export default defineEventHandler(async (event) => {
   // Authentication & Authorization check
-  const jwtUser = getUserFromEvent(event)
+  const jwtUser = await getUserFromEvent(event)
   if (!jwtUser) {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
   }
