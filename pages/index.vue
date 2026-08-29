@@ -127,7 +127,7 @@
             <div class="icon cloud-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19A4.5 4.5 0 0 0 18 10h-1.26A8 8 0 1 0 3 16.29"></path><path d="M8 22h8"></path><path d="M12 16v6"></path></svg>
             </div>
-            <h3>Cloud & IIoT</h3>
+            <h3>IIoT & Cloud</h3>
             <p>Conecta tus dispositivos a la nube, monitorea en tiempo real y controla sensores a distancia.</p>
             <NuxtLink to="/blog" class="feature-link">Aprender más &rarr;</NuxtLink>
           </div>
