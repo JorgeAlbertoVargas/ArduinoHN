@@ -112,8 +112,8 @@ export const getUserLoyalty = async (userId: string | number): Promise<UserLoyal
     // Fetch User Record
     const userRow = await findUserById(uid)
     if (userRow) {
-      points = userRow.points || 0
-      historicalSpent = userRow.historical_spent || 0
+      points = Number(userRow.points) || 0
+      historicalSpent = Number(userRow.historical_spent) || 0
     }
 
     // Fetch Transactions

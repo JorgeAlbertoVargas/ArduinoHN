@@ -49,15 +49,12 @@ export default defineEventHandler(async (event) => {
       userLoyalty.transactions = []
     }
     
-    if (usedPoints > 0 || earnedPoints > 0) {
-      userLoyalty.transactions.unshift({
-        id: Math.random().toString(36).substr(2, 9),
-        date: new Date().toISOString(),
-        orderId: orderId,
-        usedPoints: usedPoints,
-        earnedPoints: earnedPoints
-      })
-    }
+    userLoyalty.transactions.unshift({
+      date: new Date().toISOString(),
+      orderId: orderId,
+      usedPoints: usedPoints,
+      earnedPoints: earnedPoints
+    })
 
     // Guardar
     await saveUserLoyalty(userId, userLoyalty)
