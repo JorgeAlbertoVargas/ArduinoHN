@@ -5,7 +5,7 @@ import { verifyAuth } from '../../utils/auth' // Assuming standard auth check, w
 export default defineEventHandler(async (event) => {
   // GET method: Return current offers
   if (event.node.req.method === 'GET') {
-    return getOffers()
+    return await getOffers()
   }
 
   // PUT/POST method: Update offers
@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 400, message: 'Invalid payload' })
     }
 
-    const success = saveOffers(body)
+    const success = await saveOffers(body)
     if (!success) {
       throw createError({ statusCode: 500, message: 'Failed to save offers' })
     }

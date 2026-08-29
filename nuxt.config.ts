@@ -15,8 +15,9 @@ export default defineNuxtConfig({
       nocodbOrderItemsTable: process.env.NOCODB_ORDER_ITEMS_TABLE || 'm0dqnot1yjfu8za',
       nocodbProductosTable: process.env.NOCODB_PRODUCTOS_TABLE || 'mgl2cerr4iret4q',
       nocodbUsersTable: process.env.NOCODB_USERS_TABLE || 'mtkdrz1ip3343wb',
-      nocodbLoyaltyTransactionsTable: process.env.NOCODB_LOYALTY_TRANSACTIONS_TABLE || 'vwpje0pwug9njkgu',
-      nocodbLoyaltyConfigTable: process.env.NOCODB_LOYALTY_CONFIG_TABLE || 'vwka2mmfxa5kvaed'
+      nocodbOffersTable: process.env.NOCODB_OFFERS_TABLE || 'mf2layzwcm11nbo',
+      nocodbLoyaltyTransactionsTable: process.env.NOCODB_LOYALTY_TRANSACTIONS_TABLE || 'ms78meprrhlatdg',
+      nocodbLoyaltyConfigTable: process.env.NOCODB_LOYALTY_CONFIG_TABLE || 'ma7p4masktlwxaa'
     }
   },
   nitro: {
