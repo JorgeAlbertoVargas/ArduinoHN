@@ -23,6 +23,8 @@ export interface Order {
   items: OrderItem[];
   totalPrice: number;
   subtotal: number;
+  isv?: number;
+  cai?: string;
   loyalty?: LoyaltyOrderData;
   status: string;
 }
@@ -45,9 +47,11 @@ export const getAllOrders = async (): Promise<Order[]> => {
           id: row['Order ID'] || row.order_id,
           userId: 'N/A', // We don't have user_id in OrdersTable by default, but we can rely on transactions
           date: fixNocoDBDate(row.CreatedAt || row.created_at),
-          items: items,
+          items: items.items || items, // items_summary might be {items: [], subtotal, isv, cai} now
           totalPrice: row['Total Amount'] || row.total_amount,
-          subtotal: row['Total Amount'] || row.total_amount, // Approximation
+          subtotal: items.subtotal ?? (row['Total Amount'] || row.total_amount),
+          isv: items.isv,
+          cai: items.cai,
           status: row.Status || row.status || 'Desconocido'
         }
       })
@@ -86,9 +90,11 @@ export const getUserOrders = async (userId: string | number): Promise<Order[]> =
             id: row['Order ID'] || row.order_id,
             userId: String(userId),
             date: fixNocoDBDate(row.CreatedAt || row.created_at),
-            items: items,
+            items: items.items || items,
             totalPrice: row['Total Amount'] || row.total_amount,
-            subtotal: row['Total Amount'] || row.total_amount,
+            subtotal: items.subtotal ?? (row['Total Amount'] || row.total_amount),
+            isv: items.isv,
+            cai: items.cai,
             status: row.Status || row.status || 'Desconocido'
           })
         }
@@ -132,9 +138,11 @@ export const getOrderById = async (id: string): Promise<Order | undefined> => {
         id: row['Order ID'] || row.order_id,
         userId: userId,
         date: fixNocoDBDate(row.CreatedAt || row.created_at),
-        items: items,
+        items: items.items || items,
         totalPrice: row['Total Amount'] || row.total_amount,
-        subtotal: row['Total Amount'] || row.total_amount,
+        subtotal: items.subtotal ?? (row['Total Amount'] || row.total_amount),
+        isv: items.isv,
+        cai: items.cai,
         loyalty,
         status: row.Status || row.status || 'Desconocido'
       }
@@ -149,13 +157,20 @@ export const saveOrder = async (order: Order) => {
   const config = useRuntimeConfig()
   try {
     // We store the items array as a JSON string in items_summary for easy retrieval
-    // since we can't alter the NocoDB schema right now
+    // We now wrap it in an object to store subtotal, isv, and cai as well
+    const itemsSummaryObj = {
+      items: order.items,
+      subtotal: order.subtotal,
+      isv: order.isv,
+      cai: order.cai
+    }
+    
     await fetchNocoDB(config.public.nocodbOrdersTable, '', {
       method: 'POST',
       body: {
         order_id: String(order.id),
         total_amount: order.totalPrice,
-        items_summary: JSON.stringify(order.items), 
+        items_summary: JSON.stringify(itemsSummaryObj), 
         status: order.status
       }
     })

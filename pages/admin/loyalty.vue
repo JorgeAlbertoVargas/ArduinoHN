@@ -42,6 +42,20 @@
 
       <hr class="divider" />
 
+      <h2>Impuestos y Facturación</h2>
+      <div class="form-group">
+        <label>Porcentaje de ISV (%):</label>
+        <input type="number" step="0.01" v-model="config.isvPercent" class="form-control" />
+        <small class="text-muted">Ejemplo: 15 para 15%.</small>
+      </div>
+      <div class="form-group mt-3">
+        <label>CAI (Código de Autorización de Impresión):</label>
+        <input type="text" v-model="config.cai" class="form-control" />
+        <small class="text-muted">El código CAI que aparecerá en las facturas.</small>
+      </div>
+
+      <hr class="divider" />
+
       <h2>Sistema de Niveles (Opción 3)</h2>
       <div class="form-group toggle-group">
         <label class="toggle-switch">
@@ -95,6 +109,8 @@ const config = ref({
   earnRate: 100,
   redemptionValue: 1,
   exchangeRate: 25,
+  isvPercent: 15,
+  cai: '',
   enableTiers: false,
   tiers: {
     silverThreshold: 5000,

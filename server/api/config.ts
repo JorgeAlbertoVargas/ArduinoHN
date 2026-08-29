@@ -5,6 +5,8 @@ export default defineEventHandler(async () => {
   // Solo exponer configuraciones públicas
   const config = await getLoyaltyConfig()
   return {
-    exchangeRate: config.exchangeRate || 25
+    exchangeRate: config.exchangeRate || 25,
+    isvPercent: config.isvPercent || 15,
+    cai: config.cai || ''
   }
 })

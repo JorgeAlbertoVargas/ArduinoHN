@@ -55,8 +55,8 @@
           <span class="summary-value">{{ formatCurrency(cartTotal) }}</span>
         </div>
         <div class="summary-row">
-          <span>Envío e Impuestos:</span>
-          <span class="summary-value">Calculados en Checkout</span>
+          <span>ISV ({{ isvPercent }}%):</span>
+          <span class="summary-value">{{ formatCurrency(isvAmount) }}</span>
         </div>
         <div v-if="cartSavings > 0" class="summary-row savings-row" style="color: #2e7d32; font-weight: 600;">
           <span>Ahorro por ofertas:</span>
@@ -112,13 +112,16 @@ import { useLoyalty } from '~/composables/useLoyalty';
 import { useAuth } from '~/composables/useAuth';
 import { useToast } from '~/composables/useToast';
 import { formatCurrency } from '~/utils/currencyFormatter';
+import { useGlobalCurrencyConfig } from '~/composables/useGlobalCurrencyConfig';
 
 const { cartItems, removeFromCart, updateQuantity, cartTotal, cartSavings, cartItemsCount, checkoutUrl, clearCart } = useCart();
 const { points, fetchLoyalty, config } = useLoyalty();
+const { isvPercent, cai, fetchConfig } = useGlobalCurrencyConfig();
 const { isAuthenticated } = useAuth();
 const toast = useToast();
 
 onMounted(async () => {
+  await fetchConfig();
   if (isAuthenticated.value) {
     await fetchLoyalty();
   }
@@ -139,13 +142,22 @@ const pointsValue = computed(() => {
 
 const usePoints = ref(false);
 
+const isvAmount = computed(() => {
+  let subtotalAfterDiscount = cartTotal.value;
+  if (usePoints.value) {
+    const discount = Math.min(eligibleForPointsTotal.value, pointsValue.value);
+    subtotalAfterDiscount -= discount;
+  }
+  return subtotalAfterDiscount * (isvPercent.value / 100);
+});
+
 const finalTotal = computed(() => {
   let total = cartTotal.value;
   if (usePoints.value) {
     const discount = Math.min(eligibleForPointsTotal.value, pointsValue.value);
     total -= discount;
   }
-  return total;
+  return total + isvAmount.value;
 });
 
 const pointsToEarn = computed(() => {
@@ -174,6 +186,9 @@ const simulateWebhook = async () => {
     const orderPayload = {
       id: Math.floor(Math.random() * 1000000).toString(),
       total_price: finalTotal.value.toString(),
+      subtotal_price: cartTotal.value.toString(),
+      isv: isvAmount.value.toString(),
+      cai: cai.value,
       line_items: cartItems.value.map(item => ({
         sku: item.name.includes('Arduino') ? 'DK-MOCK' : 'ADS-MOCK',
         title: item.name,

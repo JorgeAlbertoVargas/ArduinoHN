@@ -18,6 +18,7 @@
         <div class="order-header-info">
           <h2>Pedido #{{ order.id }}</h2>
           <p class="date">{{ formatHondurasDateTime(order.date) }}</p>
+          <p v-if="order.cai" class="cai-text"><strong>CAI:</strong> {{ order.cai }}</p>
         </div>
         <div class="status-badge" :class="order.status.toLowerCase()">
           {{ order.status }}
@@ -59,6 +60,10 @@
           <div v-if="order.loyalty && order.loyalty.usedPoints > 0" class="summary-row discount">
             <span>Descuento por Puntos ({{ order.loyalty.usedPoints }} pts):</span>
             <span>- {{ formatCurrency(Number(order.loyalty.pointsDiscountValue)) }}</span>
+          </div>
+          <div class="summary-row">
+            <span>ISV:</span>
+            <span>{{ formatCurrency(Number(order.isv || 0)) }}</span>
           </div>
           <hr class="divider" />
           <div class="summary-row total">
@@ -159,6 +164,12 @@ const fetchOrderDetails = async (id: string) => {
 .date {
   color: var(--text-muted);
   margin: 0;
+}
+.cai-text {
+  color: var(--text-muted);
+  margin: 0.5rem 0 0 0;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
 }
 .status-badge {
   padding: 6px 12px;

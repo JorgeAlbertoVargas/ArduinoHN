@@ -5,6 +5,8 @@ export interface LoyaltyConfig {
   earnRate: number; // Lempiras to spend to earn 1 point
   redemptionValue: number; // Value in Lempiras of 1 point
   exchangeRate: number; // Lempiras per 1 USD
+  isvPercent: number;
+  cai: string;
   enableTiers: boolean;
   tiers: {
     silverThreshold: number;
@@ -37,15 +39,17 @@ export const getLoyaltyConfig = async (): Promise<LoyaltyConfig> => {
     if (response && response.list && response.list.length > 0) {
       const row = response.list[0]
       return {
-        earnRate: row.earn_rate || 100,
-        redemptionValue: row.redemption_value || 1,
-        exchangeRate: row.exchange_rate || 25,
-        enableTiers: row.enable_tiers || false,
+        earnRate: Number(row.earn_rate || 100),
+        redemptionValue: Number(row.redemption_value || 1),
+        exchangeRate: Number(row.exchange_rate || 25),
+        isvPercent: Number(row.isv_percent || 15),
+        cai: row.cai || '',
+        enableTiers: Boolean(row.enable_tiers),
         tiers: {
-          silverThreshold: 5000,
-          silverDiscount: 5,
-          goldThreshold: 20000,
-          goldDiscount: 10
+          silverThreshold: Number(row.silver_threshold || 5000),
+          silverDiscount: Number(row.silver_discount || 5),
+          goldThreshold: Number(row.gold_threshold || 20000),
+          goldDiscount: Number(row.gold_discount || 10)
         }
       }
     }
@@ -86,6 +90,8 @@ export const saveLoyaltyConfig = async (loyaltyConfig: LoyaltyConfig) => {
           earn_rate: loyaltyConfig.earnRate,
           redemption_value: loyaltyConfig.redemptionValue,
           exchange_rate: loyaltyConfig.exchangeRate,
+          isv_percent: loyaltyConfig.isvPercent,
+          cai: loyaltyConfig.cai,
           enable_tiers: loyaltyConfig.enableTiers
         }
       })
@@ -97,6 +103,8 @@ export const saveLoyaltyConfig = async (loyaltyConfig: LoyaltyConfig) => {
           earn_rate: loyaltyConfig.earnRate,
           redemption_value: loyaltyConfig.redemptionValue,
           exchange_rate: loyaltyConfig.exchangeRate,
+          isv_percent: loyaltyConfig.isvPercent,
+          cai: loyaltyConfig.cai,
           enable_tiers: loyaltyConfig.enableTiers
         }
       })

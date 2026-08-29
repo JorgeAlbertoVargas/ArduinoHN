@@ -68,6 +68,8 @@ export default defineEventHandler(async (event) => {
     items: body.line_items || [],
     totalPrice: Number(body.total_price),
     subtotal: Number(body.subtotal_price) || Number(body.total_price),
+    isv: Number(body.isv) || 0,
+    cai: body.cai || '',
     loyalty: {
       usedPoints,
       earnedPoints,
