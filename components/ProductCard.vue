@@ -23,18 +23,19 @@
       </button>
       
       <!-- Botón de añadir al carrito que se muestra en hover -->
-      <div class="add-to-cart-overlay">
-        <button class="btn btn-primary w-full add-btn" @click.stop="$emit('add-to-cart')">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-          Añadir al Carrito
-        </button>
-      </div>
+      <!-- Removed from image overlay -->
     </div>
     <div class="product-info" @click="$emit('go-to-product', id)">
       <h3 class="product-title">{{ title }}</h3>
       <div class="price-container">
         <span v-if="originalPrice" class="original-price text-muted">HNL {{ Number(originalPrice).toFixed(2) }}</span>
         <span class="product-price">HNL {{ Number(price).toFixed(2) }}</span>
+      </div>
+      <div class="actions-container mt-3">
+        <button class="btn btn-primary w-full add-btn" @click.stop="$emit('add-to-cart')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          Añadir al Carrito
+        </button>
       </div>
     </div>
   </div>
@@ -197,30 +198,24 @@ const handlePlayVideo = () => {
   transform: translate(-50%, -50%) scale(1.1);
 }
 
-/* Botón Añadir al carrito overlay */
-.add-to-cart-overlay {
-  position: absolute;
-  bottom: -60px;
-  left: 0;
-  width: 100%;
-  transition: bottom 0.3s ease;
-}
-.product-card:hover .add-to-cart-overlay {
-  bottom: 0;
+/* Botón Añadir al carrito movido a la info */
+.actions-container {
+  margin-top: 1rem;
 }
 .add-btn {
-  border-radius: 0;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
   padding: 0.8rem;
-  background-color: var(--color-primary); /* Restaurar color original */
+  background-color: var(--color-primary);
   color: white;
   border: none;
+  cursor: pointer;
 }
 .add-btn:hover {
-  background-color: var(--color-secondary, #007a6e); /* Usar secundario o un teal más oscuro */
+  background-color: var(--color-secondary, #007a6e);
 }
 
 /* Info del producto */

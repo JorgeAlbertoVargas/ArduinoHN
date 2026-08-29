@@ -134,7 +134,8 @@ const handleAddToCart = async (product: any) => {
     originalPrice: product.originalPrice,
     discountPercent: product.discountPercent
   });
-  alert(`Se agregó ${product.title} al carrito.`);
+  const toast = useToast();
+  toast.showToast(`Se agregó ${product.title} al carrito.`);
 }
 </script>
 

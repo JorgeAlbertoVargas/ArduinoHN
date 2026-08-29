@@ -7,6 +7,7 @@
     </main>
     <Footer />
     <ChatbotWidget />
+    <ToastNotification />
   </div>
 </template>
 
