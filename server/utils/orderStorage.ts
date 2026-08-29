@@ -74,7 +74,7 @@ export const getUserOrders = async (userId: string | number): Promise<Order[]> =
       
       const orders = []
       for (const orderId of orderIds) {
-        const orderRes: any = await fetchNocoDB(config.public.nocodbOrdersTable, `?where=(order_id,eq,${orderId})`)
+        const orderRes: any = await fetchNocoDB(config.public.nocodbOrdersTable, `?where=(Order%20ID,eq,${orderId})`)
         if (orderRes && orderRes.list && orderRes.list.length > 0) {
           const row = orderRes.list[0]
           let items = []
@@ -107,9 +107,9 @@ export const getOrderById = async (id: string): Promise<Order | undefined> => {
   const config = useRuntimeConfig()
   try {
     // 1. Fetch Order Details
-    const orderRes: any = await fetchNocoDB(config.public.nocodbOrdersTable, `?where=(order_id,eq,${id})`)
-    if (orderRes && orderRes.list && orderRes.list.length > 0) {
-      const row = orderRes.list[0]
+    const response: any = await fetchNocoDB(config.public.nocodbOrdersTable, `?where=(Order%20ID,eq,${id})`)
+    if (response && response.list && response.list.length > 0) {
+      const row = response.list[0]
       
       let items = []
       try { items = JSON.parse(row.items_summary) } catch(e) {}
