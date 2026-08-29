@@ -110,10 +110,12 @@ import { ref, computed, onMounted } from 'vue';
 import { useCart } from '~/composables/useCart';
 import { useLoyalty } from '~/composables/useLoyalty';
 import { useAuth } from '~/composables/useAuth';
+import { useToast } from '~/composables/useToast';
 
 const { cartItems, removeFromCart, updateQuantity, cartTotal, cartSavings, cartItemsCount, checkoutUrl, clearCart } = useCart();
 const { points, fetchLoyalty, config } = useLoyalty();
 const { isAuthenticated } = useAuth();
+const toast = useToast();
 
 onMounted(async () => {
   if (isAuthenticated.value) {
@@ -154,7 +156,7 @@ const proceedToCheckout = () => {
   if (checkoutUrl.value) {
     window.location.href = checkoutUrl.value;
   } else {
-    alert('El proceso de pago no está disponible temporalmente. Por favor, intenta de nuevo más tarde.');
+    toast.showToast('El proceso de pago no está disponible temporalmente. Por favor, intenta de nuevo más tarde.', 4000);
   }
 };
 
@@ -162,7 +164,7 @@ const isSimulating = ref(false);
 
 const simulateWebhook = async () => {
   if (cartItems.value.length === 0) {
-    alert('El carrito está vacío.');
+    toast.showToast('El carrito está vacío.');
     return;
   }
   
@@ -190,13 +192,13 @@ const simulateWebhook = async () => {
       body: orderPayload
     });
     
-    alert('¡Simulación completada! ' + (response as any).message);
+    toast.showToast('¡Simulación completada! ' + (response as any).message, 5000);
     clearCart();
     await fetchLoyalty();
     usePoints.value = false;
   } catch (err) {
     console.error(err);
-    alert('Error al simular la orden. Revisa la consola.');
+    toast.showToast('Error al simular la orden. Revisa la consola.', 5000);
   } finally {
     isSimulating.value = false;
   }
