@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useWishlist } from '~/composables/useWishlist';
-import { useAppConfig } from '~/composables/useAppConfig';
+import { useGlobalCurrencyConfig } from '~/composables/useGlobalCurrencyConfig';
 import { formatCurrency, formatUSD } from '~/utils/currencyFormatter';
 
 const props = defineProps({
@@ -90,7 +90,7 @@ const emit = defineEmits(['add-to-cart', 'quick-view', 'go-to-product', 'play-vi
 const { isInWishlist, toggleWishlist } = useWishlist();
 const inWishlist = ref(isInWishlist(props.id));
 
-const { exchangeRate } = useAppConfig();
+const { exchangeRate } = useGlobalCurrencyConfig();
 const showUSD = ref(false);
 
 watch(() => isInWishlist(props.id), (val) => {

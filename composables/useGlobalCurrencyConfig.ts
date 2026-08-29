@@ -1,6 +1,6 @@
 import { useState } from '#imports'
 
-export const useAppConfig = () => {
+export const useGlobalCurrencyConfig = () => {
   const exchangeRate = useState<number>('exchange-rate', () => 25)
 
   const fetchConfig = async () => {

@@ -14,10 +14,10 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useAuth } from '~/composables/useAuth'
-import { useAppConfig } from '~/composables/useAppConfig'
+import { useGlobalCurrencyConfig } from '~/composables/useGlobalCurrencyConfig'
 
 const { fetchUser } = useAuth()
-const { fetchConfig } = useAppConfig()
+const { fetchConfig } = useGlobalCurrencyConfig()
 
 onMounted(async () => {
   await Promise.all([

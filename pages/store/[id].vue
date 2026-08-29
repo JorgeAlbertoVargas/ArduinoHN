@@ -64,7 +64,7 @@ import { ref, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useCart } from '~/composables/useCart';
 import { useWishlist } from '~/composables/useWishlist';
-import { useAppConfig } from '~/composables/useAppConfig';
+import { useGlobalCurrencyConfig } from '~/composables/useGlobalCurrencyConfig';
 import { formatCurrency, formatUSD } from '~/utils/currencyFormatter';
 import { shopifyFetch } from '~/utils/shopify';
 
@@ -73,7 +73,7 @@ const idParam = route.params.id as string;
 const config = useRuntimeConfig();
 const cart = useCart();
 const { isInWishlist, toggleWishlist } = useWishlist();
-const { exchangeRate } = useAppConfig();
+const { exchangeRate } = useGlobalCurrencyConfig();
 const showUSD = ref(false);
 
 const isLocal = idParam.startsWith('local-');
