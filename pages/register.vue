@@ -196,19 +196,24 @@ const handleRegister = async () => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 90vmin;
-  height: 90vmin;
-  background-image: url('/logo.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  opacity: 0.03;
+  width: 150vmin;
+  height: 150vmin;
+  background-color: var(--color-primary);
+  -webkit-mask-image: url('/logo.png');
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-image: url('/logo.png');
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  opacity: 0.05;
   pointer-events: none;
   z-index: 0;
 }
 
 :global([data-theme="dark"]) .auth-container::before {
-  opacity: 0.05;
+  opacity: 0.08;
 }
 
 .auth-card {
