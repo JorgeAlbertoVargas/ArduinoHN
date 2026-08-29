@@ -74,10 +74,12 @@ export const saveLoyaltyConfig = async (loyaltyConfig: LoyaltyConfig) => {
     
     if (response && response.list && response.list.length > 0) {
       // Update
+      const recordId = response.list[0].Id || response.list[0].id
       await fetchNocoDB(config.public.nocodbLoyaltyConfigTable, '', {
         method: 'PATCH',
         body: {
-          Id: response.list[0].Id,
+          Id: recordId,
+          id: recordId,
           earn_rate: loyaltyConfig.earnRate,
           redemption_value: loyaltyConfig.redemptionValue,
           enable_tiers: loyaltyConfig.enableTiers

@@ -6,16 +6,15 @@ dotenv.config({ path: path.resolve(process.cwd(), '.env') })
 
 const nocodbUrl = process.env.NOCODB_URL
 const nocodbToken = process.env.NOCODB_TOKEN
+const nocodbUsersTable = process.env.NOCODB_USERS_TABLE
 
 async function test() {
-  const url = `${nocodbUrl}api/v1/db/meta/projects/pf1psc92t0y32as/tables`
-
+  const url = `${nocodbUrl}api/v1/db/meta/tables/${nocodbUsersTable}`
   try {
     const res = await fetch(url, { headers: { 'xc-token': nocodbToken } })
-    const text = await res.text()
-    const tables = JSON.parse(text).list || JSON.parse(text)
-    if (Array.isArray(tables)) {
-       tables.forEach((t) => console.log(`${t.id} - ${t.title}`))
+    const table = JSON.parse(await res.text())
+    if (table && table.columns) {
+       table.columns.forEach((c) => console.log(`${c.column_name} - ${c.uidt}`))
     }
   } catch (error) {
     console.error('Error:', error)

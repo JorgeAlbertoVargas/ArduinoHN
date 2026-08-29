@@ -81,6 +81,7 @@ export const updateUser = async (id: number, userData: any) => {
       method: 'PATCH',
       body: {
         Id: id,
+        id: id,
         ...userData
       }
     })

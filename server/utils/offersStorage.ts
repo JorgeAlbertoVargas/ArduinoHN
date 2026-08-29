@@ -36,7 +36,7 @@ export const saveOffers = async (data: OfferData): Promise<boolean> => {
       for (const row of existing.list) {
         await fetchNocoDB(config.public.nocodbOffersTable, '', {
           method: 'DELETE',
-          body: { Id: row.Id } // NocoDB v2 delete format
+          body: { id: row.id || row.Id } // NocoDB v2 delete format
         })
       }
     }
