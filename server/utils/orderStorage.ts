@@ -1,6 +1,19 @@
 import { useRuntimeConfig } from '#imports'
 import { fetchNocoDB } from './nocodb'
 
+// NocoDB server is 3 hours ahead of true UTC. 
+// We subtract 3 hours to get true UTC so the frontend can format it correctly for the user's local timezone.
+function fixNocoDBDate(dateString: string) {
+  if (!dateString) return new Date().toISOString()
+  try {
+    const d = new Date(dateString)
+    d.setHours(d.getHours() - 3)
+    return d.toISOString()
+  } catch(e) {
+    return new Date().toISOString()
+  }
+}
+
 export interface OrderItem {
   sku: string;
   title: string;
@@ -44,7 +57,7 @@ export const getAllOrders = async (): Promise<Order[]> => {
         return {
           id: row['Order ID'] || row.order_id,
           userId: 'N/A', // We don't have user_id in OrdersTable by default, but we can rely on transactions
-          date: row.CreatedAt || row.created_at || new Date().toISOString(),
+          date: fixNocoDBDate(row.CreatedAt || row.created_at),
           items: items,
           totalPrice: row['Total Amount'] || row.total_amount,
           subtotal: row['Total Amount'] || row.total_amount, // Approximation
@@ -85,7 +98,7 @@ export const getUserOrders = async (userId: string | number): Promise<Order[]> =
           orders.push({
             id: row['Order ID'] || row.order_id,
             userId: String(userId),
-            date: row.CreatedAt || row.created_at || new Date().toISOString(),
+            date: fixNocoDBDate(row.CreatedAt || row.created_at),
             items: items,
             totalPrice: row['Total Amount'] || row.total_amount,
             subtotal: row['Total Amount'] || row.total_amount,
@@ -131,7 +144,7 @@ export const getOrderById = async (id: string): Promise<Order | undefined> => {
       return {
         id: row['Order ID'] || row.order_id,
         userId: userId,
-        date: row.CreatedAt || row.created_at || new Date().toISOString(),
+        date: fixNocoDBDate(row.CreatedAt || row.created_at),
         items: items,
         totalPrice: row['Total Amount'] || row.total_amount,
         subtotal: row['Total Amount'] || row.total_amount,
