@@ -29,9 +29,9 @@
           <thead>
             <tr>
               <th>Producto</th>
-              <th class="text-center">Cant.</th>
-              <th class="text-right">Precio Unit.</th>
-              <th class="text-right">Total</th>
+              <th>Cant.</th>
+              <th>Precio Unit.</th>
+              <th>Total</th>
             </tr>
           </thead>
           <tbody>
@@ -42,9 +42,9 @@
                   <span v-if="item.originalPrice" class="item-discount-note">Oferta aplicada</span>
                 </div>
               </td>
-              <td class="text-center">{{ item.quantity }}</td>
-              <td class="text-right">{{ formatCurrency(Number(item.price)) }}</td>
-              <td class="text-right font-bold">{{ formatCurrency(Number(item.price) * Number(item.quantity)) }}</td>
+              <td class="text-left">{{ item.quantity }}</td>
+              <td class="text-left">{{ formatCurrency(Number(item.price)) }}</td>
+              <td class="text-left font-bold">{{ formatCurrency(Number(item.price) * Number(item.quantity)) }}</td>
             </tr>
           </tbody>
         </table>
@@ -183,8 +183,7 @@ const fetchOrderDetails = async (id: string) => {
   color: #e74c3c;
   margin-top: 4px;
 }
-.text-center { text-align: center; }
-.text-right { text-align: right; }
+.text-left { text-align: left; }
 .font-bold { font-weight: 600; }
 
 .invoice-summary {
@@ -193,21 +192,23 @@ const fetchOrderDetails = async (id: string) => {
   margin-bottom: 2rem;
 }
 .summary-box {
-  width: 300px;
+  width: 350px;
   background: var(--bg-main);
   padding: 1.5rem;
   border-radius: 8px;
   border: 1px solid var(--glass-border);
 }
 .summary-row {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  align-items: center;
   margin-bottom: 0.8rem;
   color: var(--text-main);
   gap: 1rem;
 }
 .summary-row span:last-child {
   white-space: nowrap;
+  text-align: left;
 }
 .summary-row.discount {
   color: #f39c12;
