@@ -147,8 +147,8 @@ export const saveUserLoyalty = async (userId: string | number, data: UserLoyalty
   try {
     // 1. Update User Table with new points/historical_spent
     await updateUser(uid, {
-      points: data.points,
-      historical_spent: data.historicalSpent
+      points: Math.round(data.points),
+      historical_spent: Math.round(data.historicalSpent)
     })
 
     // 2. Identify and push new transactions (transactions without an Id)
