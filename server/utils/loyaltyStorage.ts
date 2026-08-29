@@ -4,6 +4,7 @@ import { fetchNocoDB, updateUser, findUserById } from './nocodb'
 export interface LoyaltyConfig {
   earnRate: number; // Lempiras to spend to earn 1 point
   redemptionValue: number; // Value in Lempiras of 1 point
+  exchangeRate: number; // Lempiras per 1 USD
   enableTiers: boolean;
   tiers: {
     silverThreshold: number;
@@ -38,6 +39,7 @@ export const getLoyaltyConfig = async (): Promise<LoyaltyConfig> => {
       return {
         earnRate: row.earn_rate || 100,
         redemptionValue: row.redemption_value || 1,
+        exchangeRate: row.exchange_rate || 25,
         enableTiers: row.enable_tiers || false,
         tiers: {
           silverThreshold: 5000,
@@ -55,6 +57,7 @@ export const getLoyaltyConfig = async (): Promise<LoyaltyConfig> => {
   return {
     earnRate: 100,
     redemptionValue: 1,
+    exchangeRate: 25,
     enableTiers: false,
     tiers: {
       silverThreshold: 5000,
@@ -82,6 +85,7 @@ export const saveLoyaltyConfig = async (loyaltyConfig: LoyaltyConfig) => {
           id: recordId,
           earn_rate: loyaltyConfig.earnRate,
           redemption_value: loyaltyConfig.redemptionValue,
+          exchange_rate: loyaltyConfig.exchangeRate,
           enable_tiers: loyaltyConfig.enableTiers
         }
       })
@@ -92,6 +96,7 @@ export const saveLoyaltyConfig = async (loyaltyConfig: LoyaltyConfig) => {
         body: {
           earn_rate: loyaltyConfig.earnRate,
           redemption_value: loyaltyConfig.redemptionValue,
+          exchange_rate: loyaltyConfig.exchangeRate,
           enable_tiers: loyaltyConfig.enableTiers
         }
       })

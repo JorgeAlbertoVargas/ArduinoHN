@@ -43,8 +43,8 @@
                 </div>
               </td>
               <td class="text-center">{{ item.quantity }}</td>
-              <td class="text-right">L. {{ Number(item.price).toFixed(2) }}</td>
-              <td class="text-right font-bold">L. {{ (Number(item.price) * Number(item.quantity)).toFixed(2) }}</td>
+              <td class="text-right">{{ formatCurrency(Number(item.price)) }}</td>
+              <td class="text-right font-bold">{{ formatCurrency(Number(item.price) * Number(item.quantity)) }}</td>
             </tr>
           </tbody>
         </table>
@@ -54,16 +54,16 @@
         <div class="summary-box">
           <div class="summary-row">
             <span>Subtotal:</span>
-            <span>L. {{ Number(order.subtotal).toFixed(2) }}</span>
+            <span>{{ formatCurrency(Number(order.subtotal)) }}</span>
           </div>
           <div v-if="order.loyalty && order.loyalty.usedPoints > 0" class="summary-row discount">
             <span>Descuento por Puntos ({{ order.loyalty.usedPoints }} pts):</span>
-            <span>- L. {{ Number(order.loyalty.pointsDiscountValue).toFixed(2) }}</span>
+            <span>- {{ formatCurrency(Number(order.loyalty.pointsDiscountValue)) }}</span>
           </div>
           <hr class="divider" />
           <div class="summary-row total">
             <span>Total Pagado:</span>
-            <span>L. {{ Number(order.totalPrice).toFixed(2) }}</span>
+            <span>{{ formatCurrency(Number(order.totalPrice)) }}</span>
           </div>
         </div>
       </div>
@@ -80,6 +80,8 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuth } from '~/composables/useAuth';
+import { formatCurrency } from '~/utils/currencyFormatter';
+import { formatHondurasDateTime } from '~/utils/dateFormatter';
 
 const route = useRoute();
 const { isAuthenticated, fetchUser } = useAuth();
@@ -202,6 +204,10 @@ const fetchOrderDetails = async (id: string) => {
   justify-content: space-between;
   margin-bottom: 0.8rem;
   color: var(--text-main);
+  gap: 1rem;
+}
+.summary-row span:last-child {
+  white-space: nowrap;
 }
 .summary-row.discount {
   color: #f39c12;

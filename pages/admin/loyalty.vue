@@ -33,6 +33,15 @@
 
       <hr class="divider" />
 
+      <h2>Moneda y Referencias</h2>
+      <div class="form-group">
+        <label>Tasa de Cambio (Lempiras por 1 USD):</label>
+        <input type="number" step="0.01" v-model="config.exchangeRate" class="form-control" />
+        <small class="text-muted">Ejemplo: Si pones 24.85, se usará este valor para mostrar los precios en Dólares en toda la tienda.</small>
+      </div>
+
+      <hr class="divider" />
+
       <h2>Sistema de Niveles (Opción 3)</h2>
       <div class="form-group toggle-group">
         <label class="toggle-switch">
@@ -85,6 +94,7 @@ const router = useRouter()
 const config = ref({
   earnRate: 100,
   redemptionValue: 1,
+  exchangeRate: 25,
   enableTiers: false,
   tiers: {
     silverThreshold: 5000,

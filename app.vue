@@ -14,11 +14,16 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useAuth } from '~/composables/useAuth'
+import { useAppConfig } from '~/composables/useAppConfig'
 
 const { fetchUser } = useAuth()
+const { fetchConfig } = useAppConfig()
 
 onMounted(async () => {
-  await fetchUser()
+  await Promise.all([
+    fetchUser(),
+    fetchConfig()
+  ])
 })
 </script>
 

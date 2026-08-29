@@ -28,8 +28,15 @@
     <div class="product-info" @click="$emit('go-to-product', id)">
       <h3 class="product-title">{{ title }}</h3>
       <div class="price-container">
-        <span v-if="originalPrice" class="original-price text-muted">HNL {{ Number(originalPrice).toFixed(2) }}</span>
-        <span class="product-price">HNL {{ Number(price).toFixed(2) }}</span>
+        <span v-if="originalPrice && !showUSD" class="original-price text-muted">{{ formatCurrency(Number(originalPrice)) }}</span>
+        <span v-if="!showUSD" class="product-price">{{ formatCurrency(Number(price)) }}</span>
+        <span v-if="originalPrice && showUSD" class="original-price text-muted">{{ formatUSD(Number(originalPrice), exchangeRate) }}</span>
+        <span v-if="showUSD" class="product-price">{{ formatUSD(Number(price), exchangeRate) }}</span>
+        
+        <button class="currency-toggle" @click.stop="showUSD = !showUSD" :title="showUSD ? 'Ver en Lempiras' : 'Ver en Dólares'">
+          <svg v-if="!showUSD" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          <span v-else class="currency-symbol">L.</span>
+        </button>
       </div>
       <div class="actions-container mt-3">
         <button class="btn btn-primary w-full add-btn" @click.stop="$emit('add-to-cart')">
@@ -44,6 +51,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useWishlist } from '~/composables/useWishlist';
+import { useAppConfig } from '~/composables/useAppConfig';
+import { formatCurrency, formatUSD } from '~/utils/currencyFormatter';
 
 const props = defineProps({
   id: {
@@ -80,6 +89,9 @@ const emit = defineEmits(['add-to-cart', 'quick-view', 'go-to-product', 'play-vi
 
 const { isInWishlist, toggleWishlist } = useWishlist();
 const inWishlist = ref(isInWishlist(props.id));
+
+const { exchangeRate } = useAppConfig();
+const showUSD = ref(false);
 
 watch(() => isInWishlist(props.id), (val) => {
   inWishlist.value = val;
@@ -246,6 +258,31 @@ const handlePlayVideo = () => {
   align-items: center;
   justify-content: center;
   gap: 10px;
+  position: relative;
+}
+.currency-toggle {
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  margin-left: 5px;
+}
+.currency-toggle:hover {
+  background: var(--bg-hover);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.currency-symbol {
+  font-weight: bold;
+  font-size: 0.8rem;
 }
 .original-price {
   text-decoration: line-through;

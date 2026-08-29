@@ -16,10 +16,21 @@
       <div class="product-info-container">
         <h1 class="product-title">{{ product.title }}</h1>
         <div class="price-container" style="display:flex; align-items:center; gap: 1rem; margin-bottom: 2rem;">
-          <span v-if="product.originalPrice" class="original-price" style="text-decoration: line-through; color: #999; font-size: 1.4rem;">
-            HNL {{ Number(product.originalPrice).toFixed(2) }}
+          <span v-if="product.originalPrice && !showUSD" class="original-price" style="text-decoration: line-through; color: #999; font-size: 1.4rem;">
+            {{ formatCurrency(Number(product.originalPrice)) }}
           </span>
-          <span class="product-price" style="margin-bottom:0;">HNL {{ Number(product.price).toFixed(2) }}</span>
+          <span v-if="!showUSD" class="product-price" style="margin-bottom:0;">{{ formatCurrency(Number(product.price)) }}</span>
+          
+          <span v-if="product.originalPrice && showUSD" class="original-price" style="text-decoration: line-through; color: #999; font-size: 1.4rem;">
+            {{ formatUSD(Number(product.originalPrice), exchangeRate) }}
+          </span>
+          <span v-if="showUSD" class="product-price" style="margin-bottom:0;">{{ formatUSD(Number(product.price), exchangeRate) }}</span>
+
+          <button class="currency-toggle" @click="showUSD = !showUSD" :title="showUSD ? 'Ver en Lempiras' : 'Ver en Dólares'">
+            <svg v-if="!showUSD" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            <span v-else class="currency-symbol" style="font-weight: bold; font-size: 0.9rem;">L.</span>
+          </button>
+
           <span v-if="product.discountPercent" class="badge" style="background-color: #e74c3c; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 1rem;">
             -{{ product.discountPercent }}%
           </span>
@@ -53,6 +64,8 @@ import { ref, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useCart } from '~/composables/useCart';
 import { useWishlist } from '~/composables/useWishlist';
+import { useAppConfig } from '~/composables/useAppConfig';
+import { formatCurrency, formatUSD } from '~/utils/currencyFormatter';
 import { shopifyFetch } from '~/utils/shopify';
 
 const route = useRoute();
@@ -60,6 +73,8 @@ const idParam = route.params.id as string;
 const config = useRuntimeConfig();
 const cart = useCart();
 const { isInWishlist, toggleWishlist } = useWishlist();
+const { exchangeRate } = useAppConfig();
+const showUSD = ref(false);
 
 const isLocal = idParam.startsWith('local-');
 
@@ -241,6 +256,26 @@ const handleAddToCart = async () => {
   margin-bottom: 3rem;
   color: #555;
   line-height: 1.6;
+}
+.currency-toggle {
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  margin-left: 5px;
+}
+.currency-toggle:hover {
+  background: var(--bg-hover);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 .product-description h3 {
   font-size: 1.2rem;

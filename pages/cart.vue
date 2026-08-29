@@ -30,9 +30,9 @@
           </div>
           <div class="item-price">
             <div v-if="item.originalPrice" class="original-price text-muted" style="text-decoration: line-through; font-size: 0.85rem;">
-              L. {{ item.originalPrice.toFixed(2) }}
+              {{ formatCurrency(item.originalPrice) }}
             </div>
-            <div>L. {{ item.price.toFixed(2) }}</div>
+            <div>{{ formatCurrency(item.price) }}</div>
             <div v-if="item.discountPercent" class="discount-badge" style="font-size: 0.75rem; color: #e74c3c; font-weight: bold; margin-top: 4px;">
               ¡Ahorras {{ item.discountPercent }}%!
             </div>
@@ -52,7 +52,7 @@
         <h2>Resumen del pedido</h2>
         <div class="summary-row">
           <span>Subtotal ({{ cartItemsCount }} productos):</span>
-          <span class="summary-value">L. {{ cartTotal.toFixed(2) }}</span>
+          <span class="summary-value">{{ formatCurrency(cartTotal) }}</span>
         </div>
         <div class="summary-row">
           <span>Envío e Impuestos:</span>
@@ -60,32 +60,32 @@
         </div>
         <div v-if="cartSavings > 0" class="summary-row savings-row" style="color: #2e7d32; font-weight: 600;">
           <span>Ahorro por ofertas:</span>
-          <span class="summary-value" style="color: #2e7d32;">- L. {{ cartSavings.toFixed(2) }}</span>
+          <span class="summary-value" style="color: #2e7d32;">- {{ formatCurrency(cartSavings) }}</span>
         </div>
 
         <div v-if="isAuthenticated && points > 0" class="loyalty-box">
           <label class="points-toggle" :class="{ 'disabled-toggle': eligibleForPointsTotal === 0 }">
             <input type="checkbox" v-model="usePoints" :disabled="eligibleForPointsTotal === 0" />
             <span class="toggle-text">
-              Usar mis {{ points }} puntos (Descuento: L. {{ pointsValue.toFixed(2) }})
+              Usar mis {{ points }} puntos (Descuento: {{ formatCurrency(pointsValue) }})
             </span>
           </label>
           <div v-if="eligibleForPointsTotal === 0" class="points-warning">
             Los puntos no aplican a productos que ya están en oferta.
           </div>
           <div v-else-if="usePoints && eligibleForPointsTotal < pointsValue" class="points-warning">
-            El descuento se limitó a L. {{ eligibleForPointsTotal.toFixed(2) }} (solo aplicable a productos sin oferta).
+            El descuento se limitó a {{ formatCurrency(eligibleForPointsTotal) }} (solo aplicable a productos sin oferta).
           </div>
         </div>
         <div v-if="usePoints" class="summary-row savings-row" style="color: #f39c12; font-weight: 600;">
           <span>Descuento por Puntos:</span>
-          <span class="summary-value" style="color: #f39c12;">- L. {{ (cartTotal - finalTotal).toFixed(2) }}</span>
+          <span class="summary-value" style="color: #f39c12;">- {{ formatCurrency(cartTotal - finalTotal) }}</span>
         </div>
 
         <hr class="summary-divider" />
         <div class="summary-row total-row">
           <span>Total Estimado:</span>
-          <span class="summary-value">L. {{ finalTotal.toFixed(2) }}</span>
+          <span class="summary-value">{{ formatCurrency(finalTotal) }}</span>
         </div>
         
         <div v-if="isAuthenticated" class="earn-points-banner">
@@ -111,6 +111,7 @@ import { useCart } from '~/composables/useCart';
 import { useLoyalty } from '~/composables/useLoyalty';
 import { useAuth } from '~/composables/useAuth';
 import { useToast } from '~/composables/useToast';
+import { formatCurrency } from '~/utils/currencyFormatter';
 
 const { cartItems, removeFromCart, updateQuantity, cartTotal, cartSavings, cartItemsCount, checkoutUrl, clearCart } = useCart();
 const { points, fetchLoyalty, config } = useLoyalty();

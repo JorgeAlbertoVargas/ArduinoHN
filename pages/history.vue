@@ -35,7 +35,7 @@
                 {{ order.status }}
               </span>
             </td>
-            <td class="total-price">L. {{ Number(order.totalPrice).toFixed(2) }}</td>
+            <td class="total-price">{{ formatCurrency(Number(order.totalPrice)) }}</td>
             <td>
               <NuxtLink :to="`/order/${order.id}`" class="btn-link">Ver Detalles</NuxtLink>
             </td>
@@ -49,6 +49,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useAuth } from '~/composables/useAuth';
+import { formatCurrency } from '~/utils/currencyFormatter';
+import { formatHondurasDateTime } from '~/utils/dateFormatter';
 
 const { isAuthenticated, fetchUser } = useAuth();
 const orders = ref<any[]>([]);
