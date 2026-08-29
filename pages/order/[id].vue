@@ -44,26 +44,56 @@
                 </div>
               </td>
               <td class="text-center">{{ item.quantity }}</td>
-              <td class="text-right">{{ formatCurrency(Number(item.price)) }}</td>
-              <td class="text-right font-bold">{{ formatCurrency(Number(item.price) * Number(item.quantity)) }}</td>
+              <td>
+                <div class="accounting-cell">
+                  <span class="currency-symbol">L.</span>
+                  <span>{{ formatCurrency(Number(item.price)).replace('L. ', '') }}</span>
+                </div>
+              </td>
+              <td class="font-bold">
+                <div class="accounting-cell">
+                  <span class="currency-symbol">L.</span>
+                  <span>{{ formatCurrency(Number(item.price) * Number(item.quantity)).replace('L. ', '') }}</span>
+                </div>
+              </td>
             </tr>
           </tbody>
           <tfoot>
             <tr>
               <td colspan="3" class="text-right summary-label">Subtotal:</td>
-              <td class="text-right">{{ formatCurrency(Number(order.subtotal)) }}</td>
+              <td>
+                <div class="accounting-cell">
+                  <span class="currency-symbol">L.</span>
+                  <span>{{ formatCurrency(Number(order.subtotal)).replace('L. ', '') }}</span>
+                </div>
+              </td>
             </tr>
             <tr v-if="order.loyalty && order.loyalty.usedPoints > 0" class="discount-row">
               <td colspan="3" class="text-right summary-label">Descuento por Puntos ({{ order.loyalty.usedPoints }} pts):</td>
-              <td class="text-right">- {{ formatCurrency(Number(order.loyalty.pointsDiscountValue)) }}</td>
+              <td>
+                <div class="accounting-cell">
+                  <span class="currency-symbol">- L.</span>
+                  <span>{{ formatCurrency(Number(order.loyalty.pointsDiscountValue)).replace('L. ', '') }}</span>
+                </div>
+              </td>
             </tr>
             <tr>
               <td colspan="3" class="text-right summary-label">ISV:</td>
-              <td class="text-right">{{ formatCurrency(Number(order.isv || 0)) }}</td>
+              <td>
+                <div class="accounting-cell">
+                  <span class="currency-symbol">L.</span>
+                  <span>{{ formatCurrency(Number(order.isv || 0)).replace('L. ', '') }}</span>
+                </div>
+              </td>
             </tr>
             <tr class="total-row-footer">
               <td colspan="3" class="text-right summary-label font-bold">Total Pagado:</td>
-              <td class="text-right font-bold final-total">{{ formatCurrency(Number(order.totalPrice)) }}</td>
+              <td class="font-bold final-total">
+                <div class="accounting-cell">
+                  <span class="currency-symbol">L.</span>
+                  <span>{{ formatCurrency(Number(order.totalPrice)).replace('L. ', '') }}</span>
+                </div>
+              </td>
             </tr>
           </tfoot>
         </table>
@@ -213,6 +243,17 @@ const fetchOrderDetails = async (id: string) => {
 .final-total {
   font-size: 1.3rem;
   color: var(--color-primary);
+}
+
+.accounting-cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 100px;
+}
+.currency-symbol {
+  color: var(--text-muted);
+  margin-right: 1rem;
 }
 
 .loyalty-footer {
