@@ -23,8 +23,39 @@
 
       <div class="nav-right">
         <CartIcon />
-        <div class="nav-actions">
-          <NuxtLink to="/auth/login" class="btn btn-primary login-btn">Iniciar Sesión</NuxtLink>
+        <div class="nav-actions flex items-center gap-4">
+          <ClientOnly>
+            <template v-if="isAuthenticated">
+              <div class="user-dropdown">
+                <button class="user-btn">
+                  <span>{{ user?.full_name || user?.email || 'Usuario' }}</span>
+                  <span class="points-badge">{{ points }} pts</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <div class="dropdown-menu glass">
+                  <NuxtLink v-if="isAdmin" to="/admin/users" class="dropdown-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Gestión de Usuarios
+                  </NuxtLink>
+                  <NuxtLink v-if="isAdmin" to="/admin/offers" class="dropdown-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 12H16c-.7 2-2 3-4 3s-3.3-1-4-3H2.5"/><path d="M5.5 5.1L2 12v6c0 1.1.9 2 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 17 5H7a2 2 0 0 0-1.5.1z"/></svg>
+                    Ofertas del mes
+                  </NuxtLink>
+                  <NuxtLink v-if="isAdmin" to="/admin/loyalty" class="dropdown-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    Lealtad (Puntos)
+                  </NuxtLink>
+                  <button @click="handleLogout" class="dropdown-item text-danger">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Cerrar Sesión
+                  </button>
+                </div>
+              </div>
+            </template>
+            <template v-else>
+              <NuxtLink to="/login" class="btn btn-primary login-btn">Iniciar Sesión</NuxtLink>
+            </template>
+          </ClientOnly>
         </div>
       </div>
     </div>
@@ -34,7 +65,7 @@
       <div class="container">
         <nav class="nav-links">
           <NuxtLink to="/store" @click="closeMobileMenu">Tienda virtual</NuxtLink>
-          <NuxtLink to="/deals" @click="closeMobileMenu">Ofertas del día</NuxtLink>
+          <NuxtLink to="/deals" @click="closeMobileMenu">Ofertas del mes</NuxtLink>
           <NuxtLink to="/coupons" @click="closeMobileMenu">Cupones</NuxtLink>
           <NuxtLink to="/projects" @click="closeMobileMenu">Proyectos</NuxtLink>
           <NuxtLink to="/blog" @click="closeMobileMenu">Blog</NuxtLink>
@@ -47,13 +78,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import CartIcon from '~/components/CartIcon.vue';
+import { useAuth } from '~/composables/useAuth';
+import { useLoyalty } from '~/composables/useLoyalty';
 
+const { user, isAuthenticated, isAdmin, logout } = useAuth();
+const { points, fetchLoyalty } = useLoyalty();
+
+watch(isAuthenticated, (newVal) => {
+  if (newVal) fetchLoyalty();
+}, { immediate: true });
 const isMobileMenuOpen = ref(false);
 const searchQuery = ref('');
 const router = useRouter();
+
+const handleLogout = async () => {
+  await logout();
+  router.push('/login');
+};
 
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false;
@@ -207,6 +251,89 @@ const handleSearch = () => {
 .nav-links a.router-link-active {
   color: var(--color-primary);
   opacity: 1;
+}
+
+/* User Dropdown */
+.user-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.user-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-main);
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.user-btn:hover {
+  background-color: rgba(0, 151, 156, 0.1);
+}
+
+.points-badge {
+  background-color: #f39c12;
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  min-width: 180px;
+  background-color: var(--bg-card);
+  border-radius: 8px;
+  padding: 8px 0;
+  z-index: 1000;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.user-dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  font-family: var(--font-family);
+  font-size: 0.9rem;
+  color: var(--text-main);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(0, 151, 156, 0.05);
+  color: var(--color-primary);
+}
+
+.text-danger {
+  color: #c62828 !important;
+}
+
+.text-danger:hover {
+  background-color: rgba(198, 40, 40, 0.05);
 }
 
 /* Responsive Design */

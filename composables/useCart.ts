@@ -7,6 +7,8 @@ export interface CartItem {
   quantity: number;
   image?: string;
   lineId?: string; // ID de la línea en el carrito de Shopify
+  originalPrice?: number;
+  discountPercent?: number;
 }
 
 export const useCart = () => {
@@ -115,6 +117,15 @@ export const useCart = () => {
     return cartItems.value.reduce((total, item) => total + (item.price * item.quantity), 0);
   });
 
+  const cartSavings = computed(() => {
+    return cartItems.value.reduce((total, item) => {
+      if (item.originalPrice) {
+        return total + ((item.originalPrice - item.price) * item.quantity);
+      }
+      return total;
+    }, 0);
+  });
+
   const cartItemsCount = computed(() => {
     return cartItems.value.reduce((count, item) => count + item.quantity, 0);
   });
@@ -126,6 +137,7 @@ export const useCart = () => {
     updateQuantity,
     clearCart,
     cartTotal,
+    cartSavings,
     cartItemsCount,
     checkoutUrl
   };

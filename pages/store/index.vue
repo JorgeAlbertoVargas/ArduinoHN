@@ -21,6 +21,8 @@
         :price="product.price"
         :image="product.image"
         :video-url="product.videoUrl"
+        :original-price="product.originalPrice"
+        :discount-percent="product.discountPercent"
         @add-to-cart="handleAddToCart(product)"
         @quick-view="openQuickView(product)"
         @go-to-product="goToProduct"
@@ -49,11 +51,11 @@
 import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useCart } from '~/composables/useCart';
-import { shopifyFetch } from '~/utils/shopify';
+import { useProducts } from '~/composables/useProducts';
 
 const cart = useCart();
 const router = useRouter();
-const config = useRuntimeConfig();
+const route = useRoute();
 
 // Estado del Modal
 const isModalOpen = ref(false);
@@ -77,95 +79,47 @@ const goToProduct = (id: string) => {
   router.push(`/store/${id}`);
 };
 
-// --- Fetch Shopify Products ---
-const query = `
-  query getProducts {
-    products(first: 50) {
-      edges {
-        node {
-          id
-          title
-          description
-          images(first: 1) {
-            edges { node { url } }
-          }
-          variants(first: 1) {
-            edges {
-              node {
-                id
-                price { amount currencyCode }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
+const { allProducts: fetchedProducts, pending: pendingProducts, error: errorProducts } = useProducts();
 
-const { data: shopifyData, pending: pendingShopify, error: errorShopify } = await useAsyncData('shopifyProducts', () => shopifyFetch({ query }));
-
-const formattedShopifyProducts = computed(() => {
-  if (!shopifyData.value?.data?.products?.edges) return [];
-  return shopifyData.value.data.products.edges.map((edge: any) => {
-    const node = edge.node;
-    const variant = node.variants.edges[0]?.node;
-    // Fallback URL para Shopify si no tienen imagen subida
-    const fallbackImage = 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg';
-    return {
-      id: variant?.id || node.id,
-      productId: node.id,
-      title: node.title,
-      price: parseFloat(variant?.price?.amount || '0'),
-      image: node.images.edges[0]?.node?.url || fallbackImage,
-      description: node.description,
-      videoUrl: node.videoUrl || null,
-      source: 'shopify'
-    };
-  });
-});
-
-// --- Fetch NocoDB Local Products ---
-const fetchLocalProducts = async () => {
-  const url = `${config.public.nocodbUrl}/api/v2/tables/${config.public.nocodbProductosTable}/records`;
+const fetchOffers = async () => {
   try {
-    const res = await $fetch<any>(url, {
-      headers: { 'xc-token': config.public.nocodbToken }
-    });
-    return res.list || [];
-  } catch (err) {
-    console.error('Error fetching NocoDB products', err);
-    return [];
+    const data = await $fetch<Record<string, { discount: number }>>('/api/admin/offers')
+    return data || {}
+  } catch (error) {
+    return {}
   }
-};
+}
+const { data: offersData } = await useAsyncData('storeOffers', fetchOffers)
 
-const { data: localData, pending: pendingLocal, error: errorLocal } = await useAsyncData('localProducts', fetchLocalProducts);
-
-const formattedLocalProducts = computed(() => {
-  if (!localData.value) return [];
-  return localData.value.map((item: any) => {
-    const fallbackImage = 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg';
-    return {
-      id: `local-${item.Id}`,
-      productId: item.Id,
-      title: item.Nombre || 'Sin nombre',
-      price: parseFloat(item.Precio_Venta || '0'),
-      image: item.image_url || fallbackImage,
-      description: item.descripcion || '',
-      videoUrl: item.video_url || null,
-      source: 'local'
-    };
-  });
-});
+const pendingShopify = pendingProducts;
+const pendingLocal = false; // Combined above
+const errorShopify = errorProducts;
+const errorLocal = false; // Combined above
 
 // --- Mezclar y Filtrar Productos ---
-const route = useRoute();
 const allProducts = computed(() => {
-  let products = [...formattedLocalProducts.value, ...formattedShopifyProducts.value];
+  let products = fetchedProducts.value;
+  const offers = offersData.value || {};
+
+  products = products.map((product: any) => {
+    if (offers[product.id]) {
+      const discount = offers[product.id].discount;
+      const originalPrice = product.price;
+      const newPrice = originalPrice * (1 - (discount / 100));
+      return {
+        ...product,
+        price: newPrice,
+        originalPrice: originalPrice,
+        discountPercent: discount
+      };
+    }
+    return product;
+  });
+
   const q = route.query.q as string;
   if (q) {
     const term = q.toLowerCase();
-    products = products.filter(p => p.title.toLowerCase().includes(term) || p.description.toLowerCase().includes(term));
+    products = products.filter((p: any) => p.title.toLowerCase().includes(term) || p.description.toLowerCase().includes(term));
   }
   return products;
 });
@@ -176,7 +130,9 @@ const handleAddToCart = async (product: any) => {
     name: product.title,
     price: product.price,
     quantity: 1,
-    image: product.image
+    image: product.image,
+    originalPrice: product.originalPrice,
+    discountPercent: product.discountPercent
   });
   alert(`Se agregó ${product.title} al carrito.`);
 }

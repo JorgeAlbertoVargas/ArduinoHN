@@ -1,0 +1,11 @@
+{
+  "earnRate": 100,
+  "redemptionValue": 1,
+  "enableTiers": false,
+  "tiers": {
+    "silverThreshold": 5000,
+    "silverDiscount": 5,
+    "goldThreshold": 20000,
+    "goldDiscount": 10
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "7": {
+    "points": 1286,
+    "historicalSpent": 140237.198,
+    "transactions": [
+      {
+        "id": "snzmk9ad5",
+        "date": "2026-08-29T01:48:22.037Z",
+        "orderId": "726131",
+        "usedPoints": 0,
+        "earnedPoints": 1044
+      },
+      {
+        "id": "nj23vxako",
+        "date": "2026-08-29T01:40:32.207Z",
+        "orderId": "934227",
+        "usedPoints": 6,
+        "earnedPoints": 242
+      },
+      {
+        "id": "ytqb1byl2",
+        "date": "2026-08-29T01:30:32.940Z",
+        "orderId": "532362",
+        "usedPoints": 2,
+        "earnedPoints": 6
+      }
+    ]
+  }
+}

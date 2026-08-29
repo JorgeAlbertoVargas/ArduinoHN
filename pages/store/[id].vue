@@ -15,7 +15,15 @@
       
       <div class="product-info-container">
         <h1 class="product-title">{{ product.title }}</h1>
-        <p class="product-price">HNL {{ Number(product.price).toFixed(2) }}</p>
+        <div class="price-container" style="display:flex; align-items:center; gap: 1rem; margin-bottom: 2rem;">
+          <span v-if="product.originalPrice" class="original-price" style="text-decoration: line-through; color: #999; font-size: 1.4rem;">
+            HNL {{ Number(product.originalPrice).toFixed(2) }}
+          </span>
+          <span class="product-price" style="margin-bottom:0;">HNL {{ Number(product.price).toFixed(2) }}</span>
+          <span v-if="product.discountPercent" class="badge" style="background-color: #e74c3c; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 1rem;">
+            -{{ product.discountPercent }}%
+          </span>
+        </div>
         
         <div class="product-description">
           <h3>Descripción Técnica</h3>
@@ -115,7 +123,30 @@ const fetchProductData = async () => {
   return null;
 };
 
-const { data: product, pending, error } = await useAsyncData(`product-${idParam}`, fetchProductData);
+const fetchOffers = async () => {
+  try {
+    const data = await $fetch<Record<string, { discount: number }>>('/api/admin/offers')
+    return data || {}
+  } catch (error) {
+    return {}
+  }
+}
+const { data: offersData } = await useAsyncData('detailOffers', fetchOffers)
+
+const { data: rawProduct, pending, error } = await useAsyncData(`product-${idParam}`, fetchProductData);
+
+const product = computed(() => {
+  if (!rawProduct.value) return null;
+  const p = { ...rawProduct.value };
+  const offers = offersData.value || {};
+  if (offers[p.id]) {
+    const discount = offers[p.id].discount;
+    p.originalPrice = p.price;
+    p.price = p.price * (1 - (discount / 100));
+    p.discountPercent = discount;
+  }
+  return p;
+});
 
 const inWishlist = ref(false);
 
@@ -145,7 +176,9 @@ const handleAddToCart = async () => {
       name: product.value.title,
       price: product.value.price,
       quantity: 1,
-      image: product.value.image
+      image: product.value.image,
+      originalPrice: product.value.originalPrice,
+      discountPercent: product.value.discountPercent
     });
     alert(`Se agregó ${product.value.title} al carrito.`);
   }

@@ -83,3 +83,30 @@ a:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(228, 113, 40, 0.3);
 }
+
+/* Global Data Table Styles */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.data-table th, 
+.data-table td {
+  padding: 16px 24px;
+  text-align: left;
+  border-bottom: 1px solid var(--glass-border);
+  color: var(--text-main);
+}
+.data-table th {
+  background-color: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.data-table tbody tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+.data-table tbody tr:hover {
+  background-color: rgba(0, 151, 156, 0.06);
+}

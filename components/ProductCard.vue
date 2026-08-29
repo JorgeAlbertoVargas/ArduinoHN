@@ -1,6 +1,9 @@
 <template>
   <div class="product-card glass">
     <div class="product-image" @click="$emit('go-to-product', id)">
+      <div v-if="discountPercent" class="discount-badge">
+        -{{ discountPercent }}%
+      </div>
       <img v-if="image" :src="image" :alt="title" class="product-img" />
       <div v-else class="image-placeholder">SIN IMAGEN</div>
       
@@ -29,7 +32,10 @@
     </div>
     <div class="product-info" @click="$emit('go-to-product', id)">
       <h3 class="product-title">{{ title }}</h3>
-      <p class="product-price">HNL {{ Number(price).toFixed(2) }}</p>
+      <div class="price-container">
+        <span v-if="originalPrice" class="original-price text-muted">HNL {{ Number(originalPrice).toFixed(2) }}</span>
+        <span class="product-price">HNL {{ Number(price).toFixed(2) }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -57,6 +63,14 @@ const props = defineProps({
   },
   videoUrl: {
     type: String,
+    default: null
+  },
+  originalPrice: {
+    type: [Number, String],
+    default: null
+  },
+  discountPercent: {
+    type: Number,
     default: null
   }
 });
@@ -231,6 +245,31 @@ const handlePlayVideo = () => {
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--color-primary);
+}
+.price-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.original-price {
+  text-decoration: line-through;
+  font-size: 0.95rem;
+}
+.discount-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #e74c3c;
+  color: white;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  z-index: 5;
+}
+.text-muted {
+  color: #999;
 }
 .w-full {
   width: 100%;

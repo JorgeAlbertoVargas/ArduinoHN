@@ -1,0 +1,11 @@
+{
+  "local-2": {
+    "discount": 20
+  },
+  "local-4": {
+    "discount": 30
+  },
+  "gid://shopify/ProductVariant/6": {
+    "discount": 10
+  }
+}

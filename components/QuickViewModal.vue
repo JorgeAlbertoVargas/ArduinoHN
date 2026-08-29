@@ -12,7 +12,15 @@
         </div>
         <div class="modal-info">
           <h2>{{ product.title }}</h2>
-          <p class="price">HNL {{ Number(product.price).toFixed(2) }}</p>
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom: 1rem;">
+            <span v-if="product.originalPrice" class="original-price" style="text-decoration: line-through; color: #999; font-size: 1.1rem;">
+              HNL {{ Number(product.originalPrice).toFixed(2) }}
+            </span>
+            <p class="price" style="margin-bottom:0;">HNL {{ Number(product.price).toFixed(2) }}</p>
+            <span v-if="product.discountPercent" class="badge" style="background-color: #e74c3c; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; font-size: 0.9rem;">
+              -{{ product.discountPercent }}%
+            </span>
+          </div>
           <p class="description">{{ product.description || 'Sin descripción disponible.' }}</p>
           
           <button class="btn btn-primary add-btn" @click="addToCart">

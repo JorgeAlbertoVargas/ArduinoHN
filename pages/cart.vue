@@ -29,7 +29,13 @@
             </div>
           </div>
           <div class="item-price">
-            L. {{ item.price.toFixed(2) }}
+            <div v-if="item.originalPrice" class="original-price text-muted" style="text-decoration: line-through; font-size: 0.85rem;">
+              L. {{ item.originalPrice.toFixed(2) }}
+            </div>
+            <div>L. {{ item.price.toFixed(2) }}</div>
+            <div v-if="item.discountPercent" class="discount-badge" style="font-size: 0.75rem; color: #e74c3c; font-weight: bold; margin-top: 4px;">
+              ¡Ahorras {{ item.discountPercent }}%!
+            </div>
           </div>
           <div class="item-quantity">
             <div class="quantity-controls">
@@ -52,10 +58,39 @@
           <span>Envío e Impuestos:</span>
           <span class="summary-value">Calculados en Checkout</span>
         </div>
+        <div v-if="cartSavings > 0" class="summary-row savings-row" style="color: #2e7d32; font-weight: 600;">
+          <span>Ahorro por ofertas:</span>
+          <span class="summary-value" style="color: #2e7d32;">- L. {{ cartSavings.toFixed(2) }}</span>
+        </div>
+
+        <div v-if="isAuthenticated && points > 0" class="loyalty-box">
+          <label class="points-toggle" :class="{ 'disabled-toggle': eligibleForPointsTotal === 0 }">
+            <input type="checkbox" v-model="usePoints" :disabled="eligibleForPointsTotal === 0" />
+            <span class="toggle-text">
+              Usar mis {{ points }} puntos (Descuento: L. {{ pointsValue.toFixed(2) }})
+            </span>
+          </label>
+          <div v-if="eligibleForPointsTotal === 0" class="points-warning">
+            Los puntos no aplican a productos que ya están en oferta.
+          </div>
+          <div v-else-if="usePoints && eligibleForPointsTotal < pointsValue" class="points-warning">
+            El descuento se limitó a L. {{ eligibleForPointsTotal.toFixed(2) }} (solo aplicable a productos sin oferta).
+          </div>
+        </div>
+        <div v-if="usePoints" class="summary-row savings-row" style="color: #f39c12; font-weight: 600;">
+          <span>Descuento por Puntos:</span>
+          <span class="summary-value" style="color: #f39c12;">- L. {{ (cartTotal - finalTotal).toFixed(2) }}</span>
+        </div>
+
         <hr class="summary-divider" />
         <div class="summary-row total-row">
           <span>Total Estimado:</span>
-          <span class="summary-value">L. {{ cartTotal.toFixed(2) }}</span>
+          <span class="summary-value">L. {{ finalTotal.toFixed(2) }}</span>
+        </div>
+        
+        <div v-if="isAuthenticated" class="earn-points-banner">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          ¡Ganarás {{ pointsToEarn }} Puntos Arduino con esta compra!
         </div>
         
         <button class="btn btn-accent checkout-btn" @click="proceedToCheckout" disabled>
@@ -71,13 +106,52 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
 import { useCart } from '~/composables/useCart';
+import { useLoyalty } from '~/composables/useLoyalty';
+import { useAuth } from '~/composables/useAuth';
 
-const { cartItems, removeFromCart, updateQuantity, cartTotal, cartItemsCount, checkoutUrl, clearCart } = useCart();
+const { cartItems, removeFromCart, updateQuantity, cartTotal, cartSavings, cartItemsCount, checkoutUrl, clearCart } = useCart();
+const { points, fetchLoyalty, config } = useLoyalty();
+const { isAuthenticated } = useAuth();
+
+onMounted(async () => {
+  if (isAuthenticated.value) {
+    await fetchLoyalty();
+  }
+});
+
+const eligibleForPointsTotal = computed(() => {
+  return cartItems.value.reduce((sum, item) => {
+    if (!item.originalPrice) {
+      return sum + (item.price * item.quantity);
+    }
+    return sum;
+  }, 0);
+});
+
+const pointsValue = computed(() => {
+  return points.value * (config.value?.redemptionValue || 1);
+});
+
+const usePoints = ref(false);
+
+const finalTotal = computed(() => {
+  let total = cartTotal.value;
+  if (usePoints.value) {
+    const discount = Math.min(eligibleForPointsTotal.value, pointsValue.value);
+    total -= discount;
+  }
+  return total;
+});
+
+const pointsToEarn = computed(() => {
+  if (!config.value || config.value.earnRate <= 0) return 0;
+  return Math.floor(finalTotal.value / config.value.earnRate);
+});
 
 const proceedToCheckout = () => {
   if (checkoutUrl.value) {
-    // Redirigir al cliente a Shopify
     window.location.href = checkoutUrl.value;
   } else {
     alert('El proceso de pago no está disponible temporalmente. Por favor, intenta de nuevo más tarde.');
@@ -94,25 +168,32 @@ const simulateWebhook = async () => {
   
   isSimulating.value = true;
   try {
-    // Convertir el carrito en un payload estilo Shopify
     const orderPayload = {
       id: Math.floor(Math.random() * 1000000).toString(),
-      total_price: cartTotal.value.toString(),
+      total_price: finalTotal.value.toString(),
       line_items: cartItems.value.map(item => ({
         sku: item.name.includes('Arduino') ? 'DK-MOCK' : 'ADS-MOCK',
         title: item.name,
         quantity: item.quantity,
         price: item.price.toString()
-      }))
+      })),
+      loyalty: {
+        usedPoints: usePoints.value ? Math.ceil((cartTotal.value - finalTotal.value) / config.value.redemptionValue) : 0,
+        earnedPoints: pointsToEarn.value,
+        totalSpent: finalTotal.value,
+        pointsDiscountValue: usePoints.value ? (cartTotal.value - finalTotal.value) : 0
+      }
     };
 
-    const response = await $fetch('/api/webhooks/shopify', {
+    const response = await $fetch('/api/loyalty/process-order', {
       method: 'POST',
       body: orderPayload
     });
     
-    alert('¡Simulación completada! Orden ' + orderPayload.id + ' procesada. ' + (response as any).message);
+    alert('¡Simulación completada! ' + (response as any).message);
     clearCart();
+    await fetchLoyalty();
+    usePoints.value = false;
   } catch (err) {
     console.error(err);
     alert('Error al simular la orden. Revisa la consola.');
@@ -156,6 +237,12 @@ const simulateWebhook = async () => {
 .simulate-btn:hover:not(:disabled) { background-color: #ea580c; }
 .simulate-btn:disabled { opacity: 0.7; cursor: not-allowed; }
 .checkout-note { text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 1rem; }
+.loyalty-box { background: rgba(243, 156, 18, 0.1); border: 1px solid rgba(243, 156, 18, 0.3); padding: 12px; border-radius: 8px; margin: 15px 0; }
+.points-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.points-toggle.disabled-toggle { opacity: 0.5; cursor: not-allowed; }
+.toggle-text { font-size: 0.9rem; color: #b9770e; font-weight: 500; }
+.points-warning { font-size: 0.8rem; color: #d35400; margin-top: 8px; font-weight: 500; }
+.earn-points-banner { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 15px; background: rgba(0, 151, 156, 0.1); color: var(--color-primary); padding: 10px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; }
 @media (max-width: 992px) { .cart-layout { grid-template-columns: 1fr; } .cart-summary { position: static; } }
 @media (max-width: 600px) { .cart-header { display: none; } .cart-item { grid-template-columns: 1fr; gap: 1rem; } .item-price { font-size: 1.25rem; color: var(--color-primary); } .quantity-controls { margin-top: 0.5rem; } }
 </style>

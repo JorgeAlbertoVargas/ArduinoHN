@@ -13,7 +13,10 @@ export default defineNuxtConfig({
       nocodbProjectsTable: process.env.NOCODB_PROJECTS_TABLE || 'movjxf98fu72rx8',
       nocodbOrdersTable: process.env.NOCODB_ORDERS_TABLE || 'moet2c7py49b1cc',
       nocodbOrderItemsTable: process.env.NOCODB_ORDER_ITEMS_TABLE || 'm0dqnot1yjfu8za',
-      nocodbProductosTable: process.env.NOCODB_PRODUCTOS_TABLE || 'mgl2cerr4iret4q'
+      nocodbProductosTable: process.env.NOCODB_PRODUCTOS_TABLE || 'mgl2cerr4iret4q',
+      nocodbUsersTable: process.env.NOCODB_USERS_TABLE || 'mtkdrz1ip3343wb',
+      nocodbLoyaltyTransactionsTable: process.env.NOCODB_LOYALTY_TRANSACTIONS_TABLE || 'vwpje0pwug9njkgu',
+      nocodbLoyaltyConfigTable: process.env.NOCODB_LOYALTY_CONFIG_TABLE || 'vwka2mmfxa5kvaed'
     }
   },
   nitro: {
