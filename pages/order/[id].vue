@@ -226,7 +226,8 @@ const fetchOrderDetails = async (id: string) => {
 
 .data-table tfoot td {
   border-top: none;
-  padding: 0.8rem 1rem;
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
 }
 .data-table tfoot tr:first-child td {
   border-top: 1px solid var(--glass-border);
