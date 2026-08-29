@@ -47,13 +47,13 @@
               <td>
                 <div class="accounting-cell">
                   <span class="currency-symbol">L.</span>
-                  <span>{{ formatCurrency(Number(item.price)).replace('L. ', '') }}</span>
+                  <span class="accounting-amount">{{ formatCurrency(Number(item.price)).replace('L. ', '') }}</span>
                 </div>
               </td>
               <td class="font-bold">
                 <div class="accounting-cell">
                   <span class="currency-symbol">L.</span>
-                  <span>{{ formatCurrency(Number(item.price) * Number(item.quantity)).replace('L. ', '') }}</span>
+                  <span class="accounting-amount">{{ formatCurrency(Number(item.price) * Number(item.quantity)).replace('L. ', '') }}</span>
                 </div>
               </td>
             </tr>
@@ -64,7 +64,7 @@
               <td>
                 <div class="accounting-cell">
                   <span class="currency-symbol">L.</span>
-                  <span>{{ formatCurrency(Number(order.subtotal)).replace('L. ', '') }}</span>
+                  <span class="accounting-amount">{{ formatCurrency(Number(order.subtotal)).replace('L. ', '') }}</span>
                 </div>
               </td>
             </tr>
@@ -73,7 +73,7 @@
               <td>
                 <div class="accounting-cell">
                   <span class="currency-symbol">- L.</span>
-                  <span>{{ formatCurrency(Number(order.loyalty.pointsDiscountValue)).replace('L. ', '') }}</span>
+                  <span class="accounting-amount">{{ formatCurrency(Number(order.loyalty.pointsDiscountValue)).replace('L. ', '') }}</span>
                 </div>
               </td>
             </tr>
@@ -82,7 +82,7 @@
               <td>
                 <div class="accounting-cell">
                   <span class="currency-symbol">L.</span>
-                  <span>{{ formatCurrency(Number(order.isv || 0)).replace('L. ', '') }}</span>
+                  <span class="accounting-amount">{{ formatCurrency(Number(order.isv || 0)).replace('L. ', '') }}</span>
                 </div>
               </td>
             </tr>
@@ -91,7 +91,7 @@
               <td class="font-bold final-total">
                 <div class="accounting-cell">
                   <span class="currency-symbol">L.</span>
-                  <span>{{ formatCurrency(Number(order.totalPrice)).replace('L. ', '') }}</span>
+                  <span class="accounting-amount">{{ formatCurrency(Number(order.totalPrice)).replace('L. ', '') }}</span>
                 </div>
               </td>
             </tr>
@@ -254,6 +254,9 @@ const fetchOrderDetails = async (id: string) => {
 .currency-symbol {
   color: var(--text-muted);
   margin-right: 1rem;
+}
+.accounting-amount {
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .loyalty-footer {
