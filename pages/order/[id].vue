@@ -30,9 +30,9 @@
           <thead>
             <tr>
               <th>Producto</th>
-              <th>Cant.</th>
-              <th>Precio Unit.</th>
-              <th>Total</th>
+              <th class="text-center">Cant.</th>
+              <th class="text-right">Precio Unit.</th>
+              <th class="text-right">Total</th>
             </tr>
           </thead>
           <tbody>
@@ -43,34 +43,30 @@
                   <span v-if="item.originalPrice" class="item-discount-note">Oferta aplicada</span>
                 </div>
               </td>
-              <td class="text-left">{{ item.quantity }}</td>
-              <td class="text-left">{{ formatCurrency(Number(item.price)) }}</td>
-              <td class="text-left font-bold">{{ formatCurrency(Number(item.price) * Number(item.quantity)) }}</td>
+              <td class="text-center">{{ item.quantity }}</td>
+              <td class="text-right">{{ formatCurrency(Number(item.price)) }}</td>
+              <td class="text-right font-bold">{{ formatCurrency(Number(item.price) * Number(item.quantity)) }}</td>
             </tr>
           </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3" class="text-right summary-label">Subtotal:</td>
+              <td class="text-right">{{ formatCurrency(Number(order.subtotal)) }}</td>
+            </tr>
+            <tr v-if="order.loyalty && order.loyalty.usedPoints > 0" class="discount-row">
+              <td colspan="3" class="text-right summary-label">Descuento por Puntos ({{ order.loyalty.usedPoints }} pts):</td>
+              <td class="text-right">- {{ formatCurrency(Number(order.loyalty.pointsDiscountValue)) }}</td>
+            </tr>
+            <tr>
+              <td colspan="3" class="text-right summary-label">ISV:</td>
+              <td class="text-right">{{ formatCurrency(Number(order.isv || 0)) }}</td>
+            </tr>
+            <tr class="total-row-footer">
+              <td colspan="3" class="text-right summary-label font-bold">Total Pagado:</td>
+              <td class="text-right font-bold final-total">{{ formatCurrency(Number(order.totalPrice)) }}</td>
+            </tr>
+          </tfoot>
         </table>
-      </div>
-
-      <div class="invoice-summary">
-        <div class="summary-box">
-          <div class="summary-row">
-            <span>Subtotal:</span>
-            <span>{{ formatCurrency(Number(order.subtotal)) }}</span>
-          </div>
-          <div v-if="order.loyalty && order.loyalty.usedPoints > 0" class="summary-row discount">
-            <span>Descuento por Puntos ({{ order.loyalty.usedPoints }} pts):</span>
-            <span>- {{ formatCurrency(Number(order.loyalty.pointsDiscountValue)) }}</span>
-          </div>
-          <div class="summary-row">
-            <span>ISV:</span>
-            <span>{{ formatCurrency(Number(order.isv || 0)) }}</span>
-          </div>
-          <hr class="divider" />
-          <div class="summary-row total">
-            <span>Total Pagado:</span>
-            <span>{{ formatCurrency(Number(order.totalPrice)) }}</span>
-          </div>
-        </div>
       </div>
       
       <div v-if="order.loyalty && order.loyalty.earnedPoints > 0" class="loyalty-footer">
@@ -194,47 +190,29 @@ const fetchOrderDetails = async (id: string) => {
   color: #e74c3c;
   margin-top: 4px;
 }
-.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
 .font-bold { font-weight: 600; }
 
-.invoice-summary {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 2rem;
+.data-table tfoot td {
+  border-top: none;
+  padding: 0.8rem 1rem;
 }
-.summary-box {
-  width: 350px;
-  background: var(--bg-main);
-  padding: 1.5rem;
-  border-radius: 8px;
-  border: 1px solid var(--glass-border);
-}
-.summary-row {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  align-items: center;
-  margin-bottom: 0.8rem;
-  color: var(--text-main);
-  gap: 1rem;
-}
-.summary-row span:last-child {
-  white-space: nowrap;
-  text-align: left;
-}
-.summary-row.discount {
-  color: #f39c12;
-  font-weight: 500;
-}
-.divider {
-  border: none;
+.data-table tfoot tr:first-child td {
   border-top: 1px solid var(--glass-border);
-  margin: 1rem 0;
 }
-.summary-row.total {
+.summary-label {
+  color: var(--text-muted);
+}
+.discount-row td {
+  color: #f39c12;
+}
+.total-row-footer td {
+  border-top: 1px solid var(--glass-border);
+}
+.final-total {
   font-size: 1.3rem;
-  font-weight: bold;
   color: var(--color-primary);
-  margin-bottom: 0;
 }
 
 .loyalty-footer {
