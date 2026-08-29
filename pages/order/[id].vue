@@ -30,9 +30,9 @@
           <thead>
             <tr>
               <th>Producto</th>
-              <th class="text-center">Cant.</th>
-              <th class="text-right">Precio Unit.</th>
-              <th class="text-right">Total</th>
+              <th class="text-center" style="width: 80px;">Cant.</th>
+              <th class="text-right" style="width: 160px;">Precio Unit.</th>
+              <th class="text-right" style="width: 160px;">Total</th>
             </tr>
           </thead>
           <tbody>
@@ -246,17 +246,20 @@ const fetchOrderDetails = async (id: string) => {
 }
 
 .accounting-cell {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  width: 100%;
+  min-width: 130px;
   align-items: center;
-  min-width: 100px;
 }
 .currency-symbol {
   color: var(--text-muted);
-  margin-right: 1rem;
+  text-align: left;
 }
 .accounting-amount {
+  text-align: right;
   font-family: 'Courier New', Courier, monospace;
+  font-weight: inherit;
 }
 
 .loyalty-footer {
