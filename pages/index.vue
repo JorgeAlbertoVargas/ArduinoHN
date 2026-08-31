@@ -140,6 +140,17 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 const isVideoModalOpen = ref(false);
+
+useSeoMeta({
+  title: 'Inicio',
+  description: 'ArduinoHN - Tu tienda líder en componentes electrónicos, robótica e innovación tecnológica en Honduras.',
+})
+
+useSchemaOrg([
+  defineWebPage({
+    name: 'Inicio - ArduinoHN'
+  })
+])
 </script>
 
 <style scoped>

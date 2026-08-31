@@ -194,6 +194,32 @@ const handleAddToCart = async () => {
     toast.showToast(`Se agregó ${product.value.title} al carrito.`);
   }
 };
+
+const productMetaTitle = computed(() => product.value?.title || 'Cargando producto...')
+const productMetaDesc = computed(() => product.value?.description?.substring(0, 150) || 'Detalles del producto en ArduinoHN')
+const productMetaImage = computed(() => product.value?.image || 'https://arduino.hn/logo.png')
+const productPrice = computed(() => product.value?.price || 0)
+
+useSeoMeta({
+  title: productMetaTitle,
+  description: productMetaDesc,
+  ogImage: productMetaImage,
+})
+
+useSchemaOrg([
+  defineProduct({
+    name: productMetaTitle,
+    description: productMetaDesc,
+    image: productMetaImage,
+    offers: [
+      {
+        price: productPrice,
+        priceCurrency: 'HNL',
+        availability: 'https://schema.org/InStock',
+      }
+    ]
+  })
+])
 </script>
 
 <style scoped>

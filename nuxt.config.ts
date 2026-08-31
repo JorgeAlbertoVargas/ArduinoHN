@@ -4,6 +4,15 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   srcDir: '.',
   css: ['~/assets/css/main.css'],
+  modules: [
+    '@nuxtjs/seo'
+  ],
+  site: {
+    url: 'https://arduino.hn/',
+    name: 'ArduinoHN',
+    description: 'Componentes Electrónicos, Robótica y Proyectos Arduino en Honduras.',
+    defaultLocale: 'es'
+  },
   runtimeConfig: {
     public: {
       shopifyDomain: process.env.SHOPIFY_DOMAIN || 'arduinohn.myshopify.com',

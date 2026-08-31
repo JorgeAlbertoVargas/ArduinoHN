@@ -19,6 +19,28 @@ import { useGlobalCurrencyConfig } from '~/composables/useGlobalCurrencyConfig'
 const { fetchUser } = useAuth()
 const { fetchConfig } = useGlobalCurrencyConfig()
 
+useSeoMeta({
+  titleTemplate: '%s - ArduinoHN',
+  ogImage: 'https://arduino.hn/logo.png',
+  twitterCard: 'summary_large_image',
+  description: 'Encuentra los mejores componentes electrónicos, sensores, módulos y accesorios de robótica para tus proyectos Arduino en Honduras.'
+})
+
+useSchemaOrg([
+  defineOrganization({
+    name: 'ArduinoHN',
+    logo: '/logo.png',
+    sameAs: [
+      // Agrega aquí tus URLs de redes sociales cuando las crees:
+      // 'https://www.facebook.com/tu-pagina',
+      // 'https://www.instagram.com/tu-pagina'
+    ]
+  }),
+  defineWebSite({
+    name: 'ArduinoHN'
+  })
+])
+
 onMounted(async () => {
   await Promise.all([
     fetchUser(),
