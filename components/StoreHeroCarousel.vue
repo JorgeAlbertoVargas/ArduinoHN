@@ -113,6 +113,38 @@ const slides = [
     imageUrl: '/images/hero/plc_languages_hero.jpg',
     actionText: 'Ver Componentes PLC',
     actionLink: '/store?category=plc',
+  },
+  {
+    id: 8,
+    title: 'Infraestructura IoT & Domótica',
+    subtitle: 'Arquitecturas completas con Home Assistant, ESP32, HACS y sensores avanzados.',
+    imageUrl: '/images/hero/iot_ha_hero.jpg',
+    actionText: 'Ver Componentes IoT',
+    actionLink: '/store?category=iot',
+  },
+  {
+    id: 9,
+    title: 'Telefonía IP & VoIP',
+    subtitle: 'Soluciones empresariales con FreePBX, Node-RED, Asterisk y Gateways H2M/H2H.',
+    imageUrl: '/images/hero/voip_pbx_hero.jpg',
+    actionText: 'Explorar VoIP',
+    actionLink: '/store?category=voip',
+  },
+  {
+    id: 10,
+    title: 'Desarrollo en C++',
+    subtitle: 'Crea software de alto rendimiento y firmware avanzado para sistemas embebidos.',
+    imageUrl: '/images/hero/cpp_code_hero.jpg',
+    actionText: 'Ver Microcontroladores',
+    actionLink: '/store?category=mcu',
+  },
+  {
+    id: 11,
+    title: 'Machine Learning con Python',
+    subtitle: 'Implementa inteligencia artificial, análisis de datos y visión computacional.',
+    imageUrl: '/images/hero/python_code_hero.jpg',
+    actionText: 'Ver Módulos IA',
+    actionLink: '/store?category=ai',
   }
 ];
 
