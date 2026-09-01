@@ -1,0 +1,7 @@
+name = "arduinohn"
+compatibility_date = "2024-08-31"
+compatibility_flags = ["nodejs_compat"]
+main = ".output/server/index.mjs"
+
+[assets]
+directory = ".output/public"
