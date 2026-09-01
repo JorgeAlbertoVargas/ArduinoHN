@@ -79,23 +79,18 @@ export default defineEventHandler(async (event) => {
     }
 
 
-    
-    // Arrays para separar los items según su proveedor
+    // Array para separar los items de DigiKey
     const digikeyItems = [];
-    const autodsItems = [];
 
     // 3. Analizar los SKUs para decidir a qué proveedor van
     for (const item of lineItems) {
       const sku = item.sku || '';
       
-      // LOGICA DE ENRUTAMIENTO:
-      // Si el SKU empieza con "DK-" o alguna regla similar, es de DigiKey.
-      // Por defecto, o si empieza con "ADS-", lo mandamos a AutoDS.
-      // (Esta lógica se puede conectar a NocoDB más adelante para ser 100% dinámica)
+      // LOGICA DE ENRUTAMIENTO HÍBRIDO:
+      // Shopify y su App de AutoDS se encargan automáticamente del fulfillment de productos de AutoDS.
+      // Aquí, en ArduinoHN, solo interceptamos los SKUs de DigiKey (DK-) para rutearlos manualmente por API.
       if (sku.toUpperCase().startsWith('DK-') || sku.toUpperCase().includes('ARDUINO') || sku.toUpperCase().includes('SENSOR')) {
         digikeyItems.push(item);
-      } else {
-        autodsItems.push(item);
       }
     }
 
@@ -118,12 +113,8 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    // 5. Procesar el envío a AutoDS
-    if (autodsItems.length > 0) {
-      console.log(`[Webhook Shopify] Enviando ${autodsItems.length} items a AutoDS API...`);
-      // Aquí iría la llamada a la API de AutoDS
-      // await $fetch('URL_AUTODS', { ... })
-    }
+    // Nota: No es necesario procesar AutoDS aquí. 
+    // La App de AutoDS instalada en Shopify detectará los SKUs correspondientes y los procesará automáticamente.
 
     return { success: true, message: 'Order processed and routed correctly' };
   } catch (error: any) {

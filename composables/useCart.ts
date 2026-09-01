@@ -113,6 +113,24 @@ export const useCart = () => {
     checkoutUrl.value = '';
   };
 
+  const applyDiscountCode = async (code: string) => {
+    if (!cartId.value) return;
+    const mutation = `
+      mutation cartDiscountCodesUpdate($cartId: ID!, $discountCodes: [String!]!) {
+        cartDiscountCodesUpdate(cartId: $cartId, discountCodes: $discountCodes) {
+          cart { id }
+        }
+      }
+    `;
+    await shopifyFetch({
+      query: mutation,
+      variables: {
+        cartId: cartId.value,
+        discountCodes: [code]
+      }
+    });
+  };
+
   const cartTotal = computed(() => {
     return cartItems.value.reduce((total, item) => total + (item.price * item.quantity), 0);
   });
@@ -139,6 +157,7 @@ export const useCart = () => {
     cartTotal,
     cartSavings,
     cartItemsCount,
-    checkoutUrl
+    checkoutUrl,
+    applyDiscountCode
   };
 };
