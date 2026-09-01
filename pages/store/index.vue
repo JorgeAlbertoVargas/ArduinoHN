@@ -1,13 +1,15 @@
 <template>
-  <div class="container store-page">
-    <div class="store-header text-center">
-      <h1>Tienda Virtual</h1>
-      <p>Componentes y kits listos para potenciar tus proyectos en todo Honduras y el mundo.</p>
+  <div class="store-page">
+    <div class="store-intro-banner">
+      <p class="intro-text">Componentes y kits listos para potenciar tus proyectos en todo Honduras y el mundo.</p>
     </div>
     
-    <div v-if="pendingShopify || pendingLocal" class="text-center loading-state">
-      <p>Cargando catálogo de productos...</p>
-    </div>
+    <StoreHeroCarousel />
+    
+    <div class="container store-content">
+      <div v-if="pendingShopify || pendingLocal" class="text-center loading-state">
+        <p>Cargando catálogo de productos...</p>
+      </div>
     <div v-else-if="errorShopify && errorLocal" class="text-center error-state">
       <p>Error cargando productos. Intenta de nuevo más tarde.</p>
     </div>
@@ -44,6 +46,7 @@
       :video-url="selectedVideoUrl"
       @close="isVideoModalOpen = false"
     />
+    </div> <!-- Cierre de store-content -->
   </div>
 </template>
 
@@ -141,10 +144,25 @@ const handleAddToCart = async (product: any) => {
 
 <style scoped>
 .store-page {
-  padding: 4rem 0;
+  width: 100%;
 }
-.store-header {
-  margin-bottom: 4rem;
+.store-intro-banner {
+  width: 100%;
+  background-color: rgba(0, 168, 150, 0.05);
+  padding: 16px 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 168, 150, 0.2);
+}
+.intro-text {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--color-primary, #00a896);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  width: 100%;
+}
+.store-content {
+  padding: 4rem 1rem;
 }
 .products-grid {
   display: grid;

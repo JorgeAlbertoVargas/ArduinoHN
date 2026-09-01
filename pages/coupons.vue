@@ -1,8 +1,15 @@
 <template>
-  <div class="coupons-page container">
-    <h1 class="page-title">Mi Lealtad y Cupones</h1>
+  <div class="coupons-page">
+    <div class="store-intro-banner">
+      <p class="intro-text">Mi Lealtad y Cupones: Gana puntos por tus compras y canjéalos por descuentos.</p>
+    </div>
+    
+    <StoreHeroCarousel />
 
-    <div v-if="!isAuthenticated" class="alert alert-warning">
+    <div class="container store-content">
+      <h1 class="page-title" style="margin-top: 1rem;">Mi Lealtad y Cupones</h1>
+
+      <div v-if="!isAuthenticated" class="alert alert-warning">
       <p>Debes iniciar sesión para ver tus Puntos Arduino y cupones disponibles.</p>
       <NuxtLink to="/login" class="btn btn-primary mt-3">Iniciar Sesión</NuxtLink>
     </div>
@@ -71,6 +78,7 @@
         </table>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
@@ -112,10 +120,12 @@ const fetchHistory = async () => {
 
 <style scoped>
 .coupons-page {
-  padding-top: 2rem;
-  padding-bottom: 4rem;
+  width: 100%;
   min-height: calc(100vh - 200px);
 }
+.store-intro-banner { width: 100%; background-color: rgba(0, 168, 150, 0.05); padding: 16px 20px; text-align: center; border-bottom: 1px solid rgba(0, 168, 150, 0.2); }
+.intro-text { margin: 0; font-size: 1.1rem; color: var(--color-primary, #00a896); font-weight: 800; letter-spacing: 0.5px; width: 100%; }
+.store-content { padding: 2rem 1rem 4rem; }
 .page-title {
   font-size: 2rem;
   color: var(--color-primary);

@@ -1,13 +1,15 @@
 <template>
-  <div class="container store-page">
-    <div class="store-header text-center">
-      <h1>Ofertas del Mes</h1>
-      <p>Aprovecha nuestros descuentos especiales por tiempo limitado.</p>
+  <div class="store-page">
+    <div class="store-intro-banner">
+      <p class="intro-text">Ofertas del Mes: Aprovecha nuestros descuentos especiales por tiempo limitado.</p>
     </div>
     
-    <div v-if="pendingProducts || pendingOffers" class="text-center loading-state">
-      <p>Cargando ofertas...</p>
-    </div>
+    <StoreHeroCarousel />
+
+    <div class="container store-content">
+      <div v-if="pendingProducts || pendingOffers" class="text-center loading-state">
+        <p>Cargando ofertas...</p>
+      </div>
     <div v-else-if="errorProducts || errorOffers" class="text-center error-state">
       <p>Error cargando ofertas. Intenta de nuevo más tarde.</p>
     </div>
@@ -49,6 +51,7 @@
       :video-url="selectedVideoUrl"
       @close="isVideoModalOpen = false"
     />
+    </div>
   </div>
 </template>
 
@@ -134,8 +137,10 @@ const dealProducts = computed(() => {
 </script>
 
 <style scoped>
-.store-page { padding: 4rem 0; }
-.store-header { margin-bottom: 4rem; }
+.store-page { width: 100%; }
+.store-intro-banner { width: 100%; background-color: rgba(0, 168, 150, 0.05); padding: 16px 20px; text-align: center; border-bottom: 1px solid rgba(0, 168, 150, 0.2); }
+.intro-text { margin: 0; font-size: 1.1rem; color: var(--color-primary, #00a896); font-weight: 800; letter-spacing: 0.5px; width: 100%; }
+.store-content { padding: 4rem 1rem; }
 .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem; }
 .text-center { text-align: center; }
 .loading-state, .error-state, .empty-state { padding: 3rem; background-color: var(--bg-card); border-radius: 8px; border: 1px solid var(--glass-border); }
