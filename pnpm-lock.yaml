@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@nuxtjs/seo':
+        specifier: ^5.3.14
+        version: 5.3.14(vzfdjsuqcxms43e7jegg57e6ci)
       bcryptjs:
         specifier: ^3.0.3
         version: 3.0.3
@@ -24,9 +27,6 @@ importers:
         specifier: ^5.2.0
         version: 5.2.0(@vue/compiler-sfc@3.5.41)(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(yaml@2.9.0))(vue@3.5.41)
     devDependencies:
-      '@nuxtjs/seo':
-        specifier: ^5.3.14
-        version: 5.3.14(vzfdjsuqcxms43e7jegg57e6ci)
       '@types/bcryptjs':
         specifier: ^3.0.0
         version: 3.0.0
