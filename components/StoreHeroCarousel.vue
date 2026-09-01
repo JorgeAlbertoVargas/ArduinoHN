@@ -140,11 +140,11 @@ const slides = [
   },
   {
     id: 11,
-    title: 'Machine Learning con Python',
-    subtitle: 'Implementa inteligencia artificial, análisis de datos y visión computacional.',
+    title: 'MicroPython para IoT',
+    subtitle: 'Programa sensores y placas ESP32 de forma rápida y sencilla con Python.',
     imageUrl: '/images/hero/python_code_hero.jpg',
-    actionText: 'Ver Módulos IA',
-    actionLink: '/store?category=ai',
+    actionText: 'Ver Módulos ESP32',
+    actionLink: '/store?category=esp32',
   }
 ];
 
