@@ -21,7 +21,11 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild"
-    ]
+    ],
+    "supportedArchitectures": {
+      "os": ["linux", "win32"],
+      "cpu": ["x64", "arm64"]
+    }
   },
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0"
