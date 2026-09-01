@@ -13,6 +13,9 @@ export default defineNuxtConfig({
     description: 'Componentes Electrónicos, Robótica y Proyectos Arduino en Honduras.',
     defaultLocale: 'es'
   },
+  ogImage: {
+    enabled: false
+  },
   runtimeConfig: {
     public: {
       shopifyDomain: process.env.SHOPIFY_DOMAIN || 'arduinohn.myshopify.com',
