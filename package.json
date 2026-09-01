@@ -11,6 +11,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxtjs/seo": "^5.3.14",
     "bcryptjs": "^3.0.3",
     "jose": "^6.2.10",
     "nuxt": "^4.5.2",
@@ -23,7 +24,6 @@
     ]
   },
   "devDependencies": {
-    "@nuxtjs/seo": "^5.3.14",
     "@types/bcryptjs": "^3.0.0"
   }
 }
