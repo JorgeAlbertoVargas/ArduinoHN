@@ -113,26 +113,6 @@ const slides = [
     imageUrl: '/images/hero/plc_languages_hero.jpg',
     actionText: 'Ver Componentes PLC',
     actionLink: '/store?category=plc',
-  },
-  {
-    id: 8,
-    title: 'Infraestructura IoT & Domótica',
-    subtitle: 'Arquitecturas completas con Home Assistant, ESP32, HACS y VirtualBox.',
-    imageUrl: '/images/hero/infra_ha_esp32.png',
-    actionText: 'Ver Componentes',
-    actionLink: '/store?category=iot',
-    bgSize: 'contain',
-    bgColor: '#ffffff'
-  },
-  {
-    id: 9,
-    title: 'Telefonía IP & VoIP',
-    subtitle: 'Soluciones empresariales con FreePBX, Node-RED, Asterisk y Gateways H2M/H2H.',
-    imageUrl: '/images/hero/infra_voip_freepbx.png',
-    actionText: 'Explorar VoIP',
-    actionLink: '/store?category=voip',
-    bgSize: 'contain',
-    bgColor: '#ffffff'
   }
 ];
 
