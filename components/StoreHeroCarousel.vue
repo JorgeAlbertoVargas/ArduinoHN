@@ -5,7 +5,7 @@
         v-for="(slide, index) in slides" 
         :key="slide.id" 
         class="carousel-slide"
-        :style="{ backgroundImage: `url(${slide.imageUrl})` }"
+        :style="{ backgroundImage: `url(${slide.imageUrl})`, backgroundSize: slide.bgSize || 'cover', backgroundColor: slide.bgColor || 'transparent' }"
       >
         <div class="slide-overlay"></div>
         <div class="slide-content text-center">
@@ -97,6 +97,42 @@ const slides = [
     imageUrl: '/images/hero/dht11_hero_1788226047648.jpg',
     actionText: 'Comprar Sensores',
     actionLink: '/store?q=sensor',
+  },
+  {
+    id: 6,
+    title: 'PLC Arduino Opta',
+    subtitle: 'La revolución industrial de Arduino. Micro-PLC para automatización profesional con soporte IoT.',
+    imageUrl: '/images/hero/arduino_opta_hero.jpg',
+    actionText: 'Descubrir Opta',
+    actionLink: '/store?q=opta',
+  },
+  {
+    id: 7,
+    title: 'Automatización Industrial',
+    subtitle: 'Domina los lenguajes KOP, SCL, Graph y AWL. Lleva tus proyectos al siguiente nivel.',
+    imageUrl: '/images/hero/plc_languages_hero.jpg',
+    actionText: 'Ver Componentes PLC',
+    actionLink: '/store?category=plc',
+  },
+  {
+    id: 8,
+    title: 'Infraestructura IoT & Domótica',
+    subtitle: 'Arquitecturas completas con Home Assistant, ESP32, HACS y VirtualBox.',
+    imageUrl: '/images/hero/infra_ha_esp32.png',
+    actionText: 'Ver Componentes',
+    actionLink: '/store?category=iot',
+    bgSize: 'contain',
+    bgColor: '#ffffff'
+  },
+  {
+    id: 9,
+    title: 'Telefonía IP & VoIP',
+    subtitle: 'Soluciones empresariales con FreePBX, Node-RED, Asterisk y Gateways H2M/H2H.',
+    imageUrl: '/images/hero/infra_voip_freepbx.png',
+    actionText: 'Explorar VoIP',
+    actionLink: '/store?category=voip',
+    bgSize: 'contain',
+    bgColor: '#ffffff'
   }
 ];
 
@@ -159,7 +195,6 @@ onUnmounted(() => {
 .carousel-slide {
   flex: 0 0 100%;
   height: 100%;
-  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   position: relative;
