@@ -27,6 +27,12 @@ importers:
         specifier: ^5.2.0
         version: 5.3.0(@vue/compiler-sfc@3.5.42)(esbuild@0.28.2)(rolldown@1.2.6)(rollup@4.63.1)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2))(vue@3.5.42)
     devDependencies:
+      '@rolldown/binding-linux-x64-gnu':
+        specifier: 1.2.6
+        version: 1.2.6
+      '@rolldown/binding-wasm32-wasi':
+        specifier: 1.2.6
+        version: 1.2.6
       '@types/bcryptjs':
         specifier: ^3.0.0
         version: 3.0.0
@@ -186,8 +192,17 @@ packages:
   '@dxup/unimport@0.1.2':
     resolution: {integrity: sha512-/B8YJGPzaYq1NbsQmwgP8EZqg40NpTw4ZB3suuI0TplbxKHeK94jeaawLmVhCv+YwUnOpiWEz9U6SeThku/8JQ==}
 
+  '@emnapi/core@2.0.0-alpha.4':
+    resolution: {integrity: sha512-KjoUR6mNvjT+z5bKMy+a5QDI+kTNTiMZi6uPKzWuWjwZGNa0UPwIVduTfeBRdf6v8Ws5fmHDh7Usf15w/ANfkg==}
+
   '@emnapi/runtime@1.11.3':
     resolution: {integrity: sha512-Xz4Tpyki7XyrpbUK1jR1AhdAdaXyhhY4lZ3neLodmhpuWfy2PAQN5B46sAiU4liOXGLkHypn/qU+jvfWSCYYLA==}
+
+  '@emnapi/runtime@2.0.0-alpha.4':
+    resolution: {integrity: sha512-Wy1TQ99obRP3Ah7cf/OOtK1zD9t3pYTWz+G/SpAwTFMhG5hoMdlvfzBpYoHUigS/izu3q+VhYMKhJd7Ii/trpg==}
+
+  '@emnapi/wasi-threads@2.0.1':
+    resolution: {integrity: sha512-9DsSk+o5NBX0CCJT8s0EROGSGxjR/tKu6aBTaVyq+SjAEQH4XcdcRxPBRzsBLizTTJ49MJjF+jgu3qnO9GLQcQ==}
 
   '@esbuild/aix-ppc64@0.28.2':
     resolution: {integrity: sha512-XExcO+dvLKvVtNTibSTBej1NCAbaGhWn9Ww1ZPx80qsahhPFe/8jgWP0IchNe0F3HwkU7n8ejhH8bjonqht8mQ==}
@@ -541,6 +556,13 @@ packages:
     cpu: [x64]
     os: [linux]
 
+  '@napi-rs/wasm-runtime@1.2.3':
+    resolution: {integrity: sha512-UMduMbqO5s5zF2NkNacMT/yK5Y5QiKvWr2+50bzIIxFDwVJ2h49b+oyjaCGPhJxd2/gC2x39EHv/gHVuu36x2Q==}
+    engines: {node: ^20.19.0 || ^22.13.0 || >=23.5.0}
+    peerDependencies:
+      '@emnapi/core': ^1.7.1 || ^2.0.0-alpha.4
+      '@emnapi/runtime': ^1.7.1 || ^2.0.0-alpha.4
+
   '@nodable/entities@3.0.0':
     resolution: {integrity: sha512-8L9xFeTYKhm49xfIypoe2W5wV1m/3Z58kT+7kR9A8OyFxcPduI4VmxaUMQyKYrRjUoLLSXv6EKKID5Tvj9cUVw==}
 
@@ -886,6 +908,10 @@ packages:
     cpu: [arm64]
     os: [openharmony]
 
+  '@rolldown/binding-wasm32-wasi@1.2.6':
+    resolution: {integrity: sha512-7l2ygq7igusdJglAiXxy52BMlUT4ykpmLhX4YWR2bi+IGfAX4OAbpKyN74g9Zj64a9bhcekBxav4qRMsTIQmmg==}
+    engines: {node: ^20.19.0 || ^22.13.0 || >=23.5.0}
+
   '@rolldown/binding-win32-arm64-msvc@1.2.6':
     resolution: {integrity: sha512-y5NTmmasMS455JlOCO4ZM9krIchv3Mvm1crL1iUPGOPgEzSkves9n0SdC5Sjz6+qWDFhd8/JpfWMH8NSWNHe+A==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -1114,6 +1140,9 @@ packages:
 
   '@speed-highlight/core@1.2.24':
     resolution: {integrity: sha512-qeW2e1l78afw8VhRPfPQ1Gjj+KU5XFQ/OFV5ti6eTa9bruO7mJyZtA4vw0ofqmA3tKCkROE9xLk3VZoeRc98nw==}
+
+  '@tybys/wasm-util@0.10.3':
+    resolution: {integrity: sha512-F3fo1MYrRJYL3zER0OUOmkutjr1Vp23m7OsSgp7nq4SP6OqX6C/56XFIPAl5bt3zaBRjmW7SGz3u/6LwFpYcOg==}
 
   '@types/bcryptjs@3.0.0':
     resolution: {integrity: sha512-WRZOuCuaz8UcZZE4R5HXTco2goQSI2XxjGY3hbM/xDvwmqFWd4ivooImsMx65OKM6CtNKbnZ5YL+YwAwK7c1dg==}
@@ -3809,10 +3838,23 @@ snapshots:
 
   '@dxup/unimport@0.1.2': {}
 
+  '@emnapi/core@2.0.0-alpha.4':
+    dependencies:
+      '@emnapi/wasi-threads': 2.0.1
+      tslib: 2.8.1
+
   '@emnapi/runtime@1.11.3':
     dependencies:
       tslib: 2.8.1
     optional: true
+
+  '@emnapi/runtime@2.0.0-alpha.4':
+    dependencies:
+      tslib: 2.8.1
+
+  '@emnapi/wasi-threads@2.0.1':
+    dependencies:
+      tslib: 2.8.1
 
   '@esbuild/aix-ppc64@0.28.2':
     optional: true
@@ -4063,6 +4105,12 @@ snapshots:
 
   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
     optional: true
+
+  '@napi-rs/wasm-runtime@1.2.3(@emnapi/core@2.0.0-alpha.4)(@emnapi/runtime@2.0.0-alpha.4)':
+    dependencies:
+      '@emnapi/core': 2.0.0-alpha.4
+      '@emnapi/runtime': 2.0.0-alpha.4
+      '@tybys/wasm-util': 0.10.3
 
   '@nodable/entities@3.0.0': {}
 
@@ -4645,14 +4693,19 @@ snapshots:
   '@rolldown/binding-linux-s390x-gnu@1.2.6':
     optional: true
 
-  '@rolldown/binding-linux-x64-gnu@1.2.6':
-    optional: true
+  '@rolldown/binding-linux-x64-gnu@1.2.6': {}
 
   '@rolldown/binding-linux-x64-musl@1.2.6':
     optional: true
 
   '@rolldown/binding-openharmony-arm64@1.2.6':
     optional: true
+
+  '@rolldown/binding-wasm32-wasi@1.2.6':
+    dependencies:
+      '@emnapi/core': 2.0.0-alpha.4
+      '@emnapi/runtime': 2.0.0-alpha.4
+      '@napi-rs/wasm-runtime': 1.2.3(@emnapi/core@2.0.0-alpha.4)(@emnapi/runtime@2.0.0-alpha.4)
 
   '@rolldown/binding-win32-arm64-msvc@1.2.6':
     optional: true
@@ -4811,6 +4864,10 @@ snapshots:
   '@sindresorhus/merge-streams@4.0.0': {}
 
   '@speed-highlight/core@1.2.24': {}
+
+  '@tybys/wasm-util@0.10.3':
+    dependencies:
+      tslib: 2.8.1
 
   '@types/bcryptjs@3.0.0':
     dependencies:
@@ -7241,8 +7298,7 @@ snapshots:
 
   tr46@0.0.3: {}
 
-  tslib@2.8.1:
-    optional: true
+  tslib@2.8.1: {}
 
   type-fest@5.9.0:
     dependencies:

@@ -23,11 +23,19 @@
       "esbuild"
     ],
     "supportedArchitectures": {
-      "os": ["linux", "win32"],
-      "cpu": ["x64", "arm64"]
+      "os": [
+        "linux",
+        "win32"
+      ],
+      "cpu": [
+        "x64",
+        "arm64"
+      ]
     }
   },
   "devDependencies": {
+    "@rolldown/binding-linux-x64-gnu": "1.2.6",
+    "@rolldown/binding-wasm32-wasi": "1.2.6",
     "@types/bcryptjs": "^3.0.0"
   }
 }
