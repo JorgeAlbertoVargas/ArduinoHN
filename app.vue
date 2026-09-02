@@ -1,12 +1,14 @@
 <template>
   <div class="app-wrapper">
     <NuxtRouteAnnouncer />
+    <AnnouncementBar />
     <Navbar />
     <main class="main-content">
       <NuxtPage />
     </main>
     <Footer />
     <ChatbotWidget />
+    <WelcomeModal />
     <ToastNotification />
   </div>
 </template>

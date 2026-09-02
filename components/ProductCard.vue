@@ -27,11 +27,21 @@
     </div>
     <div class="product-info" @click="$emit('go-to-product', id)">
       <h3 class="product-title">{{ title }}</h3>
-      <div class="price-container" @click.stop="showUSD = !showUSD" :title="showUSD ? 'Click para ver en Lempiras' : 'Click para ver en Dólares'" style="cursor: pointer;">
-        <span v-if="originalPrice && !showUSD" class="original-price text-muted">{{ formatCurrency(Number(originalPrice)) }}</span>
-        <span v-if="!showUSD" class="product-price">{{ formatCurrency(Number(price)) }}</span>
-        <span v-if="originalPrice && showUSD" class="original-price text-muted">{{ formatUSD(Number(originalPrice), exchangeRate) }}</span>
-        <span v-if="showUSD" class="product-price">{{ formatUSD(Number(price), exchangeRate) }}</span>
+      <div class="price-container">
+        <Transition name="fade" mode="out-in">
+          <div v-if="!showUSD" key="local" class="price-wrapper">
+            <span v-if="originalPrice" class="original-price text-muted">{{ formatCurrency(Number(originalPrice), userCurrency) }}</span>
+            <span class="product-price">{{ formatCurrency(Number(price), userCurrency) }}</span>
+          </div>
+          <div v-else key="usd" class="price-wrapper">
+            <span v-if="originalPrice" class="original-price text-muted">{{ formatUSD(Number(originalPrice), exchangeRate) }}</span>
+            <span class="product-price">{{ formatUSD(Number(price), exchangeRate) }}</span>
+          </div>
+        </Transition>
+        <button class="currency-toggle-btn" @click.stop="showUSD = !showUSD" :title="showUSD ? `Ver en ${userCurrency}` : 'Ver en USD'">
+          <svg v-if="!showUSD" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          <span v-else class="currency-text">{{ userCurrency }}</span>
+        </button>
       </div>
       <div class="actions-container mt-3">
         <button class="btn btn-primary w-full add-btn" @click.stop="$emit('add-to-cart')">
@@ -85,7 +95,7 @@ const emit = defineEmits(['add-to-cart', 'quick-view', 'go-to-product', 'play-vi
 const { isInWishlist, toggleWishlist } = useWishlist();
 const inWishlist = ref(isInWishlist(props.id));
 
-const { exchangeRate } = useGlobalCurrencyConfig();
+const { exchangeRate, userCurrency } = useGlobalCurrencyConfig();
 const showUSD = ref(false);
 
 watch(() => isInWishlist(props.id), (val) => {
@@ -254,6 +264,47 @@ const handlePlayVideo = () => {
   justify-content: center;
   gap: 10px;
   position: relative;
+  min-height: 28px;
+}
+.price-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.currency-toggle-btn {
+  background: rgba(0, 168, 150, 0.1);
+  border: 1px solid rgba(0, 168, 150, 0.3);
+  color: var(--color-primary);
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+  margin-left: 5px;
+}
+.currency-toggle-btn:hover {
+  background: var(--color-primary);
+  color: white;
+}
+.currency-text {
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.fade-enter-from {
+  opacity: 0;
+  transform: translateY(-5px);
+}
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(5px);
 }
 
 .original-price {
