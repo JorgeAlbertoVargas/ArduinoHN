@@ -14,7 +14,7 @@
     <!-- Imagen del componente -->
     <div class="card-image-wrapper">
       <img 
-        :src="product.image || '/placeholder-chip.svg'" 
+        :src="getComponentImage(product)" 
         :alt="product.manufacturerPartNumber"
         class="component-img"
         loading="lazy"
@@ -94,6 +94,7 @@ import type { DigikeyProduct } from '~/composables/useDigikey';
 import { useDigikey } from '~/composables/useDigikey';
 import { formatCurrency } from '~/utils/currencyFormatter';
 import { useGlobalCurrencyConfig } from '~/composables/useGlobalCurrencyConfig';
+import { getComponentImage, getComponentPlaceholder } from '~/utils/componentImage';
 
 const props = defineProps<{
   product: DigikeyProduct;
@@ -124,7 +125,7 @@ const featuredParams = computed(() => {
 
 const handleImageError = (e: Event) => {
   const target = e.target as HTMLImageElement;
-  target.src = '/placeholder-chip.svg';
+  target.src = getComponentPlaceholder(props.product);
 };
 
 const goToDetail = () => {

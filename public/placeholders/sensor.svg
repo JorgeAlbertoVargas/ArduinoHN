@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="100%" height="100%">
+  <defs>
+    <linearGradient id="sBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1329" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+    <linearGradient id="pcbGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b" />
+      <stop offset="100%" stop-color="#022c22" />
+    </linearGradient>
+    <linearGradient id="goldPad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <filter id="sGlow">
+      <feGaussianBlur stdDeviation="3" result="b" />
+      <feMerge>
+        <feMergeNode in="b" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="240" height="240" rx="16" fill="url(#sBg)" />
+
+  <!-- Sensor PCB Module -->
+  <rect x="55" y="45" width="130" height="150" rx="8" fill="url(#pcbGrad)" stroke="#059669" stroke-width="2" />
+
+  <!-- Sensor Element Metal Can (e.g. Pressure / Gas / Temp) -->
+  <circle cx="120" cy="105" r="32" fill="#1e293b" stroke="#94a3b8" stroke-width="3" />
+  <circle cx="120" cy="105" r="22" fill="#0f172a" stroke="#475569" stroke-width="1.5" />
+  
+  <!-- Sensing Waves -->
+  <g fill="none" stroke="#38bdf8" stroke-width="1.8" filter="url(#sGlow)" opacity="0.85">
+    <path d="M 105 85 C 114 78, 126 78, 135 85" />
+    <path d="M 98 75 C 112 65, 128 65, 142 75" />
+  </g>
+
+  <!-- Gold Connection Header Pins at Bottom -->
+  <g fill="url(#goldPad)" stroke="#78350f" stroke-width="0.5">
+    <rect x="70" y="165" width="14" height="22" rx="2" />
+    <rect x="95" y="165" width="14" height="22" rx="2" />
+    <rect x="120" y="165" width="14" height="22" rx="2" />
+    <rect x="145" y="165" width="14" height="22" rx="2" />
+  </g>
+
+  <!-- Pin Dots -->
+  <circle cx="77" cy="176" r="3" fill="#0f172a" />
+  <circle cx="102" cy="176" r="3" fill="#0f172a" />
+  <circle cx="127" cy="176" r="3" fill="#0f172a" />
+  <circle cx="152" cy="176" r="3" fill="#0f172a" />
+
+  <!-- Label -->
+  <text x="120" y="32" fill="#38bdf8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="800" text-anchor="middle" letter-spacing="1.5">SENSOR / TRANSDUCTOR</text>
+  <text x="120" y="222" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="8.5" font-weight="700" text-anchor="middle" letter-spacing="1">ARDUINOHN</text>
+</svg>

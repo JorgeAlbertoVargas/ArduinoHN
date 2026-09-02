@@ -90,9 +90,22 @@
         
         <div v-if="isAuthenticated" class="earn-points-banner">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          ¡Ganarás {{ pointsToEarn }} Puntos Arduino con esta compra!
+        <!-- Aviso Inteligente de Costo de Envío vs Monto del Pedido -->
+        <div v-if="cartTotal > 0 && cartTotal < 120" class="shipping-warning-box">
+          <div class="shipping-warn-header">
+            <span class="warn-icon">📦</span>
+            <strong>Aviso sobre Costo de Envío</strong>
+          </div>
+          <p class="shipping-warn-msg">
+            El total de tus productos (<strong>{{ formatCurrency(cartTotal) }}</strong>) es menor al costo estimado de envío estándar nacional (~L. 100 - 130 HNL). Te sugerimos agregar más componentes o herramientas para aprovechar el mismo paquete.
+          </p>
+          <div class="shipping-warn-actions">
+            <NuxtLink to="/semiconductores" class="btn btn-secondary btn-sm">
+              + Agregar más piezas
+            </NuxtLink>
+          </div>
         </div>
-        
+
         <button class="btn btn-accent checkout-btn" @click="proceedToCheckout" disabled>
           Proceder al pago seguro
         </button>
@@ -261,6 +274,37 @@ const simulateWebhook = async () => {
 .toggle-text { font-size: 0.9rem; color: #b9770e; font-weight: 500; }
 .points-warning { font-size: 0.8rem; color: #d35400; margin-top: 8px; font-weight: 500; }
 .earn-points-banner { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 15px; background: rgba(0, 151, 156, 0.1); color: var(--color-primary); padding: 10px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; }
+
+.shipping-warning-box {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 15px 0 5px;
+}
+.shipping-warn-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #f59e0b;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+.shipping-warn-msg {
+  font-size: 0.82rem;
+  color: var(--text-main);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+.shipping-warn-actions {
+  display: flex;
+}
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  border-radius: 6px;
+}
+
 @media (max-width: 992px) { .cart-layout { grid-template-columns: 1fr; } .cart-summary { position: static; } }
 @media (max-width: 600px) { .cart-header { display: none; } .cart-item { grid-template-columns: 1fr; gap: 1rem; } .item-price { font-size: 1.25rem; color: var(--color-primary); } .quantity-controls { margin-top: 0.5rem; } }
 </style>

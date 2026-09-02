@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="100%" height="100%">
+  <defs>
+    <linearGradient id="tBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1329" />
+      <stop offset="100%" stop-color="#020617" />
+    </linearGradient>
+    <linearGradient id="tabGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#475569" />
+      <stop offset="50%" stop-color="#94a3b8" />
+      <stop offset="100%" stop-color="#475569" />
+    </linearGradient>
+    <linearGradient id="tBody" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#090e17" />
+    </linearGradient>
+    <filter id="tGlow">
+      <feGaussianBlur stdDeviation="3" result="b" />
+      <feMerge>
+        <feMergeNode in="b" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="240" height="240" rx="16" fill="url(#tBg)" />
+
+  <!-- Grid -->
+  <g opacity="0.12" stroke="#38bdf8" stroke-width="1">
+    <path d="M 40 0 V 240 M 120 0 V 240 M 200 0 V 240" />
+    <path d="M 0 40 H 240 M 0 120 H 240 M 0 200 H 240" />
+  </g>
+
+  <!-- Metal Heat-Sink Tab (TO-220 Style) -->
+  <rect x="75" y="45" width="90" height="35" rx="4" fill="url(#tabGrad)" stroke="#334155" stroke-width="1.5" />
+  <circle cx="120" cy="60" r="8" fill="#0b1329" stroke="#334155" stroke-width="1.5" />
+
+  <!-- Plastic Case -->
+  <rect x="70" y="75" width="100" height="75" rx="6" fill="url(#tBody)" stroke="#334155" stroke-width="2" />
+
+  <!-- 3 Leads (Gate, Drain, Source) -->
+  <g stroke="url(#tabGrad)" stroke-width="5" stroke-linecap="round">
+    <path d="M 90 150 V 205" />
+    <path d="M 120 150 V 215" />
+    <path d="M 150 150 V 205" />
+  </g>
+
+  <!-- Lead Pad Glows -->
+  <circle cx="90" cy="205" r="4" fill="#00a896" filter="url(#tGlow)" />
+  <circle cx="120" cy="215" r="4" fill="#38bdf8" filter="url(#tGlow)" />
+  <circle cx="150" cy="205" r="4" fill="#00a896" filter="url(#tGlow)" />
+
+  <!-- MOSFET Schematic Icon Glow -->
+  <g stroke="#38bdf8" stroke-width="1.5" fill="none" opacity="0.85" filter="url(#tGlow)">
+    <path d="M 105 105 H 115 M 105 112 H 115 M 105 120 H 115" />
+    <path d="M 122 100 V 125" stroke-width="2" />
+  </g>
+
+  <!-- Label -->
+  <text x="120" y="32" fill="#38bdf8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="800" text-anchor="middle" letter-spacing="1.5">MOSFET / TRANSISTOR</text>
+  <text x="120" y="100" fill="#f8fafc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="700" text-anchor="middle">TO-220 / SMD</text>
+  <text x="120" y="138" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="7.5" font-weight="600" text-anchor="middle" letter-spacing="1">ARDUINOHN</text>
+</svg>

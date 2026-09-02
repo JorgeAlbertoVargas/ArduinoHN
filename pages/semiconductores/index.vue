@@ -15,7 +15,7 @@
             <input 
               v-model="searchQuery" 
               type="text" 
-              placeholder="Buscar por número de parte (ej. STM32F401, ESP32, NE555, LM317, IRFZ44N)..." 
+              placeholder="Microcontroller" 
               class="semi-search-input"
             />
             <button v-if="searchQuery" type="button" class="clear-btn" @click="clearSearch" title="Limpiar">
@@ -221,8 +221,8 @@ const router = useRouter();
 const { fetchConfig } = useGlobalCurrencyConfig();
 const { loading, error, searchParts, categories } = useDigikey();
 
-const searchQuery = ref((route.query.q as string) || 'Microcontroller');
-const activeQuery = ref(searchQuery.value);
+const searchQuery = ref((route.query.q as string) || '');
+const activeQuery = ref(searchQuery.value || 'Microcontroller');
 const inStockOnly = ref(false);
 const selectedCategory = ref('');
 const selectedManufacturer = ref('');

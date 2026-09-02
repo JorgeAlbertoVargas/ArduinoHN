@@ -29,7 +29,7 @@
         <div class="product-gallery-card glass">
           <div class="gallery-image-wrapper">
             <img 
-              :src="product.image || '/placeholder-chip.svg'" 
+              :src="getComponentImage(product)" 
               :alt="product.manufacturerPartNumber"
               class="main-part-img"
               @error="handleImageError"
@@ -170,6 +170,7 @@ import { useRoute } from 'vue-router';
 import { useDigikey, type DigikeyProduct } from '~/composables/useDigikey';
 import { formatCurrency } from '~/utils/currencyFormatter';
 import { useGlobalCurrencyConfig } from '~/composables/useGlobalCurrencyConfig';
+import { getComponentImage, getComponentPlaceholder } from '~/utils/componentImage';
 
 const route = useRoute();
 const partNumber = route.params.partNumber as string;
@@ -212,7 +213,7 @@ const decreaseQuantity = () => {
 
 const handleImageError = (e: Event) => {
   const target = e.target as HTMLImageElement;
-  target.src = '/placeholder-chip.svg';
+  target.src = getComponentPlaceholder(product.value || undefined);
 };
 
 const handleAddToCart = async () => {
