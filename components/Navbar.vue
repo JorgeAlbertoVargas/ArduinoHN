@@ -42,8 +42,8 @@
                     Ofertas del mes
                   </NuxtLink>
                   <NuxtLink v-if="isAdmin" to="/admin/loyalty" class="dropdown-item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                    Lealtad (Puntos)
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                    Ajustes & Márgenes
                   </NuxtLink>
                   <button @click="handleLogout" class="dropdown-item text-danger">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -65,6 +65,9 @@
       <div class="container">
         <nav class="nav-links">
           <NuxtLink to="/store" @click="closeMobileMenu">Tienda virtual</NuxtLink>
+          <NuxtLink to="/semiconductores" @click="closeMobileMenu" class="semiconductors-nav-link">
+            Semiconductores
+          </NuxtLink>
           <NuxtLink to="/deals" @click="closeMobileMenu">Ofertas del mes</NuxtLink>
           <NuxtLink to="/coupons" @click="closeMobileMenu">Cupones</NuxtLink>
           <NuxtLink to="/projects" @click="closeMobileMenu">Proyectos</NuxtLink>
@@ -251,6 +254,19 @@ const handleSearch = () => {
 .nav-links a.router-link-active {
   color: var(--color-primary);
   opacity: 1;
+}
+
+.semiconductors-nav-link {
+  color: #38bdf8 !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+  position: relative;
+}
+
+.semiconductors-nav-link:hover,
+.semiconductors-nav-link.router-link-active {
+  color: #00a896 !important;
+  text-shadow: 0 0 10px rgba(0, 168, 150, 0.4);
 }
 
 /* User Dropdown */

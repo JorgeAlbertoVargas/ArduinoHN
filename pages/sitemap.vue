@@ -12,6 +12,7 @@
           <h2 class="sitemap-heading">Tienda Virtual</h2>
           <ul class="sitemap-links">
             <li><NuxtLink to="/store">Catálogo Completo</NuxtLink></li>
+            <li><NuxtLink to="/semiconductores">Centro de Semiconductores & Chips</NuxtLink></li>
             <li><NuxtLink to="/store?category=arduino">Placas Arduino</NuxtLink></li>
             <li><NuxtLink to="/store?category=raspberry">Raspberry Pi & SBCs</NuxtLink></li>
             <li><NuxtLink to="/store?category=esp32">Módulos ESP32 / IoT</NuxtLink></li>

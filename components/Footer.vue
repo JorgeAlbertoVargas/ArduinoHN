@@ -31,6 +31,7 @@
           <h4 class="footer-heading">Explora</h4>
           <ul class="footer-links">
             <li><NuxtLink to="/store">Catálogo de Productos</NuxtLink></li>
+            <li><NuxtLink to="/semiconductores">Semiconductores & Chips</NuxtLink></li>
             <li><NuxtLink to="/projects">Proyectos y Tutoriales</NuxtLink></li>
             <li><NuxtLink to="/blog">Blog Técnico</NuxtLink></li>
             <li><NuxtLink to="/coupons">Cupones de Descuento</NuxtLink></li>

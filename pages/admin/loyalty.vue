@@ -1,7 +1,7 @@
 <template>
   <div class="admin-container">
     <div class="admin-header-row">
-      <h1 class="admin-title">Configuración de Lealtad</h1>
+      <h1 class="admin-title">Ajustes de Tienda & Márgenes</h1>
       <NuxtLink to="/" class="btn btn-accent">Volver a la Tienda</NuxtLink>
     </div>
 
@@ -38,6 +38,37 @@
         <label>Tasa de Cambio (Lempiras por 1 USD):</label>
         <input type="number" step="0.01" v-model="config.exchangeRate" class="form-control" />
         <small class="text-muted">Ejemplo: Si pones 24.85, se usará este valor para mostrar los precios en Dólares en toda la tienda.</small>
+      </div>
+
+      <hr class="divider" />
+
+      <h2>⚡ Distribución Global & Semiconductores</h2>
+      <div class="form-group">
+        <label>Multiplicador de Margen de Ganancia:</label>
+        <div class="input-with-addons">
+          <input 
+            type="number" 
+            step="0.05" 
+            min="1.00" 
+            v-model.number="config.digikeyProfitMargin" 
+            class="form-control" 
+          />
+          <span class="addon-badge">
+            {{ Math.round(((config.digikeyProfitMargin || 2) - 1) * 100) }}% de Ganancia
+          </span>
+        </div>
+        <small class="text-muted">
+          Multiplicador sobre el costo base de catálogo (Ej: <strong>2.00 = 100% de ganancia</strong>, <strong>1.50 = 50%</strong>, <strong>1.30 = 30%</strong>).
+        </small>
+
+        <div class="margin-preview-box">
+          <div class="preview-title">💡 Ejemplo de Cálculo en Vivo:</div>
+          <div class="preview-text">
+            Un componente con costo base de <strong>$5.00 USD</strong> se ofrecerá a 
+            <span class="highlight-price">${{ (5 * (config.digikeyProfitMargin || 2)).toFixed(2) }} USD</span> 
+            (aprox. <strong>L. {{ (5 * (config.digikeyProfitMargin || 2) * (config.exchangeRate || 25)).toFixed(2) }} HNL</strong>).
+          </div>
+        </div>
       </div>
 
       <hr class="divider" />
@@ -111,6 +142,7 @@ const config = ref({
   exchangeRate: 25,
   isvPercent: 15,
   cai: '',
+  digikeyProfitMargin: 2.0,
   enableTiers: false,
   tiers: {
     silverThreshold: 5000,
@@ -304,5 +336,47 @@ input:checked + .slider:before {
 .alert-success {
   background-color: #e8f5e9;
   color: #2e7d32;
+}
+
+.input-with-addons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.addon-badge {
+  background: rgba(0, 168, 150, 0.2);
+  color: #38bdf8;
+  border: 1px solid rgba(0, 168, 150, 0.4);
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.margin-preview-box {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px dashed rgba(56, 189, 248, 0.35);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 10px;
+}
+
+.preview-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #38bdf8;
+  margin-bottom: 4px;
+}
+
+.preview-text {
+  font-size: 0.9rem;
+  color: var(--text-main, #ffffff);
+}
+
+.highlight-price {
+  color: #10b981;
+  font-weight: 700;
 }
 </style>

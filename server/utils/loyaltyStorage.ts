@@ -7,6 +7,7 @@ export interface LoyaltyConfig {
   exchangeRate: number; // Lempiras per 1 USD
   isvPercent: number;
   cai: string;
+  digikeyProfitMargin: number; // Margen de semiconductores (ej. 2.0 = 100% ganancia)
   enableTiers: boolean;
   tiers: {
     silverThreshold: number;
@@ -44,6 +45,7 @@ export const getLoyaltyConfig = async (): Promise<LoyaltyConfig> => {
         exchangeRate: Number(row.exchange_rate || 25),
         isvPercent: Number(row.isv_percent || 15),
         cai: row.cai || '',
+        digikeyProfitMargin: Number(row.digikey_profit_margin || 2.0),
         enableTiers: Boolean(row.enable_tiers),
         tiers: {
           silverThreshold: Number(row.silver_threshold || 5000),
@@ -62,6 +64,9 @@ export const getLoyaltyConfig = async (): Promise<LoyaltyConfig> => {
     earnRate: 100,
     redemptionValue: 1,
     exchangeRate: 25,
+    isvPercent: 15,
+    cai: '',
+    digikeyProfitMargin: 2.0,
     enableTiers: false,
     tiers: {
       silverThreshold: 5000,
@@ -92,6 +97,7 @@ export const saveLoyaltyConfig = async (loyaltyConfig: LoyaltyConfig) => {
           exchange_rate: loyaltyConfig.exchangeRate,
           isv_percent: loyaltyConfig.isvPercent,
           cai: loyaltyConfig.cai,
+          digikey_profit_margin: loyaltyConfig.digikeyProfitMargin,
           enable_tiers: loyaltyConfig.enableTiers
         }
       })
@@ -105,6 +111,7 @@ export const saveLoyaltyConfig = async (loyaltyConfig: LoyaltyConfig) => {
           exchange_rate: loyaltyConfig.exchangeRate,
           isv_percent: loyaltyConfig.isvPercent,
           cai: loyaltyConfig.cai,
+          digikey_profit_margin: loyaltyConfig.digikeyProfitMargin,
           enable_tiers: loyaltyConfig.enableTiers
         }
       })

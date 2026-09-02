@@ -17,6 +17,12 @@ export default defineNuxtConfig({
     enabled: false
   },
   runtimeConfig: {
+    digikeyClientId: process.env.DIGIKEY_CLIENT_ID || '',
+    digikeyClientSecret: process.env.DIGIKEY_CLIENT_SECRET || '',
+    digikeyLocaleSite: process.env.DIGIKEY_LOCALE_SITE || 'US',
+    digikeyLocaleLanguage: process.env.DIGIKEY_LOCALE_LANGUAGE || 'es',
+    digikeyLocaleCurrency: process.env.DIGIKEY_LOCALE_CURRENCY || 'USD',
+    digikeyProfitMargin: Number(process.env.DIGIKEY_PROFIT_MARGIN || 1.25),
     public: {
       shopifyDomain: process.env.SHOPIFY_DOMAIN || 'arduinohn.myshopify.com',
       shopifyToken: process.env.SHOPIFY_STOREFRONT_TOKEN || 'mock_storefront_token_12345',
