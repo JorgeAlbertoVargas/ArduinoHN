@@ -17,12 +17,12 @@ export default defineNuxtConfig({
     enabled: false
   },
   runtimeConfig: {
-    digikeyClientId: process.env.DIGIKEY_CLIENT_ID || '',
-    digikeyClientSecret: process.env.DIGIKEY_CLIENT_SECRET || '',
+    digikeyClientId: process.env.DIGIKEY_CLIENT_ID || 'Aqn5k5kVQRib3UPCJNrAFZaVOVnMSbYOdfYuCk7Dbwd8XdUi',
+    digikeyClientSecret: process.env.DIGIKEY_CLIENT_SECRET || '0LOok4SKB7gFWCLh4V3tAQU798GyS6BqSubshJquGAmJ6xtYjAMNOAhpewFWauMN',
     digikeyLocaleSite: process.env.DIGIKEY_LOCALE_SITE || 'US',
     digikeyLocaleLanguage: process.env.DIGIKEY_LOCALE_LANGUAGE || 'es',
     digikeyLocaleCurrency: process.env.DIGIKEY_LOCALE_CURRENCY || 'USD',
-    digikeyProfitMargin: Number(process.env.DIGIKEY_PROFIT_MARGIN || 1.25),
+    digikeyProfitMargin: Number(process.env.DIGIKEY_PROFIT_MARGIN || 2.00),
     public: {
       shopifyDomain: process.env.SHOPIFY_DOMAIN || 'arduinohn.myshopify.com',
       shopifyToken: process.env.SHOPIFY_STOREFRONT_TOKEN || 'mock_storefront_token_12345',
