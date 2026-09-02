@@ -11,7 +11,7 @@
       </span>
     </div>
 
-    <!-- Imagen del componente -->
+    <!-- Imagen del componente estandarizada -->
     <div class="card-image-wrapper">
       <img 
         :src="getComponentImage(product)" 
@@ -31,9 +31,10 @@
         SKU: <strong>{{ product.digiKeyPartNumber || product.manufacturerPartNumber }}</strong>
       </div>
       
-      <!-- Botón de Datasheet PDF debajo del SKU -->
-      <div v-if="product.datasheetUrl" class="datasheet-row">
+      <!-- Fila de Datasheet PDF (altura estandarizada) -->
+      <div class="datasheet-row">
         <a 
+          v-if="product.datasheetUrl"
           :href="product.datasheetUrl" 
           target="_blank" 
           rel="noopener noreferrer" 
@@ -41,24 +42,32 @@
           title="Abrir Hoja de Datos Oficial (PDF)"
           @click.stop
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
           <span>Datasheet (PDF)</span>
         </a>
+        <span v-else class="datasheet-placeholder">
+          <span>Especificación directa</span>
+        </span>
       </div>
 
       <p class="description-text" :title="product.description">
         {{ product.description }}
       </p>
 
-      <!-- Mini chips de especificaciones -->
-      <div v-if="featuredParams.length > 0" class="param-tags">
-        <span v-for="(param, idx) in featuredParams" :key="idx" class="param-chip" :title="`${param.name}: ${param.value}`">
-          {{ param.name }}: <strong>{{ param.value }}</strong>
+      <!-- Mini chips de especificaciones (altura estandarizada) -->
+      <div class="param-tags">
+        <template v-if="featuredParams.length > 0">
+          <span v-for="(param, idx) in featuredParams" :key="idx" class="param-chip" :title="`${param.name}: ${param.value}`">
+            {{ param.name }}: <strong>{{ param.value }}</strong>
+          </span>
+        </template>
+        <span v-else class="param-chip-empty">
+          Componente grado industrial original
         </span>
       </div>
     </div>
 
-    <!-- Footer: Precios y Acciones -->
+    <!-- Footer: Precios y Acciones (Altura 100% estandarizada e idéntica) -->
     <div class="card-footer">
       <div class="pricing-block">
         <div class="main-price">{{ formatCurrency(priceHNL, userCurrency) }}</div>
@@ -71,6 +80,7 @@
         <div v-else-if="lowestVolumePriceUSD" class="volume-hint">
           Desde ${{ lowestVolumePriceUSD }} @ mayoreo
         </div>
+        <div v-else class="min-order-spacer"></div>
       </div>
 
       <div class="actions-row">
@@ -79,7 +89,7 @@
           :title="product.minimumOrderQuantity > 1 ? `Añadir pack de ${product.minimumOrderQuantity} unidades` : 'Añadir al carrito'"
           @click.stop="handleAddToCart"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
           <span>{{ product.minimumOrderQuantity > 1 ? `+${product.minimumOrderQuantity}` : 'Agregar' }}</span>
         </button>
       </div>
@@ -119,7 +129,6 @@ const lowestVolumePriceUSD = computed(() => {
 
 const featuredParams = computed(() => {
   if (!props.product.parameters) return [];
-  // Filtrar los primeros 2 parámetros relevantes
   return props.product.parameters.slice(0, 2);
 });
 
@@ -144,33 +153,48 @@ const handleAddToCart = async () => {
 .digikey-card {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  min-height: 480px;
   border-radius: 12px;
   overflow: hidden;
-  background: var(--bg-card, #111827);
-  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--glass-border, rgba(0, 168, 150, 0.15));
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
   position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
+/* Efecto Cebra Alternante en Catálogo */
+:global(.catalog-grid > .digikey-card:nth-child(even)) {
+  background: rgba(248, 250, 252, 0.9);
+}
+
+:global(.catalog-grid > .digikey-card:nth-child(odd)) {
+  background: #ffffff;
+}
+
+/* Hover Estandarizado con Base ArduinoHN */
 .digikey-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--color-primary, #00a896);
-  box-shadow: 0 12px 28px rgba(0, 168, 150, 0.15);
+  transform: translateY(-6px);
+  border-color: var(--color-primary, #00a896) !important;
+  background: linear-gradient(180deg, rgba(0, 168, 150, 0.05) 0%, rgba(56, 189, 248, 0.02) 100%), #ffffff !important;
+  box-shadow: 0 16px 32px rgba(0, 168, 150, 0.18), 0 0 0 1px rgba(0, 168, 150, 0.4);
 }
 
 .card-top-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 14px 6px;
+  height: 38px;
+  padding: 8px 14px 4px;
   gap: 8px;
 }
 
 .mfr-badge {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #38bdf8;
+  font-size: 0.73rem;
+  font-weight: 800;
+  color: var(--color-primary, #00a896);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   white-space: nowrap;
@@ -180,7 +204,7 @@ const handleAddToCart = async () => {
 }
 
 .stock-badge {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 600;
   padding: 2px 8px;
   border-radius: 999px;
@@ -191,9 +215,9 @@ const handleAddToCart = async () => {
 }
 
 .stock-badge.in-stock {
-  background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
 .stock-dot {
@@ -206,160 +230,206 @@ const handleAddToCart = async () => {
 }
 
 .stock-badge.out-of-stock {
-  background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
+/* Imagen con contenedor idéntico */
 .card-image-wrapper {
-  height: 160px;
+  height: 155px;
   background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  padding: 12px;
-  margin: 6px 12px;
+  padding: 10px;
+  margin: 4px 12px;
   border-radius: 8px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .component-img {
   max-height: 100%;
   max-width: 100%;
   object-fit: contain;
-  transition: transform 0.2s ease;
+  transition: transform 0.25s ease;
 }
 
 .digikey-card:hover .component-img {
-  transform: scale(1.05);
-}
-
-.datasheet-row {
-  margin: 4px 0 8px;
-  display: flex;
-}
-
-.datasheet-pill-btn {
-  background: rgba(239, 68, 68, 0.12);
-  color: #f87171;
-  font-size: 0.73rem;
-  font-weight: 700;
-  padding: 4px 9px;
-  border-radius: 6px;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  text-decoration: none;
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  transition: all 0.2s ease;
-  width: fit-content;
-}
-
-.datasheet-pill-btn:hover {
-  background: #ef4444;
-  color: #ffffff;
-  border-color: #ef4444;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
-  transform: translateY(-1px);
+  transform: scale(1.06);
 }
 
 .card-body {
-  padding: 10px 14px;
+  padding: 8px 14px 10px;
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
 .mpn-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text-main, #ffffff);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-main, #0f172a);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  height: 1.3rem;
+  line-height: 1.3rem;
 }
 
 .dk-sku {
   font-size: 0.72rem;
-  color: var(--text-muted, #94a3b8);
+  color: var(--text-muted, #64748b);
+  margin-bottom: 6px;
+  height: 1rem;
+  line-height: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.datasheet-row {
+  height: 28px;
+  display: flex;
+  align-items: center;
   margin-bottom: 6px;
 }
 
+.datasheet-pill-btn {
+  background: rgba(239, 68, 68, 0.08);
+  color: #dc2626;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  transition: all 0.2s ease;
+}
+
+.datasheet-pill-btn:hover {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+
+.datasheet-placeholder {
+  font-size: 0.7rem;
+  color: var(--text-muted, #94a3b8);
+  font-style: italic;
+}
+
 .description-text {
-  font-size: 0.82rem;
-  color: var(--text-muted, #cbd5e1);
+  font-size: 0.8rem;
+  color: var(--text-muted, #475569);
   line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  height: 2.25rem;
   margin-bottom: 8px;
-  min-height: 2.2rem;
 }
 
 .param-tags {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 4px;
+  height: 48px;
+  overflow: hidden;
   margin-top: auto;
 }
 
 .param-chip {
-  font-size: 0.7rem;
-  background: rgba(0, 168, 150, 0.08);
-  border: 1px solid rgba(0, 168, 150, 0.2);
-  color: #94a3b8;
+  font-size: 0.68rem;
+  background: rgba(0, 168, 150, 0.06);
+  border: 1px solid rgba(0, 168, 150, 0.18);
+  color: #475569;
   padding: 2px 6px;
   border-radius: 4px;
   white-space: nowrap;
-  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .param-chip strong {
-  color: #00a896;
+  color: var(--color-primary, #00a896);
 }
 
+.param-chip-empty {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  font-style: italic;
+  padding-top: 4px;
+}
+
+/* Footer 100% Estandarizado */
 .card-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 14px;
-  border-top: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
-  background: rgba(0, 0, 0, 0.15);
+  height: 84px;
+  padding: 10px 14px;
+  border-top: 1px solid rgba(226, 232, 240, 0.9);
+  background: rgba(241, 245, 249, 0.7);
+  transition: background 0.25s ease;
+}
+
+.digikey-card:hover .card-footer {
+  background: rgba(0, 168, 150, 0.08);
 }
 
 .pricing-block {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  flex: 1;
+  padding-right: 8px;
 }
 
 .main-price {
   font-size: 1.15rem;
-  font-weight: 800;
+  font-weight: 900;
   color: var(--color-primary, #00a896);
   letter-spacing: -0.5px;
+  line-height: 1.2;
 }
 
 .usd-subprice {
-  font-size: 0.72rem;
-  color: var(--text-muted, #94a3b8);
+  font-size: 0.7rem;
+  color: var(--text-muted, #64748b);
+  line-height: 1.2;
 }
 
 .volume-hint {
-  color: #38bdf8;
-  display: block;
-  font-size: 0.7rem;
+  color: #0284c7;
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .min-order-tag {
-  color: #f59e0b;
-  font-size: 0.72rem;
+  color: #d97706;
+  font-size: 0.68rem;
   font-weight: 700;
-  display: block;
-  margin-top: 2px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.min-order-spacer {
+  height: 0.68rem;
 }
 
 .btn-dk-cart {
@@ -367,18 +437,21 @@ const handleAddToCart = async () => {
   color: #ffffff;
   border: none;
   border-radius: 8px;
-  padding: 8px 14px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  display: flex;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 168, 150, 0.25);
 }
 
 .btn-dk-cart:hover {
   background: var(--color-secondary, #008f80);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 168, 150, 0.4);
 }
 </style>
