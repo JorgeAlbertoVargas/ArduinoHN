@@ -485,8 +485,28 @@ onMounted(async () => {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding-bottom: 8px;
+  padding-bottom: 10px;
   scrollbar-width: thin;
+  scrollbar-color: var(--color-primary, #00979C) rgba(0, 151, 156, 0.12);
+}
+
+.categories-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.categories-scroll::-webkit-scrollbar-track {
+  background: rgba(0, 151, 156, 0.1);
+  border-radius: 999px;
+}
+
+.categories-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, var(--color-primary, #00979C), #38bdf8);
+  border-radius: 999px;
+  box-shadow: 0 0 6px rgba(0, 151, 156, 0.4);
+}
+
+.categories-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary, #005C5F);
 }
 
 .cat-chip {

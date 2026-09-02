@@ -22,21 +22,24 @@ export default defineEventHandler(async (event) => {
 
     const p = raw.Product || raw;
 
+    // 0. Seleccionar la mejor variación al detalle (Cut Tape / Bulk / Unitario)
+    const bestVar = selectBestRetailVariation(p);
+
     let baseUnitPriceUSD = p.UnitPrice || 0;
-    if (!baseUnitPriceUSD && p.StandardPricing && p.StandardPricing.length > 0) {
+    if (bestVar?.StandardPricing && bestVar.StandardPricing.length > 0) {
+      baseUnitPriceUSD = bestVar.StandardPricing[0].UnitPrice || 0;
+    } else if (!baseUnitPriceUSD && p.StandardPricing && p.StandardPricing.length > 0) {
       baseUnitPriceUSD = p.StandardPricing[0].UnitPrice || 0;
-    } else if (!baseUnitPriceUSD && p.ProductVariations && p.ProductVariations.length > 0) {
-      const v = p.ProductVariations[0];
-      if (v.StandardPricing && v.StandardPricing.length > 0) {
-        baseUnitPriceUSD = v.StandardPricing[0].UnitPrice || 0;
-      }
     }
 
     const finalPriceUSD = Number((baseUnitPriceUSD * profitMargin).toFixed(2));
 
-    const rawPriceBreaks = (p.StandardPricing && p.StandardPricing.length > 0)
-      ? p.StandardPricing
-      : (p.ProductVariations?.[0]?.StandardPricing || []);
+    const rawPriceBreaks = (bestVar?.StandardPricing && bestVar.StandardPricing.length > 0)
+      ? bestVar.StandardPricing
+      : (p.StandardPricing && p.StandardPricing.length > 0)
+        ? p.StandardPricing
+        : (p.ProductVariations?.[0]?.StandardPricing || []);
+
     const priceBreaks = rawPriceBreaks.map((pb: any) => ({
       breakQuantity: pb.BreakQuantity,
       unitPriceUSD: Number((pb.UnitPrice * profitMargin).toFixed(2)),
@@ -45,7 +48,7 @@ export default defineEventHandler(async (event) => {
 
     const productDesc = p.Description?.ProductDescription || p.ProductDescription || p.ManufacturerProductNumber;
     const detailedDesc = p.Description?.DetailedDescription || p.DetailedDescription || productDesc;
-    const dkSku = p.DigiKeyPartNumber || p.ProductVariations?.[0]?.DigiKeyProductNumber || p.ManufacturerProductNumber;
+    const dkSku = bestVar?.DigiKeyProductNumber || p.DigiKeyPartNumber || p.ManufacturerProductNumber;
 
     let image = p.PrimaryPhoto || p.PhotoUrl || '';
     if (image && !image.startsWith('http')) {
@@ -58,13 +61,15 @@ export default defineEventHandler(async (event) => {
       value: param.ValueText
     }));
 
-    const rawMinQty = p.MinimumOrderQuantity || p.ProductVariations?.[0]?.MinimumOrderQuantity || 1;
+    const rawMinQty = bestVar?.MinimumOrderQuantity || p.MinimumOrderQuantity || 1;
     let minQty = Math.max(1, rawMinQty);
     if (finalPriceUSD > 0 && finalPriceUSD < 0.10 && minQty === 1) {
       minQty = 10;
     } else if (finalPriceUSD >= 0.10 && finalPriceUSD < 0.25 && minQty === 1) {
       minQty = 5;
     }
+
+    const pkgName = bestVar?.PackageType?.Name || p.Packaging?.Name || p.ProductVariations?.[0]?.PackageType?.Name || 'Estándar';
 
     return {
       success: true,
@@ -80,8 +85,8 @@ export default defineEventHandler(async (event) => {
         family: p.Family?.Name || '',
         series: p.Series?.Name || '',
         status: p.ProductStatus?.Status || 'Activo',
-        stock: p.QuantityAvailable || 0,
-        inStock: (p.QuantityAvailable || 0) > 0,
+        stock: bestVar?.QuantityAvailableforPackageType || p.QuantityAvailable || 0,
+        inStock: (bestVar?.QuantityAvailableforPackageType || p.QuantityAvailable || 0) > 0,
         leadTimeWeeks: p.ManufacturerLeadWeeks || null,
         minimumOrderQuantity: minQty,
         basePriceUSD: baseUnitPriceUSD,
@@ -91,7 +96,7 @@ export default defineEventHandler(async (event) => {
         datasheetUrl: p.DatasheetUrl || null,
         productUrl: p.ProductUrl || null,
         parameters,
-        packaging: p.Packaging?.Name || p.ProductVariations?.[0]?.PackageType?.Name || 'Estándar',
+        packaging: pkgName,
         rohsStatus: p.RohsStatus || p.Classifications?.RohsStatus || 'Cumple con RoHS'
       }
     };

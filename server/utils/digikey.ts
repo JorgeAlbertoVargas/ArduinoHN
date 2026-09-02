@@ -104,3 +104,34 @@ export async function fetchDigikeyApi<T = any>(
     });
   }
 }
+
+/**
+ * Selecciona la mejor variación de empaque para venta al detalle (unitario / maker),
+ * priorizando compras individuales (Cut Tape, Bulk, Tube) sobre carretes industriales (Tape & Reel).
+ */
+export function selectBestRetailVariation(product: any): any {
+  const variations = product?.ProductVariations || [];
+  if (variations.length === 0) return null;
+  if (variations.length === 1) return variations[0];
+
+  // 1. Filtrar variaciones con stock disponible
+  const withStock = variations.filter((v: any) => (v.QuantityAvailableforPackageType || 0) > 0);
+  const pool = withStock.length > 0 ? withStock : variations;
+
+  // 2. Ordenar por MinimumOrderQuantity ascendente (priorizar minQty = 1)
+  const sorted = [...pool].sort((a: any, b: any) => {
+    const minA = a.MinimumOrderQuantity || 1;
+    const minB = b.MinimumOrderQuantity || 1;
+    if (minA !== minB) return minA - minB;
+    
+    // Preferir Cinta Cortada (CT) o A Granel sobre Digi-Reel si tienen el mismo minQty
+    const isPreferredA = a.PackageType?.Name?.toLowerCase().includes('cortada') || a.PackageType?.Name?.toLowerCase().includes('cut') || a.PackageType?.Name?.toLowerCase().includes('granel') || a.PackageType?.Name?.toLowerCase().includes('bulk');
+    const isPreferredB = b.PackageType?.Name?.toLowerCase().includes('cortada') || b.PackageType?.Name?.toLowerCase().includes('cut') || b.PackageType?.Name?.toLowerCase().includes('granel') || b.PackageType?.Name?.toLowerCase().includes('bulk');
+    if (isPreferredA && !isPreferredB) return -1;
+    if (!isPreferredA && isPreferredB) return 1;
+
+    return 0;
+  });
+
+  return sorted[0];
+}

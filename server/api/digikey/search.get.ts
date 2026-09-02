@@ -52,23 +52,26 @@ export default defineEventHandler(async (event) => {
     });
 
     const products = (rawData.Products || []).map((p: any) => {
-      // 1. Determinar precio base unitario
+      // 0. Seleccionar la mejor variación al detalle (Cut Tape / Bulk / Unitario)
+      const bestVar = selectBestRetailVariation(p);
+
+      // 1. Determinar precio base unitario minorista
       let baseUnitPriceUSD = p.UnitPrice || 0;
-      if (!baseUnitPriceUSD && p.StandardPricing && p.StandardPricing.length > 0) {
+      if (bestVar?.StandardPricing && bestVar.StandardPricing.length > 0) {
+        baseUnitPriceUSD = bestVar.StandardPricing[0].UnitPrice || 0;
+      } else if (!baseUnitPriceUSD && p.StandardPricing && p.StandardPricing.length > 0) {
         baseUnitPriceUSD = p.StandardPricing[0].UnitPrice || 0;
-      } else if (!baseUnitPriceUSD && p.ProductVariations && p.ProductVariations.length > 0) {
-        const v = p.ProductVariations[0];
-        if (v.StandardPricing && v.StandardPricing.length > 0) {
-          baseUnitPriceUSD = v.StandardPricing[0].UnitPrice || 0;
-        }
       }
 
       const finalPriceUSD = Number((baseUnitPriceUSD * profitMargin).toFixed(2));
 
       // 2. Mapear escalas de precio
-      const rawPriceBreaks = (p.StandardPricing && p.StandardPricing.length > 0)
-        ? p.StandardPricing
-        : (p.ProductVariations?.[0]?.StandardPricing || []);
+      const rawPriceBreaks = (bestVar?.StandardPricing && bestVar.StandardPricing.length > 0)
+        ? bestVar.StandardPricing
+        : (p.StandardPricing && p.StandardPricing.length > 0)
+          ? p.StandardPricing
+          : (p.ProductVariations?.[0]?.StandardPricing || []);
+
       const priceBreaks = rawPriceBreaks.map((pb: any) => ({
         breakQuantity: pb.BreakQuantity,
         unitPriceUSD: Number((pb.UnitPrice * profitMargin).toFixed(2)),
@@ -80,7 +83,7 @@ export default defineEventHandler(async (event) => {
       const detailedDesc = p.Description?.DetailedDescription || p.DetailedDescription || productDesc;
 
       // 4. SKU de DigiKey
-      const dkSku = p.DigiKeyPartNumber || p.ProductVariations?.[0]?.DigiKeyProductNumber || p.ManufacturerProductNumber;
+      const dkSku = bestVar?.DigiKeyProductNumber || p.DigiKeyPartNumber || p.ManufacturerProductNumber;
 
       // 5. Normalizar foto
       let image = p.PrimaryPhoto || p.PhotoUrl || '';
@@ -95,12 +98,11 @@ export default defineEventHandler(async (event) => {
         value: param.ValueText
       }));
 
-      // 7. Cantidad Mínima y Monto Mínimo para elementos que valen centavos
-      const rawMinQty = p.MinimumOrderQuantity || p.ProductVariations?.[0]?.MinimumOrderQuantity || 1;
+      // 7. Cantidad Mínima y Monto Mínimo
+      const rawMinQty = bestVar?.MinimumOrderQuantity || p.MinimumOrderQuantity || 1;
       let minQty = Math.max(1, rawMinQty);
       
-      // Si el precio unitario es menor a $0.10 USD (o menor a $0.25 USD) y el empaque permite compra fraccionada,
-      // establecemos un lote/pack mínimo para que no se venda una unidad suelta de centavos
+      // Si el componente vale menos de 10 centavos USD, establecemos lote de 10
       if (finalPriceUSD > 0 && finalPriceUSD < 0.10 && minQty === 1) {
         minQty = 10;
       } else if (finalPriceUSD >= 0.10 && finalPriceUSD < 0.25 && minQty === 1) {
