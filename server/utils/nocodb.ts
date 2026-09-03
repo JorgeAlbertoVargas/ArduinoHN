@@ -24,6 +24,7 @@ export const fetchNocoDB = async (tableId: string, path: string = '', options: a
   }
 
   const response = await $fetch(url, {
+    timeout: 3500,
     ...options,
     headers
   })

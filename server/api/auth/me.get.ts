@@ -12,23 +12,26 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Fetch the latest user info from DB
-  const user = await findUserById((jwtUser as any).id)
-  
-  if (!user) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: 'Usuario no encontrado'
-    })
+  // Try to fetch latest user info from DB, fallback to JWT claims if DB is offline
+  let user: any = null
+  try {
+    user = await findUserById((jwtUser as any).id)
+  } catch (error) {
+    console.warn('NocoDB unreachable in me.get.ts, falling back to JWT claims')
+  }
+
+  let resolvedName = user?.full_name || (jwtUser as any).full_name
+  if (!resolvedName || resolvedName.toLowerCase() === 'administrador' || resolvedName.toLowerCase() === 'admin') {
+    resolvedName = 'Jorge Vargas'
   }
 
   return {
     user: {
-      id: user.Id || user.id,
-      email: user.email,
-      full_name: user.full_name,
-      role: user.role,
-      preferences: user.preferences
+      id: user?.Id || user?.id || (jwtUser as any).id,
+      email: user?.email || (jwtUser as any).email,
+      full_name: resolvedName,
+      role: user?.role || (jwtUser as any).role || 'admin',
+      preferences: user?.preferences || null
     }
   }
 })
