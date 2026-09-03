@@ -43,7 +43,31 @@
       {{ successMsg }}
     </div>
 
-    <div class="admin-card glass">
+    <!-- Tab Navigation -->
+    <div class="users-tabs-nav">
+      <button 
+        type="button" 
+        class="tab-btn" 
+        :class="{ active: currentTab === 'users' }"
+        @click="currentTab = 'users'"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Usuarios Registrados ({{ users.length }})</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="tab-btn" 
+        :class="{ active: currentTab === 'audit' }"
+        @click="currentTab = 'audit'"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="3"/></svg>
+        <span>Registro de Auditoría de Seguridad ({{ auditLogs.length }})</span>
+      </button>
+    </div>
+
+    <!-- TAB 1: LISTA DE USUARIOS -->
+    <div v-show="currentTab === 'users'" class="admin-card glass">
       <div class="card-header">
         <div class="table-title-wrap">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -108,6 +132,68 @@
             <tr v-if="filteredUsers.length === 0">
               <td colspan="5" class="text-center text-muted py-6">
                 No se encontraron usuarios.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 2: AUDIT LOGS TABLE -->
+    <div v-show="currentTab === 'audit'" class="admin-card glass">
+      <div class="card-header">
+        <div class="table-title-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="3"/></svg>
+          <h3>Historial de Acciones y Cambios de Privilegios</h3>
+        </div>
+        <button class="btn btn-outline btn-sm" @click="fetchUsers">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <span>Actualizar Historial</span>
+        </button>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr class="audit-header">
+              <th>Fecha y Hora</th>
+              <th>Administrador Autorizador</th>
+              <th>Usuario Afectado</th>
+              <th>Acción Realizada</th>
+              <th>Transición de Rol</th>
+              <th>Detalles</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="log in auditLogs" :key="log.id">
+              <td class="small font-mono text-muted">
+                {{ formatHondurasDateTime(log.timestamp) }}
+              </td>
+              <td>
+                <div class="fw-bold">{{ log.adminName }}</div>
+                <div class="small text-muted font-mono">{{ log.adminEmail }}</div>
+              </td>
+              <td>
+                <div class="fw-bold">{{ log.targetUserName || 'Usuario' }}</div>
+                <div class="small text-muted font-mono">{{ log.targetUserEmail }}</div>
+              </td>
+              <td>
+                <span class="audit-action-tag">{{ log.action }}</span>
+              </td>
+              <td>
+                <div class="role-transition">
+                  <span class="badge" :class="'badge-' + (log.previousRole || 'cliente')">{{ (log.previousRole || 'cliente').toUpperCase() }}</span>
+                  <span class="transition-arrow">➔</span>
+                  <span class="badge" :class="'badge-' + log.newRole">{{ log.newRole.toUpperCase() }}</span>
+                </div>
+              </td>
+              <td class="small text-muted">
+                {{ log.details }}
+              </td>
+            </tr>
+            <tr v-if="auditLogs.length === 0">
+              <td colspan="6" class="text-center text-muted py-6">
+                No hay registros de auditoría aún.
               </td>
             </tr>
           </tbody>
@@ -201,7 +287,9 @@ import { useAuth } from '~/composables/useAuth'
 const { isAdmin } = useAuth()
 const router = useRouter()
 
+const currentTab = ref<'users' | 'audit'>('users')
 const users = ref<any[]>([])
+const auditLogs = ref<any[]>([])
 const isLoading = ref(true)
 const errorMsg = ref('')
 const successMsg = ref('')
@@ -221,7 +309,8 @@ const pendingChange = ref({
   userEmail: '',
   newRole: '',
   previousRole: '',
-  sentToEmail: ''
+  sentToEmail: '',
+  devOtp: ''
 })
 
 onMounted(async () => {
@@ -235,8 +324,13 @@ onMounted(async () => {
 const fetchUsers = async () => {
   isLoading.value = true
   try {
-    const response = await $fetch<any[]>('/api/admin/users')
-    users.value = response
+    const response: any = await $fetch('/api/admin/users')
+    if (Array.isArray(response)) {
+      users.value = response
+    } else if (response) {
+      users.value = response.users || []
+      auditLogs.value = response.auditLogs || []
+    }
   } catch (error: any) {
     errorMsg.value = 'Error al cargar usuarios. Asegúrate de ser administrador.'
   } finally {
@@ -260,6 +354,22 @@ const formatHondurasDate = (dateStr: string) => {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
+    })
+  } catch (e) {
+    return dateStr
+  }
+}
+
+const formatHondurasDateTime = (dateStr: string) => {
+  try {
+    const date = new Date(dateStr)
+    return date.toLocaleString('es-HN', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
     })
   } catch (e) {
     return dateStr
@@ -504,6 +614,70 @@ useHead({
 .btn-test-email:hover {
   background: var(--color-primary);
   color: #ffffff;
+}
+
+/* Tabs Navigation */
+.users-tabs-nav {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 9999px;
+  font-family: var(--font-family);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-muted, #64748b);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: rgba(0, 151, 156, 0.05);
+}
+
+.tab-btn.active {
+  background: var(--color-primary);
+  color: #ffffff;
+  border-color: var(--color-primary);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 151, 156, 0.25);
+}
+
+.audit-header th {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+}
+
+.audit-action-tag {
+  display: inline-block;
+  background: rgba(2, 132, 199, 0.1);
+  color: #0284c7;
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+}
+
+.role-transition {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.transition-arrow {
+  color: var(--text-muted);
+  font-weight: 800;
+  font-size: 0.8rem;
 }
 
 /* Security Info Banner */
