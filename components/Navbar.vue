@@ -41,14 +41,41 @@
 
                     <!-- Tree View Structure -->
                     <div class="tree-menu">
-                      <!-- Node: Gestión de Usuarios -->
-                      <div class="tree-node">
-                        <NuxtLink to="/admin/users" class="tree-item leaf-node">
-                          <span class="tree-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                      <!-- Expandable Parent Node: Usuarios & Seguridad -->
+                      <div class="tree-node tree-branch" :class="{ 'is-expanded': isUsersExpanded }">
+                        <button 
+                          type="button" 
+                          class="tree-item branch-header"
+                          @click.stop="isUsersExpanded = !isUsersExpanded"
+                        >
+                          <span class="tree-toggle">
+                            <svg :class="{ 'rotated': isUsersExpanded }" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="m9 18 6-6-6-6"/>
+                            </svg>
                           </span>
-                          <span class="tree-label">Gestión de Usuarios</span>
-                        </NuxtLink>
+                          <span class="tree-icon folder-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                          </span>
+                          <span class="tree-label">Usuarios & Seguridad</span>
+                        </button>
+
+                        <div v-show="isUsersExpanded" class="tree-children">
+                          <NuxtLink to="/admin/users" class="tree-item tree-child leaf-node">
+                            <span class="tree-icon child-icon">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+                            </span>
+                            <span class="tree-label">Gestión de Usuarios</span>
+                          </NuxtLink>
+
+                          <NuxtLink to="/admin/audit-logs" class="tree-item tree-child leaf-node">
+                            <span class="tree-icon child-icon">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="3"/></svg>
+                            </span>
+                            <span class="tree-label">Auditoría de Seguridad</span>
+                          </NuxtLink>
+                        </div>
                       </div>
 
                       <!-- Node: Ofertas del mes -->
@@ -224,6 +251,7 @@ import { useLoyalty } from '~/composables/useLoyalty';
 const { user, isAuthenticated, isAdmin, logout } = useAuth();
 const { points, fetchLoyalty } = useLoyalty();
 
+const isUsersExpanded = ref(true);
 const isSettingsExpanded = ref(true);
 const isProductAnalysisExpanded = ref(true);
 const isMobileMenuOpen = ref(false);
