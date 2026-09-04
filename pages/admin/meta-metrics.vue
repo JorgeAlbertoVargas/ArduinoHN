@@ -108,7 +108,15 @@
       <div class="campaign-meta-strip glass-card">
         <div class="strip-field name-field">
           <label>Campaña / Análisis:</label>
-          <input type="text" v-model="activeScenario.name" placeholder="Ej. Kit IoT Starter - Audiencia Fría" class="form-control-clean font-bold" />
+          <input type="text" v-model="activeScenario.name" list="product-list" placeholder="Ej. Kit IoT Starter - Audiencia Fría" class="form-control-clean font-bold" />
+          <datalist id="product-list">
+            <option value="Simulación: Kit IoT Starter"></option>
+            <option value="Simulación: Arduino Uno R3"></option>
+            <option value="Simulación: Raspberry Pi 4"></option>
+            <option value="Simulación: Módulo ESP32"></option>
+            <option value="Simulación: Brazo Robótico"></option>
+            <option value="Simulación: Kit Sensores Básicos"></option>
+          </datalist>
         </div>
         <div class="strip-field">
           <label>Tipo:</label>
