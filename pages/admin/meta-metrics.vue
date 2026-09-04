@@ -106,9 +106,9 @@
       
       <!-- Top Quick Meta Bar -->
       <div class="campaign-meta-strip glass-card">
-        <div class="strip-field name-field">
+        <div class="strip-field name-field" style="flex: 1; min-width: 350px;">
           <label>Campaña / Análisis:</label>
-          <input type="text" v-model="activeScenario.name" list="product-list" placeholder="Ej. Kit IoT Starter - Audiencia Fría" class="form-control-clean font-bold" />
+          <input type="text" v-model="activeScenario.name" list="product-list" placeholder="Ej. Busca un producto o ingresa un nombre..." class="form-control-clean font-bold" style="width: 100%;" />
           <datalist id="product-list">
             <option v-for="p in allProducts" :key="p.id" :value="`Simulación: ${p.title}`"></option>
           </datalist>
