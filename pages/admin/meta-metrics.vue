@@ -110,12 +110,7 @@
           <label>Campaña / Análisis:</label>
           <input type="text" v-model="activeScenario.name" list="product-list" placeholder="Ej. Kit IoT Starter - Audiencia Fría" class="form-control-clean font-bold" />
           <datalist id="product-list">
-            <option value="Simulación: Kit IoT Starter"></option>
-            <option value="Simulación: Arduino Uno R3"></option>
-            <option value="Simulación: Raspberry Pi 4"></option>
-            <option value="Simulación: Módulo ESP32"></option>
-            <option value="Simulación: Brazo Robótico"></option>
-            <option value="Simulación: Kit Sensores Básicos"></option>
+            <option v-for="p in allProducts" :key="p.id" :value="`Simulación: ${p.title}`"></option>
           </datalist>
         </div>
         <div class="strip-field">
@@ -1235,8 +1230,10 @@
 import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { useMetaMetrics } from '~/composables/useMetaMetrics'
+import { useProducts } from '~/composables/useProducts'
 
 const route = useRoute()
+const { allProducts } = useProducts()
 const currentTab = ref('tree')
 const selectedNode = ref<string>('roas')
 const searchFilter = ref('')
