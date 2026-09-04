@@ -201,11 +201,12 @@
               <!-- ROOT FOLDER NODE: ROAS (Level 1) -->
               <div 
                 class="f3d-folder pos-f-roas" 
-                :class="{ 'is-selected': selectedNode === 'roas', 'is-editing': editingNode === 'roas' }"
+                :class="[{ 'is-selected': selectedNode === 'roas', 'is-editing': editingNode === 'roas' }, getNodeStatus('roas')]"
                 @click="selectedNode = 'roas'"
                 @dblclick.stop="handleNodeDblClick('roas')"
                 title="Doble clic para editar ROAS objetivo"
               >
+                <div class="kpi-tooltip" v-if="getNodeTooltip('roas')">{{ getNodeTooltip('roas') }}</div>
                 <div class="f3d-back theme-arduino">
                   <div class="f3d-tab tab-arduino-orange">
                     <span class="f3d-tab-icon">🏆</span>
@@ -251,11 +252,12 @@
               <!-- LEVEL 2 FOLDER: AOV (Ticket Promedio) -->
               <div 
                 class="f3d-folder pos-f-aov" 
-                :class="{ 'is-selected': selectedNode === 'aov', 'is-editing': editingNode === 'aov' }"
+                :class="[{ 'is-selected': selectedNode === 'aov', 'is-editing': editingNode === 'aov' }, getNodeStatus('aov')]"
                 @click="selectedNode = 'aov'"
                 @dblclick.stop="handleNodeDblClick('aov')"
                 title="Doble clic para editar AOV objetivo"
               >
+                <div class="kpi-tooltip" v-if="getNodeTooltip('aov')">{{ getNodeTooltip('aov') }}</div>
                 <div class="f3d-back theme-arduino">
                   <div class="f3d-tab tab-arduino-teal">
                     <span class="f3d-tab-icon">📦</span>
@@ -298,11 +300,12 @@
               <!-- LEVEL 2 FOLDER: CPA (Costo por Adquisición) -->
               <div 
                 class="f3d-folder pos-f-cpa" 
-                :class="{ 'is-selected': selectedNode === 'cpa', 'is-editing': editingNode === 'cpa' }"
+                :class="[{ 'is-selected': selectedNode === 'cpa', 'is-editing': editingNode === 'cpa' }, getNodeStatus('cpa')]"
                 @click="selectedNode = 'cpa'"
                 @dblclick.stop="handleNodeDblClick('cpa')"
                 title="Doble clic para editar CPA objetivo"
               >
+                <div class="kpi-tooltip" v-if="getNodeTooltip('cpa')">{{ getNodeTooltip('cpa') }}</div>
                 <div class="f3d-back theme-arduino">
                   <div class="f3d-tab tab-arduino-dark">
                     <span class="f3d-tab-icon">🎯</span>
@@ -349,11 +352,12 @@
               <!-- LEVEL 3 FOLDER: PRECIO MEDIO -->
               <div 
                 class="f3d-folder f3d-compact pos-f-precio" 
-                :class="{ 'is-selected': selectedNode === 'precio', 'is-editing': editingNode === 'precio' }"
+                :class="[{ 'is-selected': selectedNode === 'precio', 'is-editing': editingNode === 'precio' }, getNodeStatus('precio')]"
                 @click="selectedNode = 'precio'"
                 @dblclick.stop="handleNodeDblClick('precio')"
                 title="Doble clic para editar Precio"
               >
+                <div class="kpi-tooltip" v-if="getNodeTooltip('precio')">{{ getNodeTooltip('precio') }}</div>
                 <div class="f3d-back theme-arduino">
                   <div class="f3d-tab tab-arduino-teal">
                     <span class="f3d-tab-text">Unitario</span>
@@ -391,11 +395,12 @@
               <!-- LEVEL 3 FOLDER: CANTIDAD MEDIA -->
               <div 
                 class="f3d-folder f3d-compact pos-f-cant" 
-                :class="{ 'is-selected': selectedNode === 'cant', 'is-editing': editingNode === 'cant' }"
+                :class="[{ 'is-selected': selectedNode === 'cant', 'is-editing': editingNode === 'cant' }, getNodeStatus('cant')]"
                 @click="selectedNode = 'cant'"
                 @dblclick.stop="handleNodeDblClick('cant')"
                 title="Doble clic para editar Cantidad Media"
               >
+                <div class="kpi-tooltip" v-if="getNodeTooltip('cant')">{{ getNodeTooltip('cant') }}</div>
                 <div class="f3d-back theme-arduino">
                   <div class="f3d-tab tab-arduino-teal">
                     <span class="f3d-tab-text">Uds/Orden</span>
@@ -432,11 +437,12 @@
               <!-- LEVEL 3 FOLDER: CPC (Costo Clic) -->
               <div 
                 class="f3d-folder f3d-compact pos-f-cpc" 
-                :class="{ 'is-selected': selectedNode === 'cpc', 'is-editing': editingNode === 'cpc' }"
+                :class="[{ 'is-selected': selectedNode === 'cpc', 'is-editing': editingNode === 'cpc' }, getNodeStatus('cpc')]"
                 @click="selectedNode = 'cpc'"
                 @dblclick.stop="handleNodeDblClick('cpc')"
                 title="Doble clic para editar CPC objetivo"
               >
+                <div class="kpi-tooltip" v-if="getNodeTooltip('cpc')">{{ getNodeTooltip('cpc') }}</div>
                 <div class="f3d-back theme-arduino">
                   <div class="f3d-tab tab-arduino-orange">
                     <span class="f3d-tab-text">Por Clic</span>
@@ -474,11 +480,12 @@
               <!-- LEVEL 3 FOLDER: %CVR (Conversión Landing) -->
               <div 
                 class="f3d-folder f3d-compact pos-f-cvr" 
-                :class="{ 'is-selected': selectedNode === 'cvr', 'is-editing': editingNode === 'cvr' }"
+                :class="[{ 'is-selected': selectedNode === 'cvr', 'is-editing': editingNode === 'cvr' }, getNodeStatus('cvr')]"
                 @click="selectedNode = 'cvr'"
                 @dblclick.stop="handleNodeDblClick('cvr')"
                 title="Doble clic para editar %CVR"
               >
+                <div class="kpi-tooltip" v-if="getNodeTooltip('cvr')">{{ getNodeTooltip('cvr') }}</div>
                 <div class="f3d-back theme-arduino">
                   <div class="f3d-tab tab-arduino-dark">
                     <span class="f3d-tab-text">Tienda</span>
@@ -519,11 +526,12 @@
               <!-- LEVEL 4 FOLDER: CPM (Subasta Meta) -->
               <div 
                 class="f3d-folder f3d-mini pos-f-cpm" 
-                :class="{ 'is-selected': selectedNode === 'cpm', 'is-editing': editingNode === 'cpm' }"
+                :class="[{ 'is-selected': selectedNode === 'cpm', 'is-editing': editingNode === 'cpm' }, getNodeStatus('cpm')]"
                 @click="selectedNode = 'cpm'"
                 @dblclick.stop="handleNodeDblClick('cpm')"
                 title="Doble clic para editar CPM"
               >
+                <div class="kpi-tooltip" v-if="getNodeTooltip('cpm')">{{ getNodeTooltip('cpm') }}</div>
                 <div class="f3d-back theme-arduino">
                   <div class="f3d-tab tab-arduino-dark">
                     <span class="f3d-tab-text">Subasta</span>
@@ -561,11 +569,12 @@
               <!-- LEVEL 4 FOLDER: %CTR (Creativo Único) -->
               <div 
                 class="f3d-folder f3d-mini pos-f-ctr" 
-                :class="{ 'is-selected': selectedNode === 'ctr', 'is-editing': editingNode === 'ctr' }"
+                :class="[{ 'is-selected': selectedNode === 'ctr', 'is-editing': editingNode === 'ctr' }, getNodeStatus('ctr')]"
                 @click="selectedNode = 'ctr'"
                 @dblclick.stop="handleNodeDblClick('ctr')"
                 title="Doble clic para editar %CTR"
               >
+                <div class="kpi-tooltip" v-if="getNodeTooltip('ctr')">{{ getNodeTooltip('ctr') }}</div>
                 <div class="f3d-back theme-arduino">
                   <div class="f3d-tab tab-arduino-teal">
                     <span class="f3d-tab-text">Creativo</span>
@@ -1236,6 +1245,26 @@ const route = useRoute()
 const { allProducts } = useProducts()
 const currentTab = ref('tree')
 const selectedNode = ref<string>('roas')
+
+import { META_KPI_RULES } from '~/composables/useMetaMetrics'
+
+const getNodeStatus = (metricKey: string) => {
+  if (metricKey === 'cpm' || metricKey === 'cpc' || metricKey === 'precio' || metricKey === 'cant' || metricKey === 'aov') return ''
+  const keywordMap: any = { ctr: 'CTR Único', cvr: 'CVR', cpa: 'CPA', roas: 'ROAS', frecuencia: 'Frecuencia' }
+  const match = diagnosis.value.alerts.find((a: any) => a.metric.includes(keywordMap[metricKey] || metricKey))
+  return match ? `node-${match.level}` : 'node-healthy'
+}
+
+const getNodeTooltip = (metricKey: string) => {
+  if (metricKey === 'cpm') return META_KPI_RULES.cpmTip
+  if (metricKey === 'cpc') return META_KPI_RULES.cpcTip
+  if (metricKey === 'precio' || metricKey === 'cant' || metricKey === 'aov') return ''
+  const keywordMap: any = { ctr: 'CTR Único', cvr: 'CVR', cpa: 'CPA', roas: 'ROAS', frecuencia: 'Frecuencia' }
+  const match = diagnosis.value.alerts.find((a: any) => a.metric.includes(keywordMap[metricKey] || metricKey))
+  if (!match) return ''
+  return `${match.level.toUpperCase()}\n${match.diagnosisText}\n\nAcción: ${match.actionText}`
+}
+
 const searchFilter = ref('')
 
 // Interactive Node Inline Editing via Double-Click
@@ -2616,4 +2645,55 @@ const exportToCSV = () => {
   from { opacity: 0; transform: translateY(3px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* KPI Alerts & Tooltips */
+.node-alert .f3d-front { border-color: #f59e0b !important; box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.5), 0 4px 15px rgba(245, 158, 11, 0.25) !important; }
+.node-alert .f3d-metric-val { color: #d97706 !important; }
+.node-critical .f3d-front { border-color: #ef4444 !important; box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.5), 0 4px 15px rgba(239, 68, 68, 0.25) !important; }
+.node-critical .f3d-metric-val { color: #dc2626 !important; }
+.node-healthy .f3d-front { border-color: #10b981 !important; box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.5), 0 4px 15px rgba(16, 185, 129, 0.15) !important; }
+.node-healthy .f3d-metric-val { color: #059669 !important; }
+
+.kpi-tooltip {
+  position: absolute;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: rgba(15, 23, 42, 0.98);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  width: max-content;
+  max-width: 260px;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 100;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.1);
+  white-space: pre-wrap;
+  font-family: monospace;
+}
+.kpi-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: rgba(15, 23, 42, 0.98) transparent transparent transparent;
+}
+.f3d-folder:hover .kpi-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+.node-alert .kpi-tooltip { border-top: 3px solid #f59e0b; }
+.node-critical .kpi-tooltip { border-top: 3px solid #ef4444; }
+.node-healthy .kpi-tooltip { border-top: 3px solid #10b981; }
+
 </style>

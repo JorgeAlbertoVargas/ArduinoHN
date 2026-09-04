@@ -123,6 +123,68 @@ const PRESET_TEMPLATES: Partial<MetaScenario>[] = [
   }
 ];
 
+// Tabla de Configuración de Reglas KPI (Fácilmente adaptable a futuro para 3ra Forma Normal en BDD)
+export const META_KPI_RULES = {
+  ctrUnico: {
+    minHealthy: 1.0,
+    alertText: 'El creativo no habla el lenguaje del ingeniero o maker.',
+    alertAction: 'Rota creativo — cambia el gancho de los primeros 3 segundos.',
+    healthyText: 'Creativo resonando adecuadamente con la audiencia técnica.',
+    healthyAction: 'Mantén el formato y prueba variaciones sutiles de copy.'
+  },
+  ctrTodos: {
+    minHealthy: 2.0,
+    minAlert: 1.5,
+    alertText: 'Baja retención visual inicial.',
+    alertAction: 'El arte visual no es disruptivo; prueba formato Reel.',
+    healthyText: 'El anuncio atrae la atención y genera clics generales.',
+    healthyAction: 'Monitorear la tasa de conversión posterior.'
+  },
+  frecuenciaFria: {
+    maxHealthy: 2.0,
+    alertText: 'Saturación publicitaria en nicho técnico.',
+    alertAction: 'Amplía audiencia o rota creatividades (nicho técnico se satura rápido).',
+    healthyText: 'Exposición equilibrada sin quemar la audiencia.',
+    healthyAction: 'Continuar monitoreo semanal.'
+  },
+  frecuenciaRetargeting: {
+    maxHealthy: 3.0,
+    alertText: 'Saturación sin nuevas ventas.',
+    alertAction: 'Refresca el público o cambia el ángulo del mensaje.',
+    healthyText: 'Recordatorio constante y efectivo.',
+    healthyAction: 'Mantener si las ventas continúan.'
+  },
+  cvr: {
+    minHealthy: 2.0,
+    alertText: 'Fricción en el proceso de compra o checkout.',
+    alertAction: 'Fricción en landing: revisa envío, stock, método de pago.',
+    healthyText: 'Embudo de conversión de tienda con buena fluidez.',
+    healthyAction: 'Testea upsells de cables y accesorios en el carrito.'
+  },
+  cpa: {
+    alertText: 'El costo publicitario por adquisición supera el margen de ganancia del producto.',
+    alertAction: 'Diagnostica con la cascada: ¿es problema de CPC o de CVR?'
+  },
+  tasaCierre: {
+    minHealthy: 5.0,
+    alertText: 'Baja conversión de leads a ventas.',
+    alertAction: 'El fallo está en el proceso comercial, no en Meta Ads.',
+    healthyText: 'Proceso de ventas por chat altamente efectivo.',
+    healthyAction: 'Escalar presupuesto en campañas de mensajes.'
+  },
+  roas: {
+    minHealthy: 3.0,
+    minAlert: 2.0,
+    alertText: 'Rentabilidad inviable en dropshipping / comercio electrónico.',
+    alertAction: 'Sube el AOV con kits/bundles antes de tocar el CPA.',
+    alertActionMedium: 'Explora bundles con mayor margen para dar holgura a las pujas de Meta.',
+    healthyText: 'Excelente retorno sobre inversión publicitaria.',
+    healthyAction: 'Campaña lista para escalar presupuesto verticalmente.'
+  },
+  cpmTip: 'Si CPM sube > 20% en 1 semana: Revisa saturación de audiencia o calidad del anuncio.',
+  cpcTip: 'Si CPC sube sin cambio en CTR: Subasta saturada; ajusta puja o abre segmentación (Broad).'
+}
+
 export const useMetaMetrics = () => {
   const scenarios = ref<MetaScenario[]>([])
   const isLoading = ref(false)
@@ -236,36 +298,63 @@ export const useMetaMetrics = () => {
     const marginAmount = computedAov.value * ((Number(activeScenario.value.margenBrutoPct) || 35) / 100)
 
     // CTR Único Audit
-    if (ctr < 1.0) {
+    if (ctr < META_KPI_RULES.ctrUnico.minHealthy) {
       alerts.push({
         metric: 'CTR Único (Enlace)',
         level: 'critical',
         currentValue: `${ctr.toFixed(2)}%`,
-        benchmark: '≥ 1.0% en público técnico',
-        diagnosisText: 'El creativo no habla el lenguaje del ingeniero o maker.',
-        actionText: 'Cambia el ángulo: muestra datasheets, pines, esquemas de conexión o caso de uso real en los primeros 3s.'
+        benchmark: `≥ ${META_KPI_RULES.ctrUnico.minHealthy}%`,
+        diagnosisText: META_KPI_RULES.ctrUnico.alertText,
+        actionText: META_KPI_RULES.ctrUnico.alertAction
       })
     } else {
       alerts.push({
         metric: 'CTR Único (Enlace)',
         level: 'healthy',
         currentValue: `${ctr.toFixed(2)}%`,
-        benchmark: '≥ 1.0%',
-        diagnosisText: 'Creativo resonando adecuadamente con la audiencia técnica.',
-        actionText: 'Mantén el formato y prueba variaciones sutiles de copy.'
+        benchmark: `≥ ${META_KPI_RULES.ctrUnico.minHealthy}%`,
+        diagnosisText: META_KPI_RULES.ctrUnico.healthyText,
+        actionText: META_KPI_RULES.ctrUnico.healthyAction
       })
     }
 
-    // Frecuencia Audit (Specific for technical niche: limit is 2.0 on cold traffic!)
-    const freqThreshold = campaignType === 'retargeting' ? 3.0 : 2.0
+    // CTR Todos Audit
+    const ctrTodos = Number(activeScenario.value.ctrTodos) || 0
+    if (ctrTodos > 0) {
+      if (ctrTodos < META_KPI_RULES.ctrTodos.minAlert) {
+        alerts.push({
+          metric: 'CTR (Todos)',
+          level: 'alert',
+          currentValue: `${ctrTodos.toFixed(2)}%`,
+          benchmark: `≥ ${META_KPI_RULES.ctrTodos.minHealthy}%`,
+          diagnosisText: META_KPI_RULES.ctrTodos.alertText,
+          actionText: META_KPI_RULES.ctrTodos.alertAction
+        })
+      } else if (ctrTodos >= META_KPI_RULES.ctrTodos.minHealthy) {
+        alerts.push({
+          metric: 'CTR (Todos)',
+          level: 'healthy',
+          currentValue: `${ctrTodos.toFixed(2)}%`,
+          benchmark: `≥ ${META_KPI_RULES.ctrTodos.minHealthy}%`,
+          diagnosisText: META_KPI_RULES.ctrTodos.healthyText,
+          actionText: META_KPI_RULES.ctrTodos.healthyAction
+        })
+      }
+    }
+
+    // Frecuencia Audit
+    const isRetargeting = campaignType === 'retargeting'
+    const freqThreshold = isRetargeting ? META_KPI_RULES.frecuenciaRetargeting.maxHealthy : META_KPI_RULES.frecuenciaFria.maxHealthy
+    const freqRule = isRetargeting ? META_KPI_RULES.frecuenciaRetargeting : META_KPI_RULES.frecuenciaFria
+
     if (freq > freqThreshold) {
       alerts.push({
-        metric: `Frecuencia (${campaignType === 'retargeting' ? 'Retargeting' : 'Audiencia Fría'})`,
+        metric: `Frecuencia (${isRetargeting ? 'Retargeting' : 'Audiencia Fría'})`,
         level: 'alert',
         currentValue: `${freq.toFixed(1)}x`,
-        benchmark: `≤ ${freqThreshold.toFixed(1)} en nicho técnico`,
-        diagnosisText: 'Saturación publicitaria: los ingenieros/makers sufren fatiga rápida (banner blindness).',
-        actionText: 'Amplía audiencia a electrónica DIY/Broad o introduce nuevos ángulos de creatividades.'
+        benchmark: `≤ ${freqThreshold.toFixed(1)}`,
+        diagnosisText: freqRule.alertText,
+        actionText: freqRule.alertAction
       })
     } else {
       alerts.push({
@@ -273,71 +362,105 @@ export const useMetaMetrics = () => {
         level: 'healthy',
         currentValue: `${freq.toFixed(1)}x`,
         benchmark: `≤ ${freqThreshold.toFixed(1)}`,
-        diagnosisText: 'Exposición equilibrada sin quemar la audiencia.',
-        actionText: 'Continuar monitoreo semanal.'
+        diagnosisText: freqRule.healthyText,
+        actionText: freqRule.healthyAction
       })
     }
 
     // CVR Landing / Checkout Audit
-    if (cvr < 2.0) {
+    if (cvr < META_KPI_RULES.cvr.minHealthy) {
       alerts.push({
-        metric: 'CVR (Conversión Landing/Tienda)',
+        metric: 'CVR (Conversión)',
         level: 'alert',
         currentValue: `${cvr.toFixed(2)}%`,
-        benchmark: '≥ 2.0% – 3.0%',
-        diagnosisText: 'Fricción en el proceso de compra o checkout.',
-        actionText: 'Optimiza la landing: aclara envíos en Honduras, métodos locales de pago y botón directo a WhatsApp de soporte técnico.'
+        benchmark: `≥ ${META_KPI_RULES.cvr.minHealthy}%`,
+        diagnosisText: META_KPI_RULES.cvr.alertText,
+        actionText: META_KPI_RULES.cvr.alertAction
       })
     } else {
       alerts.push({
         metric: 'CVR',
         level: 'healthy',
         currentValue: `${cvr.toFixed(2)}%`,
-        benchmark: '≥ 2.0%',
-        diagnosisText: 'Embudo de conversión de tienda con buena fluidez.',
-        actionText: 'Testea upsells de cables y accesorios en el carrito.'
+        benchmark: `≥ ${META_KPI_RULES.cvr.minHealthy}%`,
+        diagnosisText: META_KPI_RULES.cvr.healthyText,
+        actionText: META_KPI_RULES.cvr.healthyAction
       })
     }
 
     // CPA vs Margin
     if (cpa > marginAmount && cpa > 0) {
       alerts.push({
-        metric: 'CPA vs Margen Bruto',
+        metric: 'CPA',
         level: 'critical',
         currentValue: `$${cpa.toFixed(2)} (Margen: $${marginAmount.toFixed(2)})`,
         benchmark: 'CPA < Margen Bruto',
-        diagnosisText: 'El costo publicitario por adquisición supera el margen de ganancia del producto.',
-        actionText: 'Aplica la cascada: sube el AOV empaquetando en Kits o reduce el CPA mejorando el CVR.'
+        diagnosisText: META_KPI_RULES.cpa.alertText,
+        actionText: META_KPI_RULES.cpa.alertAction
       })
+    } else {
+      alerts.push({
+        metric: 'CPA',
+        level: 'healthy',
+        currentValue: `$${cpa.toFixed(2)}`,
+        benchmark: `CPA < $${marginAmount.toFixed(2)}`,
+        diagnosisText: 'Costo por adquisición rentable.',
+        actionText: 'Mantén el costo bajo control.'
+      })
+    }
+    
+    // Tasa de Cierre (Mensajes)
+    const isMessages = campaignType === 'lead_messages'
+    const tasaCierre = Number(activeScenario.value.tasaCierreMensajes) || 0
+    if (isMessages) {
+      if (tasaCierre < META_KPI_RULES.tasaCierre.minHealthy) {
+        alerts.push({
+          metric: 'Tasa Cierre',
+          level: 'alert',
+          currentValue: `${tasaCierre.toFixed(2)}%`,
+          benchmark: `≥ ${META_KPI_RULES.tasaCierre.minHealthy}%`,
+          diagnosisText: META_KPI_RULES.tasaCierre.alertText,
+          actionText: META_KPI_RULES.tasaCierre.alertAction
+        })
+      } else {
+        alerts.push({
+          metric: 'Tasa Cierre',
+          level: 'healthy',
+          currentValue: `${tasaCierre.toFixed(2)}%`,
+          benchmark: `≥ ${META_KPI_RULES.tasaCierre.minHealthy}%`,
+          diagnosisText: META_KPI_RULES.tasaCierre.healthyText,
+          actionText: META_KPI_RULES.tasaCierre.healthyAction
+        })
+      }
     }
 
     // ROAS Audit
-    if (roas < 2.0) {
+    if (roas < META_KPI_RULES.roas.minAlert) {
       alerts.push({
         metric: 'ROAS',
         level: 'critical',
         currentValue: `${roas.toFixed(2)}x`,
-        benchmark: '≥ 3.0x – 4.0x',
-        diagnosisText: 'Rentabilidad inviable en dropshipping / comercio electrónico.',
-        actionText: 'No bajes el CPA sacrificando volumen; empaqueta en bundle (Kit IoT $60 vs pieza de $25) para disparar el ROAS.'
+        benchmark: `≥ ${META_KPI_RULES.roas.minHealthy}x`,
+        diagnosisText: META_KPI_RULES.roas.alertText,
+        actionText: META_KPI_RULES.roas.alertAction
       })
-    } else if (roas < 3.0) {
+    } else if (roas < META_KPI_RULES.roas.minHealthy) {
       alerts.push({
         metric: 'ROAS',
         level: 'alert',
         currentValue: `${roas.toFixed(2)}x`,
-        benchmark: '≥ 3.0x – 4.0x',
+        benchmark: `≥ ${META_KPI_RULES.roas.minHealthy}x`,
         diagnosisText: 'Rentabilidad ajustada cerca del umbral de equilibrio.',
-        actionText: 'Explora bundles con mayor margen para dar holgura a las pujas de Meta.'
+        actionText: META_KPI_RULES.roas.alertActionMedium
       })
     } else {
       alerts.push({
         metric: 'ROAS',
         level: 'healthy',
         currentValue: `${roas.toFixed(2)}x`,
-        benchmark: '≥ 3.0x',
-        diagnosisText: 'Excelente retorno sobre inversión publicitaria.',
-        actionText: 'Campaña lista para escalar presupuesto verticalmente (15-20% cada 3 días).'
+        benchmark: `≥ ${META_KPI_RULES.roas.minHealthy}x`,
+        diagnosisText: META_KPI_RULES.roas.healthyText,
+        actionText: META_KPI_RULES.roas.healthyAction
       })
     }
 
