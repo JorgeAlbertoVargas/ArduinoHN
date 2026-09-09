@@ -89,7 +89,8 @@ export async function syncProductToOdoo(productData: {
   const odooProductData: any = {
     name: productData.title,
     list_price: productData.price,
-    type: 'product', // Cambiado a 'product' (Almacenable) para poder rastrear inventario
+    type: 'consu', // En Odoo 19 el tipo es 'consu' (Goods)
+    is_storable: true, // Esta bandera es la que activa el inventario en Odoo 19+
   };
   
   if (productData.cost !== undefined) {

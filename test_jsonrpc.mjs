@@ -6,53 +6,37 @@ const db = process.env.ODOO_DB;
 const user = process.env.ODOO_USERNAME;
 const pass = process.env.ODOO_PASSWORD;
 
-async function testJsonRpc() {
-  console.log('Testing Odoo JSON-RPC...');
-  
+const rpcCall = async (service, method, args) => {
+  const response = await fetch(`${url}/jsonrpc`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      method: "call",
+      params: { service, method, args },
+      id: Math.floor(Math.random() * 1000)
+    })
+  });
+  const data = await response.json();
+  if (data.error) throw new Error(JSON.stringify(data.error));
+  return data.result;
+};
+
+async function testOdooField() {
   try {
-    const authRes = await fetch(`${url}/jsonrpc`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        method: "call",
-        params: {
-            service: "common",
-            method: "authenticate",
-            args: [db, user, pass, {}]
-        },
-        id: 1
-      })
-    });
+    const uid = await rpcCall('common', 'authenticate', [db, user, pass, {}]);
     
-    const authData = await authRes.json();
-    console.log('Auth response:', authData);
+    const fields = await rpcCall('object', 'execute_kw', [
+      db, uid, pass, 'ir.model.fields', 'search_read',
+      [[['model', '=', 'product.template'], ['name', 'in', ['is_storable', 'detailed_type']]]],
+      { fields: ['name', 'selection'] }
+    ]);
     
-    if (authData.result) {
-      const uid = authData.result;
-      console.log('✅ Authenticated via JSON-RPC! UID:', uid);
-      
-      // Test search
-      const searchRes = await fetch(`${url}/jsonrpc`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          method: "call",
-          params: {
-              service: "object",
-              method: "execute_kw",
-              args: [db, uid, pass, "res.partner", "search", [[["id", ">", 0]]]]
-          },
-          id: 2
-        })
-      });
-      const searchData = await searchRes.json();
-      console.log('Search response:', searchData.result ? `Found ${searchData.result.length} partners` : searchData);
-    }
+    console.log('Fields found:', fields);
+    
   } catch (err) {
     console.error('Error:', err);
   }
 }
 
-testJsonRpc();
+testOdooField();
