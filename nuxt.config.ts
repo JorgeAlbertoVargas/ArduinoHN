@@ -48,6 +48,12 @@ export default defineNuxtConfig({
   },
   nitro: {
     preset: 'cloudflare',
+    experimental: {
+      tasks: true
+    },
+    scheduledTasks: {
+      '*/5 * * * *': ['sync']
+    },
     prerender: {
       failOnError: false
     }

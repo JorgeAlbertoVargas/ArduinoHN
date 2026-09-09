@@ -33,3 +33,6 @@ DIGIKEY_PROFIT_MARGIN="1.25"
 NUXT_ODOO_URL="https://iaodoo.syteccorpia.com"
 NUXT_ODOO_DB="odoo19_erp"
 NUXT_ODOO_USERNAME="jvargas@syteccorp.com"
+
+[triggers]
+crons = ["*/5 * * * *"]
