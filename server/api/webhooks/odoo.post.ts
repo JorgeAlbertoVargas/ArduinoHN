@@ -1,14 +1,12 @@
-import { syncOdooToShopify } from '../../utils/syncOdooToShopify';
-
 export default defineEventHandler(async (event) => {
   try {
     console.log('[Odoo Webhook] Notificación recibida desde Odoo. Iniciando sincronización...');
     
     // Ejecutar la sincronización
-    // Usamos waitUntil para que Cloudflare no corte la conexión prematuramente
-    event.context.waitUntil(syncOdooToShopify().catch(err => {
+    // En Nuxt 3 / H3, pasamos la promesa sin await o usamos event.waitUntil si el entorno lo soporta
+    syncOdooToShopify().catch(err => {
       console.error('[Odoo Webhook] Error en background sync:', err);
-    }));
+    });
 
     return { 
       success: true, 
