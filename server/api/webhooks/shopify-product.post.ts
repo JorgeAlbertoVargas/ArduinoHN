@@ -37,22 +37,20 @@ export default defineEventHandler(async (event) => {
     // Odoo lo actualizará solo si le mandamos el valor, así que omitimos si no lo tenemos.
     const barcode = firstVariant.barcode || '';
 
-    // Sincronizar asincronamente
-    (async () => {
-      try {
-        console.log(`[Webhook Shopify Product] Sincronizando producto ${sku} hacia Odoo...`);
-        await syncProductToOdoo({
-          title,
-          sku,
-          price,
-          description,
-          barcode
-        });
-        console.log(`[Webhook Shopify Product] Producto ${sku} sincronizado exitosamente en Odoo.`);
-      } catch (err) {
-        console.error(`[Webhook Shopify Product] Error sincronizando producto hacia Odoo:`, err);
-      }
-    })();
+    // Sincronizar esperando la respuesta (necesario en Cloudflare para no cortar la conexión)
+    try {
+      console.log(`[Webhook Shopify Product] Sincronizando producto ${sku} hacia Odoo...`);
+      await syncProductToOdoo({
+        title,
+        sku,
+        price,
+        description,
+        barcode
+      });
+      console.log(`[Webhook Shopify Product] Producto ${sku} sincronizado exitosamente en Odoo.`);
+    } catch (err) {
+      console.error(`[Webhook Shopify Product] Error sincronizando producto hacia Odoo:`, err);
+    }
 
     return { success: true, message: 'Product webhook processed' };
   } catch (error: any) {

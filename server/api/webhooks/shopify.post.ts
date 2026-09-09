@@ -131,21 +131,19 @@ export default defineEventHandler(async (event) => {
         price: parseFloat(i.price || '0.00')
       }));
 
-      // Lanzamos la promesa sin await para no bloquear la respuesta del webhook
-      (async () => {
-        try {
-          console.log(`[Webhook Shopify] Sincronizando orden ${order.id} hacia Odoo...`);
-          const partnerId = await syncCustomerToOdoo(customerData);
-          await createSaleOrderInOdoo({
-            partner_id: partnerId,
-            order_reference: String(order.id),
-            line_items: lineItemsForOdoo
-          });
-          console.log(`[Webhook Shopify] Orden ${order.id} sincronizada en Odoo con éxito.`);
-        } catch (odooErr) {
-          console.error(`[Webhook Shopify] Error sincronizando hacia Odoo:`, odooErr);
-        }
-      })();
+      // Sincronizar esperando la respuesta
+      try {
+        console.log(`[Webhook Shopify] Sincronizando orden ${order.id} hacia Odoo...`);
+        const partnerId = await syncCustomerToOdoo(customerData);
+        await createSaleOrderInOdoo({
+          partner_id: partnerId,
+          order_reference: String(order.id),
+          line_items: lineItemsForOdoo
+        });
+        console.log(`[Webhook Shopify] Orden ${order.id} sincronizada en Odoo con éxito.`);
+      } catch (odooErr) {
+        console.error(`[Webhook Shopify] Error sincronizando hacia Odoo:`, odooErr);
+      }
     }
 
     return { success: true, message: 'Order processed and routed correctly' };
