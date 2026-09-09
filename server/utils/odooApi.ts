@@ -1,5 +1,16 @@
 const getOdooConfig = () => {
-  const config = useRuntimeConfig();
+  let config;
+  try {
+    config = useRuntimeConfig();
+  } catch (e) {
+    config = {
+      odooUrl: process.env.NUXT_ODOO_URL,
+      odooDb: process.env.NUXT_ODOO_DB,
+      odooUsername: process.env.NUXT_ODOO_USERNAME,
+      odooPassword: process.env.NUXT_ODOO_PASSWORD
+    };
+  }
+
   return {
     url: config.odooUrl || 'https://iaodoo.syteccorpia.com',
     db: config.odooDb || '',
@@ -277,4 +288,41 @@ export async function createSaleOrderInOdoo(orderData: {
   }
   
   return orderId;
+}
+
+export async function getProductsFromOdoo(limit = 50) {
+  const config = getOdooConfig();
+  const uid = await authenticateOdoo();
+
+  try {
+    const searchParams = [
+      config.db,
+      uid,
+      config.password,
+      'product.template',
+      'search_read',
+      [[['type', '=', 'consu']]], // Goods
+      {
+        fields: ['id', 'name', 'list_price', 'default_code', 'description_sale', 'qty_available', 'image_512', 'description', 'product_properties'],
+        limit: limit
+      }
+    ];
+    return await rpcCall('object', 'execute_kw', searchParams);
+  } catch (error) {
+    console.warn('[Odoo] Failed to fetch with qty_available, trying fallback without it.', error);
+    // Fallback without qty_available which sometimes causes issues if stock module is not fully configured on templates
+    const fallbackParams = [
+      config.db,
+      uid,
+      config.password,
+      'product.template',
+      'search_read',
+      [[['type', '=', 'consu']]],
+      {
+        fields: ['id', 'name', 'list_price', 'default_code', 'description_sale', 'image_512', 'description', 'product_properties'],
+        limit: limit
+      }
+    ];
+    return await rpcCall('object', 'execute_kw', fallbackParams);
+  }
 }

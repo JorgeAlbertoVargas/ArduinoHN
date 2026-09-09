@@ -7,7 +7,7 @@
     <StoreHeroCarousel />
     
     <div class="container store-content">
-      <div v-if="pendingShopify || pendingLocal" class="text-center loading-state">
+      <div v-if="(pendingShopify || pendingLocal) && allProducts.length === 0" class="text-center loading-state">
         <p>Cargando catálogo de productos...</p>
       </div>
     <div v-else-if="errorShopify && errorLocal" class="text-center error-state">
@@ -25,6 +25,7 @@
         :video-url="product.videoUrl"
         :original-price="product.originalPrice"
         :discount-percent="product.discountPercent"
+        :stock="product.stock"
         @add-to-cart="handleAddToCart(product)"
         @quick-view="openQuickView(product)"
         @go-to-product="goToProduct"
@@ -51,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useCart } from '~/composables/useCart';
 import { useProducts } from '~/composables/useProducts';
@@ -82,7 +83,22 @@ const goToProduct = (id: string) => {
   router.push(`/store/${id}`);
 };
 
-const { allProducts: fetchedProducts, pending: pendingProducts, error: errorProducts } = useProducts();
+const { allProducts: fetchedProducts, pending: pendingProducts, error: errorProducts, refreshOdoo } = useProducts();
+
+// Auto-refresco de los productos de Odoo cada 15 segundos
+let odooRefreshInterval: any = null;
+
+onMounted(() => {
+  odooRefreshInterval = setInterval(() => {
+    if (refreshOdoo) refreshOdoo();
+  }, 15000);
+});
+
+onUnmounted(() => {
+  if (odooRefreshInterval) {
+    clearInterval(odooRefreshInterval);
+  }
+});
 
 const fetchOffers = async () => {
   try {
@@ -143,7 +159,8 @@ const handleAddToCart = async (product: any) => {
     quantity: 1,
     image: product.image,
     originalPrice: product.originalPrice,
-    discountPercent: product.discountPercent
+    discountPercent: product.discountPercent,
+    sku: product.sku
   });
   const toast = useToast();
   toast.showToast(`Se agregó ${product.title} al carrito.`);

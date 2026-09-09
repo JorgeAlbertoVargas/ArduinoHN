@@ -1,6 +1,9 @@
 <template>
   <div class="product-card glass">
     <div class="product-image" @click="$emit('go-to-product', id)">
+      <div v-if="stock !== null && stock <= 0" class="out-of-stock-badge">
+        Agotado
+      </div>
       <div v-if="discountPercent" class="discount-badge">
         -{{ discountPercent }}%
       </div>
@@ -44,9 +47,20 @@
         </button>
       </div>
       <div class="actions-container mt-3">
-        <button class="btn btn-primary w-full add-btn" @click.stop="$emit('add-to-cart')">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-          Añadir al Carrito
+        <button 
+          class="btn btn-primary w-full add-btn" 
+          :disabled="stock !== null && stock <= 0"
+          :class="{'opacity-50 cursor-not-allowed': stock !== null && stock <= 0}"
+          @click.stop="stock !== null && stock <= 0 ? null : $emit('add-to-cart')"
+        >
+          <template v-if="stock !== null && stock <= 0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            Agotado
+          </template>
+          <template v-else>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+            Añadir al Carrito
+          </template>
         </button>
       </div>
     </div>
@@ -85,6 +99,10 @@ const props = defineProps({
     default: null
   },
   discountPercent: {
+    type: Number,
+    default: null
+  },
+  stock: {
     type: Number,
     default: null
   }
@@ -318,6 +336,18 @@ const handlePlayVideo = () => {
   top: 10px;
   left: 10px;
   background-color: #e74c3c;
+  color: white;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  z-index: 5;
+}
+.out-of-stock-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.75);
   color: white;
   font-weight: bold;
   padding: 4px 10px;

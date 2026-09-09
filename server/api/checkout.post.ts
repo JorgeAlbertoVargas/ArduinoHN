@@ -16,15 +16,67 @@ export default defineEventHandler(async (event) => {
   }
 
   // Construir las líneas del draft order
-  const lineItems = cartItems.map((item: any) => {
-    // Si item.id tiene formato gid://, extraer el ID numérico
-    const variantId = item.id.includes('gid://') ? item.id.split('/').pop() : item.id;
-    
-    return {
+  const lineItems = [];
+
+  for (const item of cartItems) {
+    let variantId = item.id;
+
+    if (item.id.includes('gid://')) {
+      variantId = item.id.split('/').pop();
+    } else if (item.id.startsWith('odoo-') || item.id.startsWith('local-')) {
+      // Necesitamos buscar el ID real de Shopify por SKU
+      // Si no tenemos SKU en el payload, intentamos usar el ODOO-ID como fallback
+      const skuToSearch = item.sku || `ODOO-${item.id.replace('odoo-', '')}`;
+      
+      try {
+        const searchRes = await fetch(`https://${domain}/admin/api/2024-01/graphql.json`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Shopify-Access-Token': token
+          },
+          body: JSON.stringify({
+            query: `
+              query productBySku($query: String!) {
+                products(first: 1, query: $query) {
+                  edges {
+                    node {
+                      variants(first: 1) {
+                        edges {
+                          node {
+                            id
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `,
+            variables: { query: `sku:${skuToSearch}` }
+          })
+        });
+        
+        const searchData = await searchRes.json();
+        const existingVariant = searchData?.data?.products?.edges?.[0]?.node?.variants?.edges?.[0]?.node?.id;
+        
+        if (existingVariant) {
+          variantId = existingVariant.split('/').pop();
+        } else {
+          console.warn(`[Checkout] Producto Odoo no encontrado en Shopify: ${skuToSearch}`);
+          throw createError({ statusCode: 400, statusMessage: `El producto ${item.name} aún no está disponible para compra.` });
+        }
+      } catch (err) {
+        console.error('[Checkout] Error buscando variante en Shopify:', err);
+        throw createError({ statusCode: 500, statusMessage: 'Error interno conectando con el sistema de inventario.' });
+      }
+    }
+
+    lineItems.push({
       variant_id: parseInt(variantId),
       quantity: item.quantity
-    };
-  });
+    });
+  }
 
   try {
     // Crear el Draft Order via REST API

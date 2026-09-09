@@ -86,6 +86,55 @@ export const useProducts = () => {
     })
   })
 
+  // --- Fetch Odoo Products ---
+  const { data: odooData, pending: pendingOdoo, error: errorOdoo, refresh: refreshOdooData } = useAsyncData('odooProducts', () => $fetch('/api/odoo-products'))
+
+  const formattedOdooProducts = computed(() => {
+    if (!odooData.value?.success || !odooData.value?.products) return []
+    
+    // Filtramos basados en las Propiedades (checkbox "Mostrar en Web") o Notas Internas
+    const publishedProducts = odooData.value.products.filter((item: any) => {
+      // 1. Buscamos en las propiedades dinámicas (la casilla que creaste)
+      if (item.product_properties && Array.isArray(item.product_properties)) {
+        const mostrarEnWebProp = item.product_properties.find(
+          (prop: any) => prop.string === 'Mostrar en Web'
+        );
+        if (mostrarEnWebProp) {
+          return mostrarEnWebProp.value === true;
+        }
+      }
+
+      // 2. Como método de respaldo, seguimos usando las Notas Internas
+      if (!item.description) return false;
+      const notes = item.description.toLowerCase();
+      if (notes.includes('no publicar')) return false;
+      if (notes.includes('publicar')) return true;
+      
+      return false;
+    });
+
+    return publishedProducts.map((item: any) => {
+      const fallbackImage = 'https://upload.wikimedia.org/wikipedia/commons/3/38/Arduino_Uno_-_R3.jpg'
+      let imageUrl = fallbackImage
+      if (item.image_512 && typeof item.image_512 === 'string') {
+        imageUrl = `data:image/jpeg;base64,${item.image_512}`
+      }
+      
+      return {
+        id: `odoo-${item.id}`,
+        productId: item.id.toString(),
+        title: item.name || 'Sin nombre',
+        price: parseFloat(item.list_price || '0'),
+        image: imageUrl,
+        description: item.description_sale || '',
+        videoUrl: null,
+        source: 'odoo',
+        sku: item.default_code,
+        stock: item.qty_available
+      }
+    })
+  })
+
   const allProducts = computed(() => {
     const testOpta = {
       id: 'local-test-opta',
@@ -97,15 +146,19 @@ export const useProducts = () => {
       videoUrl: null,
       source: 'local'
     }
-    return [testOpta, ...formattedLocalProducts.value, ...formattedShopifyProducts.value]
+    return [testOpta, ...formattedOdooProducts.value, ...formattedLocalProducts.value, ...formattedShopifyProducts.value]
   })
 
-  const pending = computed(() => pendingShopify.value || pendingLocal.value)
-  const error = computed(() => errorShopify.value || errorLocal.value)
+  const pending = computed(() => pendingShopify.value || pendingLocal.value || pendingOdoo.value)
+  const error = computed(() => errorShopify.value || errorLocal.value || errorOdoo.value)
+
+  // Función para forzar la actualización de los datos de Odoo
+  const refreshOdoo = () => refreshOdooData()
 
   return {
     allProducts,
     pending,
-    error
+    error,
+    refreshOdoo
   }
 }
