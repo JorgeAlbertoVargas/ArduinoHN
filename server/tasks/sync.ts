@@ -1,5 +1,3 @@
-import { syncOdooToShopify } from '../utils/syncOdooToShopify';
-
 export default defineTask({
   meta: {
     name: 'sync',
