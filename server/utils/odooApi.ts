@@ -1,5 +1,3 @@
-import xmlrpc from 'xmlrpc';
-
 const getOdooConfig = () => {
   const config = useRuntimeConfig();
   return {
@@ -10,33 +8,38 @@ const getOdooConfig = () => {
   };
 };
 
-// Helper to create a client
-const createClient = (path: string) => {
+// Reemplazamos xmlrpc por fetch nativo apuntando a /jsonrpc
+const rpcCall = async (service: string, method: string, args: any[]) => {
   const config = getOdooConfig();
-  const urlObj = new URL(config.url);
-  const clientOptions = {
-    host: urlObj.hostname,
-    port: urlObj.port || (urlObj.protocol === 'https:' ? 443 : 80),
-    path: path
-  };
   
-  if (urlObj.protocol === 'https:') {
-    return xmlrpc.createSecureClient(clientOptions);
-  }
-  return xmlrpc.createClient(clientOptions);
-};
-
-// Promisify xmlrpc call
-const rpcCall = (client: any, method: string, params: any[]): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    client.methodCall(method, params, (error: any, value: any) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(value);
-      }
-    });
+  const response = await fetch(`${config.url}/jsonrpc`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      method: "call",
+      params: {
+        service: service,
+        method: method,
+        args: args
+      },
+      id: Math.floor(Math.random() * 1000000)
+    })
   });
+
+  if (!response.ok) {
+    throw new Error(`Odoo API HTTP error: ${response.status}`);
+  }
+
+  const data: any = await response.json();
+  
+  if (data.error) {
+    throw new Error(`Odoo RPC Error: ${data.error.message || JSON.stringify(data.error)}`);
+  }
+
+  return data.result;
 };
 
 export async function authenticateOdoo() {
@@ -45,8 +48,7 @@ export async function authenticateOdoo() {
     throw new Error('Odoo credentials are not fully configured in environment variables');
   }
   
-  const common = createClient('/xmlrpc/2/common');
-  const uid = await rpcCall(common, 'authenticate', [
+  const uid = await rpcCall('common', 'authenticate', [
     config.db,
     config.username,
     config.password,
@@ -70,7 +72,6 @@ export async function syncProductToOdoo(productData: {
 }) {
   const config = getOdooConfig();
   const uid = await authenticateOdoo();
-  const models = createClient('/xmlrpc/2/object');
   
   // 1. Check if product exists
   const searchParams = [
@@ -82,12 +83,12 @@ export async function syncProductToOdoo(productData: {
     [[['default_code', '=', productData.sku]]]
   ];
   
-  const existingIds = await rpcCall(models, 'execute_kw', searchParams);
+  const existingIds = await rpcCall('object', 'execute_kw', searchParams);
   
   const odooProductData: any = {
     name: productData.title,
     list_price: productData.price,
-    type: 'consu', // Or 'product' depending on inventory valuation
+    type: 'consu', 
   };
   
   if (productData.cost !== undefined) {
@@ -102,7 +103,7 @@ export async function syncProductToOdoo(productData: {
 
   if (existingIds && existingIds.length > 0) {
     // Update existing
-    await rpcCall(models, 'execute_kw', [
+    await rpcCall('object', 'execute_kw', [
       config.db,
       uid,
       config.password,
@@ -114,9 +115,8 @@ export async function syncProductToOdoo(productData: {
     return existingIds[0];
   } else {
     // Create new
-    // We also need to set default_code for creation
     odooProductData.default_code = productData.sku;
-    const newId = await rpcCall(models, 'execute_kw', [
+    const newId = await rpcCall('object', 'execute_kw', [
       config.db,
       uid,
       config.password,
@@ -136,7 +136,6 @@ export async function syncCustomerToOdoo(customerData: {
 }) {
   const config = getOdooConfig();
   const uid = await authenticateOdoo();
-  const models = createClient('/xmlrpc/2/object');
   
   if (!customerData.email) {
     throw new Error('Customer email is required to sync to Odoo');
@@ -151,7 +150,7 @@ export async function syncCustomerToOdoo(customerData: {
     [[['email', '=', customerData.email]]]
   ];
   
-  const existingIds = await rpcCall(models, 'execute_kw', searchParams);
+  const existingIds = await rpcCall('object', 'execute_kw', searchParams);
   
   const odooPartnerData: any = {
     name: customerData.name,
@@ -163,14 +162,14 @@ export async function syncCustomerToOdoo(customerData: {
   }
 
   if (existingIds && existingIds.length > 0) {
-    await rpcCall(models, 'execute_kw', [
+    await rpcCall('object', 'execute_kw', [
       config.db, uid, config.password, 'res.partner', 'write',
       [existingIds, odooPartnerData]
     ]);
     console.log(`[Odoo] Updated customer ${customerData.email}`);
     return existingIds[0];
   } else {
-    const newId = await rpcCall(models, 'execute_kw', [
+    const newId = await rpcCall('object', 'execute_kw', [
       config.db, uid, config.password, 'res.partner', 'create',
       [odooPartnerData]
     ]);
@@ -191,10 +190,9 @@ export async function createSaleOrderInOdoo(orderData: {
 }) {
   const config = getOdooConfig();
   const uid = await authenticateOdoo();
-  const models = createClient('/xmlrpc/2/object');
   
   // Create the Sale Order first
-  const orderId = await rpcCall(models, 'execute_kw', [
+  const orderId = await rpcCall('object', 'execute_kw', [
     config.db, uid, config.password, 'sale.order', 'create',
     [{
       partner_id: orderData.partner_id,
@@ -210,7 +208,7 @@ export async function createSaleOrderInOdoo(orderData: {
     
     // Attempt to find product by sku
     if (item.sku) {
-      const prodIds = await rpcCall(models, 'execute_kw', [
+      const prodIds = await rpcCall('object', 'execute_kw', [
         config.db, uid, config.password, 'product.product', 'search',
         [[['default_code', '=', item.sku]]]
       ]);
@@ -229,13 +227,10 @@ export async function createSaleOrderInOdoo(orderData: {
     if (product_id) {
       lineData.product_id = product_id;
     } else {
-      // Si Odoo requiere product_id y no lo encontramos, deberíamos crearlo al vuelo o usar un genérico.
-      // Aquí intentaremos buscar o crear un genérico, o dejar que Odoo lo rechace si es mandatorio.
-      // (En muchas versiones de Odoo product_id es obligatorio en sale.order.line)
       console.warn(`[Odoo] Producto con SKU ${item.sku} no encontrado en Odoo, enviando linea sin product_id.`);
     }
 
-    await rpcCall(models, 'execute_kw', [
+    await rpcCall('object', 'execute_kw', [
       config.db, uid, config.password, 'sale.order.line', 'create',
       [lineData]
     ]);
