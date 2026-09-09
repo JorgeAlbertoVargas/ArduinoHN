@@ -33,9 +33,8 @@ export default defineEventHandler(async (event) => {
     }
 
     const price = parseFloat(firstVariant.price || '0');
-    // Para el costo, muchas veces en Shopify no viene en el payload estándar del webhook de productos, pero si está mapeado se usa.
-    // Odoo lo actualizará solo si le mandamos el valor, así que omitimos si no lo tenemos.
     const barcode = firstVariant.barcode || '';
+    const qty = firstVariant.inventory_quantity || 0;
 
     // Sincronizar esperando la respuesta (necesario en Cloudflare para no cortar la conexión)
     try {
@@ -45,7 +44,8 @@ export default defineEventHandler(async (event) => {
         sku,
         price,
         description,
-        barcode
+        barcode,
+        qty
       });
       console.log(`[Webhook Shopify Product] Producto ${sku} sincronizado exitosamente en Odoo.`);
     } catch (err) {

@@ -69,6 +69,7 @@ export async function syncProductToOdoo(productData: {
   cost?: number;
   description?: string;
   barcode?: string;
+  qty?: number;
 }) {
   const config = getOdooConfig();
   const uid = await authenticateOdoo();
@@ -88,7 +89,7 @@ export async function syncProductToOdoo(productData: {
   const odooProductData: any = {
     name: productData.title,
     list_price: productData.price,
-    type: 'consu', 
+    type: 'product', // Cambiado a 'product' (Almacenable) para poder rastrear inventario
   };
   
   if (productData.cost !== undefined) {
@@ -101,32 +102,70 @@ export async function syncProductToOdoo(productData: {
     odooProductData.barcode = productData.barcode;
   }
 
+  let templateId = null;
+
   if (existingIds && existingIds.length > 0) {
-    // Update existing
+    templateId = existingIds[0];
     await rpcCall('object', 'execute_kw', [
-      config.db,
-      uid,
-      config.password,
-      'product.template',
-      'write',
-      [existingIds, odooProductData]
+      config.db, uid, config.password, 'product.template', 'write',
+      [templateId, odooProductData]
     ]);
     console.log(`[Odoo] Updated product ${productData.sku}`);
-    return existingIds[0];
   } else {
-    // Create new
     odooProductData.default_code = productData.sku;
-    const newId = await rpcCall('object', 'execute_kw', [
-      config.db,
-      uid,
-      config.password,
-      'product.template',
-      'create',
+    templateId = await rpcCall('object', 'execute_kw', [
+      config.db, uid, config.password, 'product.template', 'create',
       [odooProductData]
     ]);
     console.log(`[Odoo] Created new product ${productData.sku}`);
-    return newId;
   }
+
+  // 2. Sincronizar Inventario si viene especificado
+  if (productData.qty !== undefined && templateId) {
+    try {
+      // Necesitamos el ID de la variante (product.product) asociada a este template
+      const productIds = await rpcCall('object', 'execute_kw', [
+        config.db, uid, config.password, 'product.product', 'search',
+        [[['product_tmpl_id', '=', templateId]]]
+      ]);
+      
+      if (productIds && productIds.length > 0) {
+        const productId = productIds[0];
+        
+        // Buscar la ubicación de stock principal por defecto (tipo interna)
+        const locationIds = await rpcCall('object', 'execute_kw', [
+          config.db, uid, config.password, 'stock.location', 'search',
+          [[['usage', '=', 'internal']]]
+        ]);
+        
+        if (locationIds && locationIds.length > 0) {
+          const locationId = locationIds[0];
+          
+          // Crear un ajuste de inventario (stock.quant)
+          const quantId = await rpcCall('object', 'execute_kw', [
+            config.db, uid, config.password, 'stock.quant', 'create',
+            [{
+              product_id: productId,
+              location_id: locationId,
+              inventory_quantity: productData.qty
+            }]
+          ]);
+          
+          // Aplicar el ajuste
+          await rpcCall('object', 'execute_kw', [
+            config.db, uid, config.password, 'stock.quant', 'action_apply_inventory',
+            [[quantId]]
+          ]);
+          
+          console.log(`[Odoo] Inventario ajustado a ${productData.qty} para el SKU ${productData.sku}`);
+        }
+      }
+    } catch (stockErr) {
+      console.error(`[Odoo] Error ajustando inventario para ${productData.sku}:`, stockErr);
+    }
+  }
+
+  return templateId;
 }
 
 export async function syncCustomerToOdoo(customerData: {
