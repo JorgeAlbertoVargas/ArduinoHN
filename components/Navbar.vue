@@ -79,13 +79,31 @@
                       </div>
 
                       <!-- Node: Ofertas del mes -->
-                      <div class="tree-node">
-                        <NuxtLink to="/admin/offers" class="tree-item leaf-node">
-                          <span class="tree-icon">
+                      <div class="tree-node tree-branch" :class="{ 'is-expanded': isOffersExpanded }">
+                        <button 
+                          type="button" 
+                          class="tree-item branch-header"
+                          @click.stop="isOffersExpanded = !isOffersExpanded"
+                        >
+                          <span class="tree-toggle">
+                            <svg :class="{ 'rotated': isOffersExpanded }" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="m9 18 6-6-6-6"/>
+                            </svg>
+                          </span>
+                          <span class="tree-icon folder-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 12H16c-.7 2-2 3-4 3s-3.3-1-4-3H2.5"/><path d="M5.5 5.1L2 12v6c0 1.1.9 2 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 17 5H7a2 2 0 0 0-1.5.1z"/></svg>
                           </span>
                           <span class="tree-label">Ofertas del mes</span>
-                        </NuxtLink>
+                        </button>
+
+                        <div v-show="isOffersExpanded" class="tree-children">
+                          <NuxtLink to="/admin/offers" class="tree-item tree-child leaf-node">
+                            <span class="tree-icon child-icon">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+                            </span>
+                            <span class="tree-label">Gestión de Ofertas</span>
+                          </NuxtLink>
+                        </div>
                       </div>
 
                       <!-- Expandable Parent Node: Ajustes -->
@@ -293,13 +311,23 @@
     </div>
 
     <!-- Bottom Tier (Desktop) / Mobile Menu -->
-    <div :class="['navbar-bottom', { 'mobile-open': isMobileMenuOpen }]">
-      <div class="container">
+    <div :class="['navbar-bottom-wrapper', { 'mobile-open': isMobileMenuOpen }]">
+      <div class="navbar-bottom">
+        <div class="container">
         <nav class="nav-links">
           <NuxtLink to="/store" @click="closeMobileMenu">Tienda virtual</NuxtLink>
-          <NuxtLink to="/semiconductores" @click="closeMobileMenu" class="semiconductors-nav-link">
-            Semiconductores
-          </NuxtLink>
+          <div class="nav-dropdown">
+            <span class="semiconductors-nav-link nav-dropdown-btn">
+              Electrónica
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+            <div class="nav-dropdown-content glass">
+              <NuxtLink to="/semiconductores" @click="closeMobileMenu">Semiconductores</NuxtLink>
+              <NuxtLink to="/store?category=mcu" @click="closeMobileMenu">Microcontroladores</NuxtLink>
+              <NuxtLink to="/store?category=sensor" @click="closeMobileMenu">Sensores</NuxtLink>
+              <NuxtLink to="/store?category=plc" @click="closeMobileMenu">PLCs</NuxtLink>
+            </div>
+          </div>
           <NuxtLink to="/deals" @click="closeMobileMenu">Ofertas del mes</NuxtLink>
           <NuxtLink to="/coupons" @click="closeMobileMenu">Cupones</NuxtLink>
           <NuxtLink to="/projects" @click="closeMobileMenu">Proyectos</NuxtLink>
@@ -307,6 +335,7 @@
           <NuxtLink to="/history" @click="closeMobileMenu" class="auth-only">Historial de consumo</NuxtLink>
           <NuxtLink to="/customer-service" @click="closeMobileMenu">Servicio al cliente</NuxtLink>
         </nav>
+        </div>
       </div>
     </div>
   </header>
@@ -322,10 +351,11 @@ import { useLoyalty } from '~/composables/useLoyalty';
 const { user, isAuthenticated, isAdmin, logout } = useAuth();
 const { points, fetchLoyalty } = useLoyalty();
 
-const isUsersExpanded = ref(true);
-const isSettingsExpanded = ref(true);
-const isProductAnalysisExpanded = ref(true);
-const isMetaMetricsExpanded = ref(true);
+const isUsersExpanded = ref(false);
+const isOffersExpanded = ref(false);
+const isSettingsExpanded = ref(false);
+const isProductAnalysisExpanded = ref(false);
+const isMetaMetricsExpanded = ref(false);
 const isMobileMenuOpen = ref(false);
 const searchQuery = ref('');
 const router = useRouter();
@@ -472,15 +502,11 @@ const handleSearch = () => {
 .nav-links {
   display: flex;
   gap: 1.5rem;
-  overflow-x: auto; /* Allow scrolling if too many items on small screens */
-  white-space: nowrap;
-  scrollbar-width: none; /* Hide scrollbar Firefox */
-}
-.nav-links::-webkit-scrollbar {
-  display: none; /* Hide scrollbar Chrome/Safari */
+  overflow: visible;
+  flex-wrap: wrap;
 }
 
-.nav-links a {
+.nav-links a, .nav-dropdown-btn {
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--text-main);
@@ -504,6 +530,49 @@ const handleSearch = () => {
 .semiconductors-nav-link.router-link-active {
   color: #00a896 !important;
   text-shadow: 0 0 10px rgba(0, 168, 150, 0.4);
+}
+
+/* Nav Dropdown */
+.nav-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.nav-dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: var(--bg-card);
+  min-width: 200px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  z-index: 1;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  flex-direction: column;
+  padding: 8px 0;
+}
+
+.nav-dropdown:hover .nav-dropdown-content {
+  display: flex;
+}
+
+.nav-dropdown-content a {
+  padding: 10px 16px;
+  text-decoration: none;
+  display: block;
+  white-space: normal;
+}
+
+.nav-dropdown-content a:hover {
+  background-color: rgba(0, 151, 156, 0.1);
 }
 
 /* User Dropdown */
@@ -545,9 +614,9 @@ const handleSearch = () => {
 .dropdown-menu {
   display: none;
   position: absolute;
-  right: 0;
+  right: -20px;
   top: 100%;
-  min-width: 280px;
+  min-width: 230px;
   background-color: var(--bg-card);
   border-radius: 10px;
   padding: 8px;
@@ -728,7 +797,7 @@ const handleSearch = () => {
     display: none;
   }
   
-  .navbar-bottom {
+  .navbar-bottom-wrapper {
     display: none;
     position: absolute;
     top: 100%;
@@ -741,7 +810,7 @@ const handleSearch = () => {
     z-index: 99;
   }
   
-  .navbar-bottom.mobile-open {
+  .navbar-bottom-wrapper.mobile-open {
     display: block;
   }
   

@@ -114,3 +114,17 @@ export const getAllUsers = async () => {
     return []
   }
 }
+
+export const createLead = async (leadData: any) => {
+  const config = useRuntimeConfig()
+  try {
+    const response = await fetchNocoDB(config.public.nocodbLeadsTable, '', {
+      method: 'POST',
+      body: leadData
+    })
+    return response
+  } catch (error) {
+    console.error('Error creating lead:', error)
+    throw error
+  }
+}

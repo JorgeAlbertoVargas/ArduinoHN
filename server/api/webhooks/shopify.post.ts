@@ -116,6 +116,38 @@ export default defineEventHandler(async (event) => {
     // Nota: No es necesario procesar AutoDS aquí. 
     // La App de AutoDS instalada en Shopify detectará los SKUs correspondientes y los procesará automáticamente.
 
+    // 5. Sincronizar hacia Odoo (Cliente y Orden) asíncronamente
+    if (order.customer && order.customer.email) {
+      const customerData = {
+        name: `${order.customer.first_name || ''} ${order.customer.last_name || ''}`.trim() || order.customer.email,
+        email: order.customer.email,
+        phone: order.customer.phone || undefined
+      };
+
+      const lineItemsForOdoo = lineItems.map((i: any) => ({
+        title: i.title || i.name,
+        sku: i.sku,
+        quantity: parseInt(i.quantity || '1', 10),
+        price: parseFloat(i.price || '0.00')
+      }));
+
+      // Lanzamos la promesa sin await para no bloquear la respuesta del webhook
+      (async () => {
+        try {
+          console.log(`[Webhook Shopify] Sincronizando orden ${order.id} hacia Odoo...`);
+          const partnerId = await syncCustomerToOdoo(customerData);
+          await createSaleOrderInOdoo({
+            partner_id: partnerId,
+            order_reference: String(order.id),
+            line_items: lineItemsForOdoo
+          });
+          console.log(`[Webhook Shopify] Orden ${order.id} sincronizada en Odoo con éxito.`);
+        } catch (odooErr) {
+          console.error(`[Webhook Shopify] Error sincronizando hacia Odoo:`, odooErr);
+        }
+      })();
+    }
+
     return { success: true, message: 'Order processed and routed correctly' };
   } catch (error: any) {
     console.error('[Webhook Shopify] Error procesando el webhook:', error);

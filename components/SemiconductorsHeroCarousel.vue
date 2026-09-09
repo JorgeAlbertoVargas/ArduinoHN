@@ -150,11 +150,18 @@ onUnmounted(() => {
 .semi-hero-carousel-container {
   position: relative;
   width: 100%;
-  height: 60vh;
-  min-height: 480px;
+  height: 60px;
+  min-height: 60px;
   max-height: 650px;
   overflow: hidden;
   background-color: #090e17;
+  transition: all 0.4s ease-in-out;
+  cursor: pointer;
+}
+
+.semi-hero-carousel-container:hover {
+  height: 60vh;
+  min-height: 480px;
 }
 
 .carousel-track {

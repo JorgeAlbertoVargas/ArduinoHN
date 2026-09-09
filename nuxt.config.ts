@@ -23,9 +23,10 @@ export default defineNuxtConfig({
     digikeyLocaleLanguage: process.env.DIGIKEY_LOCALE_LANGUAGE || 'es',
     digikeyLocaleCurrency: process.env.DIGIKEY_LOCALE_CURRENCY || 'USD',
     digikeyProfitMargin: Number(process.env.DIGIKEY_PROFIT_MARGIN || 2.00),
+    geminiApiKey: process.env.GEMINI_API_KEY || '',
     public: {
-      shopifyDomain: process.env.SHOPIFY_DOMAIN || 'arduinohn.myshopify.com',
-      shopifyToken: process.env.SHOPIFY_STOREFRONT_TOKEN || 'mock_storefront_token_12345',
+      shopifyDomain: process.env.SHOPIFY_DOMAIN || '1thjxa-80.myshopify.com',
+      shopifyToken: process.env.SHOPIFY_STOREFRONT_TOKEN || '4872c19072ffca32cc549cdf3310ed6a',
       nocodbUrl: process.env.NOCODB_URL || 'https://ianocodb.syteccorpia.com/',
       nocodbToken: process.env.NOCODB_TOKEN || 'nc_pat_cTQfsJmbeIoKknRricm6Ch6iLXzcwGt3XlLBRVNh',
       nocodbProjectsTable: process.env.NOCODB_PROJECTS_TABLE || 'movjxf98fu72rx8',
@@ -37,7 +38,8 @@ export default defineNuxtConfig({
       nocodbLoyaltyTransactionsTable: process.env.NOCODB_LOYALTY_TRANSACTIONS_TABLE || 'ms78meprrhlatdg',
       nocodbLoyaltyConfigTable: process.env.NOCODB_LOYALTY_CONFIG_TABLE || 'ma7p4masktlwxaa',
       nocodbProductMatrixTable: process.env.NOCODB_PRODUCT_MATRIX_TABLE || 'm_product_evaluations',
-      nocodbFiscalTable: process.env.NOCODB_FISCAL_TABLE || 'm_fiscal_sar_config'
+      nocodbFiscalTable: process.env.NOCODB_FISCAL_TABLE || 'm_fiscal_sar_config',
+      nocodbLeadsTable: process.env.NOCODB_LEADS_TABLE || 'mjb256olx2dk7fm'
     }
   },
   nitro: {

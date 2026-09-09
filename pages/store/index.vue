@@ -119,10 +119,18 @@ const allProducts = computed(() => {
     return product;
   });
 
-  const q = route.query.q as string;
+  const q = (route.query.q || route.query.category) as string;
   if (q) {
-    const term = q.toLowerCase();
-    products = products.filter((p: any) => p.title.toLowerCase().includes(term) || p.description.toLowerCase().includes(term));
+    let term = q.toLowerCase();
+    if (term === 'mcu') term = 'mcu|arduino|esp32|raspberry|microcontrolador|pic';
+    if (term === 'plc') term = 'plc|controlador lógico programable|opta|automatización|siemens|logo|industrial';
+    
+    const terms = term.split('|');
+    products = products.filter((p: any) => {
+      const title = p.title?.toLowerCase() || '';
+      const desc = p.description?.toLowerCase() || '';
+      return terms.some(t => title.includes(t) || desc.includes(t));
+    });
   }
   return products;
 });

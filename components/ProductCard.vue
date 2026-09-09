@@ -209,10 +209,12 @@ const handlePlayVideo = () => {
   cursor: pointer;
   transition: all 0.3s ease;
   z-index: 10;
+  opacity: 0.4;
 }
 .video-play-btn:hover {
   background: var(--color-primary);
   transform: translate(-50%, -50%) scale(1.1);
+  opacity: 1;
 }
 
 /* Botón Añadir al carrito movido a la info */

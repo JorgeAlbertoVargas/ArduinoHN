@@ -190,11 +190,18 @@ onUnmounted(() => {
 .hero-carousel-container {
   position: relative;
   width: 100%;
-  height: 65vh; /* Altura amplia */
-  min-height: 500px;
+  height: 60px;
+  min-height: 60px;
   max-height: 750px;
   overflow: hidden;
   background-color: #000;
+  transition: all 0.4s ease-in-out;
+  cursor: pointer;
+}
+
+.hero-carousel-container:hover {
+  height: 65vh;
+  min-height: 500px;
 }
 
 .carousel-track {

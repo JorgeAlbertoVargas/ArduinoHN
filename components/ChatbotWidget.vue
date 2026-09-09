@@ -43,6 +43,9 @@
 
 <script setup lang="ts">
 import { ref, nextTick } from 'vue';
+import { useProducts } from '~/composables/useProducts';
+
+const { allProducts } = useProducts();
 
 const isOpen = ref(false);
 const inputMsg = ref('');
@@ -60,7 +63,7 @@ const scrollToBottom = async () => {
   }
 };
 
-const sendMessage = () => {
+const sendMessage = async () => {
   if (!inputMsg.value.trim() || isTyping.value) return;
   
   const userText = inputMsg.value.trim();
@@ -70,20 +73,30 @@ const sendMessage = () => {
   
   isTyping.value = true;
   
-  // Mock AI response
-  setTimeout(() => {
+  try {
+    // Preparar el catálogo resumido
+    const catalog = allProducts.value.map(p => ({
+      title: p.title,
+      price: p.price,
+      description: p.description
+    }));
+
+    const response = await $fetch<{ reply: string }>('/api/chat', {
+      method: 'POST',
+      body: {
+        messages: messages.value.slice(1), // Excluir el mensaje de bienvenida para ahorrar tokens
+        catalog
+      }
+    });
+
+    messages.value.push({ role: 'assistant', text: response.reply });
+  } catch (error) {
+    console.error('Error in chat:', error);
+    messages.value.push({ role: 'assistant', text: 'Lo siento, hubo un error de conexión. Intenta de nuevo más tarde.' });
+  } finally {
     isTyping.value = false;
-    let reply = 'Interesante pregunta. Pronto podré responderte con la ayuda de mi IA real.';
-    
-    if (userText.toLowerCase().includes('precio') || userText.toLowerCase().includes('cuesta')) {
-      reply = 'Los precios están mostrados en HNL (Lempiras) en la tienda. Si no ves el precio de un producto, consulta nuestra disponibilidad.';
-    } else if (userText.toLowerCase().includes('envío') || userText.toLowerCase().includes('entrega')) {
-      reply = 'Hacemos envíos a todo el país. Los tiempos dependen del producto (si es stock local o bajo pedido internacional).';
-    }
-    
-    messages.value.push({ role: 'assistant', text: reply });
     scrollToBottom();
-  }, 1500);
+  }
 };
 </script>
 

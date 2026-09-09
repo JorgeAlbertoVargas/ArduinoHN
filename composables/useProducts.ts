@@ -54,10 +54,11 @@ export const useProducts = () => {
 
   // --- Fetch NocoDB Local Products ---
   const fetchLocalProducts = async () => {
-    const url = `${config.public.nocodbUrl}api/v2/tables/${config.public.nocodbProductosTable}/records?limit=100`
+    const url = `${config.public.nocodbUrl}api/v2/tables/${config.public.nocodbProductosTable}/records?limit=4`
     try {
       const res = await $fetch<any>(url, {
-        headers: { 'xc-token': config.public.nocodbToken }
+        headers: { 'xc-token': config.public.nocodbToken },
+        timeout: 5000
       })
       return res.list || []
     } catch (err) {
@@ -86,7 +87,17 @@ export const useProducts = () => {
   })
 
   const allProducts = computed(() => {
-    return [...formattedLocalProducts.value, ...formattedShopifyProducts.value]
+    const testOpta = {
+      id: 'local-test-opta',
+      productId: 'test-opta',
+      title: 'Arduino Opta WiFi',
+      price: 9920.00, // Equivale a aprox. $400.00 USD (calculado a ~24.8 HNL)
+      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTed5LdpObUAvP14-1U6TQCHDTR5ZrOIojeJguDFp700g&s=10',
+      description: 'Micro PLC Industrial con conectividad WiFi y Bluetooth, ideal para automatización industrial y robótica. Programable mediante diagramas de escalera.',
+      videoUrl: null,
+      source: 'local'
+    }
+    return [testOpta, ...formattedLocalProducts.value, ...formattedShopifyProducts.value]
   })
 
   const pending = computed(() => pendingShopify.value || pendingLocal.value)

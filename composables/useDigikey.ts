@@ -144,22 +144,63 @@ export const useDigikey = () => {
     }
   };
 
-  /**
-   * Añadir producto de DigiKey al carrito de ArduinoHN
-   */
   const addToCart = async (product: DigikeyProduct, quantity: number = 1) => {
     const unitPriceHNL = convertToHNL(product.priceUSD);
+    const finalQuantity = Math.max(quantity, product.minimumOrderQuantity || 1);
     
-    await cart.addToCart({
-      id: `DK-${product.digiKeyPartNumber || product.manufacturerPartNumber}`,
-      name: `[ArduinoHN Global] ${product.manufacturerPartNumber} - ${product.title}`,
-      price: unitPriceHNL,
-      quantity: Math.max(quantity, product.minimumOrderQuantity || 1),
-      image: product.image,
-      originalPrice: unitPriceHNL
-    });
+    toast.showToast('Sincronizando con Shopify...', 'info');
+    loading.value = true;
+    
+    try {
+      const sku = product.digiKeyPartNumber || product.manufacturerPartNumber;
+      
+      // 0. Verificar si el producto ya está en el carrito local por SKU
+      // Esto evita crear duplicados en Shopify si el usuario da múltiples clics rápidos
+      // antes de que el buscador de Shopify indexe el producto creado.
+      const existingCartItem = cart.cartItems.value.find(item => item.sku === sku);
+      
+      let variantIdToUse = '';
+      
+      if (existingCartItem) {
+        // Si ya existe, reutilizamos el Variant ID que ya teníamos
+        variantIdToUse = existingCartItem.id;
+      } else {
+        // 1. Si no existe en el carrito, sincronizamos con Shopify y obtenemos el Variant ID
+        const syncResponse = await $fetch<{ success: boolean; variantId: string }>('/api/digikey/sync', {
+          method: 'POST',
+          body: {
+            partNumber: sku,
+            productData: product,
+            priceHNL: unitPriceHNL
+          }
+        });
 
-    toast.showToast(`Se agregó ${product.manufacturerPartNumber} al carrito.`);
+        if (!syncResponse || !syncResponse.variantId) {
+          throw new Error('No se recibió el Variant ID de Shopify');
+        }
+        
+        variantIdToUse = syncResponse.variantId;
+      }
+
+      // 2. Agregar al carrito (useCart se encargará de incrementar cantidad si ya existe por ID)
+      await cart.addToCart({
+        id: variantIdToUse,
+        name: `[ArduinoHN Global] ${product.manufacturerPartNumber} - ${product.title}`,
+        price: unitPriceHNL,
+        quantity: finalQuantity,
+        image: product.image,
+        originalPrice: unitPriceHNL,
+        sku: sku
+      });
+
+      toast.showToast(`Se agregaron ${finalQuantity} unidades al carrito.`);
+    } catch (err: any) {
+      console.error('Error sincronizando al carrito:', err);
+      error.value = err?.message || 'Error al conectar con Shopify';
+      toast.showToast('Error al procesar el producto para compra.', 'error');
+    } finally {
+      loading.value = false;
+    }
   };
 
   return {

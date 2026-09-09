@@ -1,5 +1,17 @@
 <template>
-  <div class="cart-page container">
+  <div v-if="!isUnlocked" class="container" style="padding-top: 5rem; text-align: center; max-width: 400px; margin: 0 auto;">
+    <h2>Acceso Restringido</h2>
+    <p>El carrito de compras se encuentra en mantenimiento.</p>
+    <div style="margin-top: 2rem; text-align: left;">
+      <label>Usuario:</label>
+      <input v-model="username" type="text" class="form-control" style="margin-bottom: 1rem; width: 100%; padding: 10px;" />
+      <label>Contraseña:</label>
+      <input v-model="password" type="password" class="form-control" style="margin-bottom: 1rem; width: 100%; padding: 10px;" @keyup.enter="unlockCart" />
+      <button class="btn btn-primary" style="width: 100%; padding: 10px;" @click="unlockCart">Acceder al Carrito</button>
+    </div>
+  </div>
+  
+  <div v-else class="cart-page container">
     <h1 class="page-title">Carrito de Compras</h1>
     
     <div v-if="cartItems.length === 0" class="empty-cart glass">
@@ -109,13 +121,14 @@
           </div>
         </div>
 
-        <button class="btn btn-accent checkout-btn" @click="proceedToCheckout" disabled>
-          Proceder al pago seguro
-        </button>
-        <button class="btn btn-secondary simulate-btn" @click="simulateWebhook" :disabled="isSimulating">
-          {{ isSimulating ? 'Simulando...' : 'Simular Compra' }}
-        </button>
-        <p class="checkout-note">Estamos probando el carrito.</p>
+        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+          <button class="btn btn-outline" style="flex: 1; padding: 14px;" @click="clearCart">
+            Vaciar Carrito
+          </button>
+          <button class="btn btn-accent checkout-btn" style="flex: 2; margin-top: 0;" @click="proceedToCheckout" :disabled="isCheckingOut">
+            {{ isCheckingOut ? 'Cargando...' : 'Proceder al pago seguro' }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -129,6 +142,18 @@ import { useAuth } from '~/composables/useAuth';
 import { useToast } from '~/composables/useToast';
 import { formatCurrency } from '~/utils/currencyFormatter';
 import { useGlobalCurrencyConfig } from '~/composables/useGlobalCurrencyConfig';
+
+const isUnlocked = ref(false);
+const username = ref('');
+const password = ref('');
+
+const unlockCart = () => {
+  if (username.value === 'admin' && password.value === 'arduino123') {
+    isUnlocked.value = true;
+  } else {
+    toast.showToast('Credenciales incorrectas', 3000);
+  }
+};
 
 const { cartItems, removeFromCart, updateQuantity, cartTotal, cartSavings, cartItemsCount, checkoutUrl, clearCart } = useCart();
 const { points, fetchLoyalty, config } = useLoyalty();
@@ -181,60 +206,45 @@ const pointsToEarn = computed(() => {
   return Math.floor(finalTotal.value / config.value.earnRate);
 });
 
-const proceedToCheckout = () => {
-  if (checkoutUrl.value) {
-    window.location.href = checkoutUrl.value;
-  } else {
-    toast.showToast('El proceso de pago no está disponible temporalmente. Por favor, intenta de nuevo más tarde.', 4000);
-  }
-};
+const isCheckingOut = ref(false);
 
-const isSimulating = ref(false);
-
-const simulateWebhook = async () => {
+const proceedToCheckout = async () => {
   if (cartItems.value.length === 0) {
-    toast.showToast('El carrito está vacío.');
+    toast.showToast('El carrito está vacío.', 4000);
     return;
   }
   
-  isSimulating.value = true;
+  isCheckingOut.value = true;
+  
   try {
-    const orderPayload = {
-      id: Math.floor(Math.random() * 1000000).toString(),
-      total_price: finalTotal.value.toString(),
-      subtotal_price: cartTotal.value.toString(),
-      isv: isvAmount.value.toString(),
-      cai: cai.value,
-      line_items: cartItems.value.map(item => ({
-        sku: item.name.includes('Arduino') ? 'DK-MOCK' : 'ADS-MOCK',
-        title: item.name,
-        quantity: item.quantity,
-        price: item.price.toString()
-      })),
-      loyalty: {
-        usedPoints: usePoints.value ? Math.ceil((cartTotal.value - finalTotal.value) / config.value.redemptionValue) : 0,
-        earnedPoints: pointsToEarn.value,
-        totalSpent: finalTotal.value,
-        pointsDiscountValue: usePoints.value ? (cartTotal.value - finalTotal.value) : 0
-      }
-    };
+    // Generar un Shopify Cart Permalink
+    // Formato: https://[dominio]/cart/[variant_id]:[cantidad],[variant_id]:[cantidad]
+    const itemsParams = cartItems.value.map(item => {
+      // Extraer ID numérico si viene en formato GID
+      const variantId = item.id.includes('gid://') ? item.id.split('/').pop() : item.id;
+      return `${variantId}:${item.quantity}`;
+    }).join(',');
 
-    const response = await $fetch('/api/loyalty/process-order', {
-      method: 'POST',
-      body: orderPayload
-    });
+    const checkoutUrl = `https://checkout.arduino.hn/cart/${itemsParams}`;
     
-    toast.showToast('¡Simulación completada! ' + (response as any).message, 5000);
-    clearCart();
-    await fetchLoyalty();
-    usePoints.value = false;
-  } catch (err) {
-    console.error(err);
-    toast.showToast('Error al simular la orden. Revisa la consola.', 5000);
-  } finally {
-    isSimulating.value = false;
+    // Guardamos una copia de seguridad en memoria volátil de esta pestaña (por si le dan al botón 'Atrás')
+    const backup = JSON.stringify(cartItems.value);
+    sessionStorage.setItem('arduino_cart_backup', backup);
+    
+    // Vaciamos el carrito oficial de inmediato para que cuando la compra termine, la tienda esté limpia.
+    // Si regresan exitosamente desde Shopify con el código que les diste, Nuxt verá que está vacío.
+    cartItems.value = [];
+    
+    // Redirigir al usuario al checkout oficial de Shopify
+    window.location.href = checkoutUrl;
+    
+  } catch (error) {
+    console.error('Checkout error:', error);
+    toast.showToast('Error al procesar el pago. Por favor, intenta de nuevo.', 4000);
+    isCheckingOut.value = false;
   }
 };
+
 </script>
 
 <style scoped>
