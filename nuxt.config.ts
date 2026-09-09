@@ -24,6 +24,10 @@ export default defineNuxtConfig({
     digikeyLocaleCurrency: process.env.DIGIKEY_LOCALE_CURRENCY || 'USD',
     digikeyProfitMargin: Number(process.env.DIGIKEY_PROFIT_MARGIN || 2.00),
     geminiApiKey: process.env.GEMINI_API_KEY || '',
+    odooUrl: process.env.ODOO_URL || 'https://iaodoo.syteccorpia.com',
+    odooDb: process.env.ODOO_DB || '',
+    odooUsername: process.env.ODOO_USERNAME || '',
+    odooPassword: process.env.ODOO_PASSWORD || '',
     public: {
       shopifyDomain: process.env.SHOPIFY_DOMAIN || '1thjxa-80.myshopify.com',
       shopifyToken: process.env.SHOPIFY_STOREFRONT_TOKEN || '4872c19072ffca32cc549cdf3310ed6a',

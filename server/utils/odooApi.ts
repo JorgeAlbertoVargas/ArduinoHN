@@ -1,11 +1,12 @@
 import xmlrpc from 'xmlrpc';
 
 const getOdooConfig = () => {
+  const config = useRuntimeConfig();
   return {
-    url: process.env.ODOO_URL || 'https://iaodoo.syteccorpia.com',
-    db: process.env.ODOO_DB || '',
-    username: process.env.ODOO_USERNAME || '',
-    password: process.env.ODOO_PASSWORD || ''
+    url: config.odooUrl || 'https://iaodoo.syteccorpia.com',
+    db: config.odooDb || '',
+    username: config.odooUsername || '',
+    password: config.odooPassword || ''
   };
 };
 
