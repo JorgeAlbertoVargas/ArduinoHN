@@ -5,3 +5,31 @@ main = ".output/server/index.mjs"
 
 [assets]
 directory = ".output/public"
+
+[[routes]]
+pattern = "arduino.hn"
+zone_name = "arduino.hn"
+custom_domain = true
+
+[vars]
+SHOPIFY_DOMAIN="1thjxa-80.myshopify.com"
+NOCODB_URL="https://ianocodb.syteccorpia.com/"
+NOCODB_PROJECTS_TABLE="movjxf98fu72rx8"
+NOCODB_ORDERS_TABLE="moet2c7py49b1cc"
+NOCODB_ORDER_ITEMS_TABLE="m0dqnot1yjfu8za"
+NOCODB_PRODUCTOS_TABLE="mgl2cerr4iret4q"
+NOCODB_USERS_TABLE="mtkdrz1ip3343wb"
+NOCODB_OFFERS_TABLE="mf2layzwcm11nbo"
+NOCODB_LOYALTY_TRANSACTIONS_TABLE="ms78meprrhlatdg"
+NOCODB_LOYALTY_CONFIG_TABLE="ma7p4masktlwxaa"
+SMTP_HOST="smtp.syteccorp.com"
+SMTP_PORT="465"
+SMTP_USER="jvargas@syteccorp.com"
+DIGIKEY_CLIENT_ID="Aqn5k5kVQRib3UPCJNrAFZaVOVnMSbYOdfYuCk7Dbwd8XdUi"
+DIGIKEY_LOCALE_SITE="US"
+DIGIKEY_LOCALE_LANGUAGE="es"
+DIGIKEY_LOCALE_CURRENCY="USD"
+DIGIKEY_PROFIT_MARGIN="1.25"
+ODOO_URL="https://iaodoo.syteccorpia.com"
+ODOO_DB="odoo19_erp"
+ODOO_USERNAME="jvargas@syteccorp.com"
