@@ -135,14 +135,35 @@ export default defineEventHandler(async (event) => {
       try {
         console.log(`[Webhook Shopify] Sincronizando orden ${order.id} hacia Odoo...`);
         const partnerId = await syncCustomerToOdoo(customerData);
-        await createSaleOrderInOdoo({
+        const orderId = await createSaleOrderInOdoo({
           partner_id: partnerId,
           order_reference: String(order.id),
           line_items: lineItemsForOdoo
         });
-        console.log(`[Webhook Shopify] Orden ${order.id} sincronizada en Odoo con éxito.`);
+        console.log(`[Webhook Shopify] Orden ${order.id} sincronizada en Odoo como Sale Order ${orderId}.`);
+        
+        // --- NUEVO FLUJO AUTOMATIZADO ---
+        // 1. Confirmar Cotización a Pedido de Venta
+        const confirmed = await confirmSaleOrder(orderId);
+        
+        if (confirmed) {
+           // 2. Validar Entrega de Inventario automáticamente (Descuenta stock)
+           const deliveryValidated = await validateDeliveryForSaleOrder(orderId);
+           
+           if (deliveryValidated) {
+               // 3. Crear Factura (Borrador)
+               const invoiceId = await createInvoiceForSaleOrder(orderId);
+               
+               if (invoiceId) {
+                  // 4. Publicar Factura automáticamente (Consume CAI)
+                  await postInvoice(invoiceId);
+               }
+           } else {
+               console.warn(`[Webhook Shopify] No se pudo validar la entrega para la orden ${orderId}. La factura no será generada automáticamente.`);
+           }
+        }
       } catch (odooErr) {
-        console.error(`[Webhook Shopify] Error sincronizando hacia Odoo:`, odooErr);
+        console.error(`[Webhook Shopify] Error en flujo automatizado hacia Odoo:`, odooErr);
       }
     }
 

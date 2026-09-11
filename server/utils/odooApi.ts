@@ -326,3 +326,111 @@ export async function getProductsFromOdoo(limit = 50) {
     return await rpcCall('object', 'execute_kw', fallbackParams);
   }
 }
+
+// =======================================================================
+// AUTOMATIZACIÓN DE FLUJO DE VENTAS (SHOPIFY -> ODOO)
+// =======================================================================
+
+export async function confirmSaleOrder(orderId: number) {
+  const config = getOdooConfig();
+  const uid = await authenticateOdoo();
+  
+  try {
+    await rpcCall('object', 'execute_kw', [
+      config.db, uid, config.password, 'sale.order', 'action_confirm',
+      [[orderId]]
+    ]);
+    console.log(`[Odoo] Confirmed Sale Order ${orderId}`);
+    return true;
+  } catch (e) {
+    console.error(`[Odoo] Error confirming Sale Order ${orderId}:`, e);
+    return false;
+  }
+}
+
+export async function validateDeliveryForSaleOrder(orderId: number) {
+  const config = getOdooConfig();
+  const uid = await authenticateOdoo();
+  
+  try {
+    // 1. Encontrar los pickings (entregas) vinculados a la orden
+    const pickingIds = await rpcCall('object', 'execute_kw', [
+      config.db, uid, config.password, 'stock.picking', 'search',
+      [[['sale_id', '=', orderId], ['state', 'not in', ['done', 'cancel']]]]
+    ]);
+    
+    if (!pickingIds || pickingIds.length === 0) {
+      console.log(`[Odoo] No pending deliveries found for Sale Order ${orderId}`);
+      return false;
+    }
+    
+    for (const pickingId of pickingIds) {
+      // 2. Validar el picking
+      const result = await rpcCall('object', 'execute_kw', [
+        config.db, uid, config.password, 'stock.picking', 'button_validate',
+        [[pickingId]]
+      ]);
+      
+      // Si Odoo devuelve un wizard para transferencia inmediata
+      if (result && typeof result === 'object' && result.res_model === 'stock.immediate.transfer') {
+        const wizardId = await rpcCall('object', 'execute_kw', [
+          config.db, uid, config.password, 'stock.immediate.transfer', 'create',
+          [{ pick_ids: [[6, 0, [pickingId]]] }]
+        ]);
+        
+        await rpcCall('object', 'execute_kw', [
+          config.db, uid, config.password, 'stock.immediate.transfer', 'process',
+          [[wizardId]]
+        ]);
+        console.log(`[Odoo] Processed Immediate Transfer for delivery ${pickingId}`);
+      } else if (result && typeof result === 'object' && result.res_model === 'stock.backorder.confirmation') {
+         // Si falta stock y Odoo pregunta por Backorder, lo rechazamos para forzar la validación de lo disponible
+         // O bien lo validamos creando backorder. Por ahora asumiremos que se entrega lo que hay
+         console.warn(`[Odoo] Backorder wizard returned for picking ${pickingId}. Manual intervention might be required.`);
+      } else {
+        console.log(`[Odoo] Validated delivery ${pickingId} for Sale Order ${orderId}`);
+      }
+    }
+    return true;
+  } catch (e) {
+    console.error(`[Odoo] Error validating delivery for Sale Order ${orderId}:`, e);
+    return false;
+  }
+}
+
+export async function createInvoiceForSaleOrder(orderId: number) {
+  const config = getOdooConfig();
+  const uid = await authenticateOdoo();
+  
+  try {
+     const invoiceIds = await rpcCall('object', 'execute_kw', [
+        config.db, uid, config.password, 'sale.order', '_create_invoices',
+        [[orderId], { final: true }]
+     ]);
+     
+     if (invoiceIds && invoiceIds.length > 0) {
+        console.log(`[Odoo] Created Draft Invoice ${invoiceIds[0]} for Sale Order ${orderId}`);
+        return invoiceIds[0];
+     }
+  } catch (e) {
+     console.error(`[Odoo] Error creating invoice for Sale Order ${orderId}:`, e);
+  }
+  return null;
+}
+
+export async function postInvoice(invoiceId: number) {
+  const config = getOdooConfig();
+  const uid = await authenticateOdoo();
+  
+  try {
+     await rpcCall('object', 'execute_kw', [
+        config.db, uid, config.password, 'account.move', 'action_post',
+        [[invoiceId]]
+     ]);
+     console.log(`[Odoo] Posted (Confirmed) Invoice ${invoiceId}`);
+     return true;
+  } catch (e) {
+     console.error(`[Odoo] Error posting invoice ${invoiceId}:`, e);
+     return false;
+  }
+}
