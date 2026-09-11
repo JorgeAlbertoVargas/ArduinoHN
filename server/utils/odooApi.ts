@@ -242,6 +242,17 @@ export async function createSaleOrderInOdoo(orderData: {
   const config = getOdooConfig();
   const uid = await authenticateOdoo();
   
+  // 1. Verificar si el pedido ya existe para evitar duplicados
+  const existingOrderIds = await rpcCall('object', 'execute_kw', [
+    config.db, uid, config.password, 'sale.order', 'search',
+    [[['client_order_ref', '=', orderData.order_reference]]]
+  ]);
+
+  if (existingOrderIds && existingOrderIds.length > 0) {
+    console.log(`[Odoo] Sale Order already exists for ref ${orderData.order_reference}. Skipping creation.`);
+    return existingOrderIds[0];
+  }
+
   // Create the Sale Order first
   const orderId = await rpcCall('object', 'execute_kw', [
     config.db, uid, config.password, 'sale.order', 'create',
