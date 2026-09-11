@@ -4,10 +4,10 @@ const getOdooConfig = () => {
     config = useRuntimeConfig();
   } catch (e) {
     config = {
-      odooUrl: process.env.NUXT_ODOO_URL,
-      odooDb: process.env.NUXT_ODOO_DB,
-      odooUsername: process.env.NUXT_ODOO_USERNAME,
-      odooPassword: process.env.NUXT_ODOO_PASSWORD
+      odooUrl: process.env.NUXT_ODOO_URL || process.env.ODOO_URL,
+      odooDb: process.env.NUXT_ODOO_DB || process.env.ODOO_DB,
+      odooUsername: process.env.NUXT_ODOO_USERNAME || process.env.ODOO_USERNAME,
+      odooPassword: process.env.NUXT_ODOO_PASSWORD || process.env.ODOO_PASSWORD
     };
   }
 
@@ -414,19 +414,46 @@ export async function createInvoiceForSaleOrder(orderId: number) {
   const uid = await authenticateOdoo();
   
   try {
+     // 1. Crear el wizard de facturación
+     const wizardId = await rpcCall('object', 'execute_kw', [
+       config.db, uid, config.password, 'sale.advance.payment.inv', 'create',
+       [{ advance_payment_method: 'delivered' }]
+     ]);
+     
+     // 2. Ejecutar el wizard pasándole el ID de la orden en el contexto
+     const res = await rpcCall('object', 'execute_kw', [
+       config.db, uid, config.password, 'sale.advance.payment.inv', 'create_invoices',
+       [[wizardId]],
+       { context: { active_ids: [orderId], active_model: 'sale.order' } }
+     ]);
+     
+     // El wizard crea la factura, necesitamos buscarla para devolver su ID
      const invoiceIds = await rpcCall('object', 'execute_kw', [
-        config.db, uid, config.password, 'sale.order', '_create_invoices',
-        [[orderId], { final: true }]
+        config.db, uid, config.password, 'account.move', 'search',
+        [[['invoice_origin', '=', await getOrderName(orderId)]]]
      ]);
      
      if (invoiceIds && invoiceIds.length > 0) {
-        console.log(`[Odoo] Created Draft Invoice ${invoiceIds[0]} for Sale Order ${orderId}`);
-        return invoiceIds[0];
+        // Devolvemos la última factura creada para esa orden
+        const lastInvoiceId = invoiceIds[invoiceIds.length - 1];
+        console.log(`[Odoo] Created Draft Invoice ${lastInvoiceId} for Sale Order ${orderId}`);
+        return lastInvoiceId;
      }
   } catch (e) {
      console.error(`[Odoo] Error creating invoice for Sale Order ${orderId}:`, e);
   }
   return null;
+}
+
+// Función auxiliar para obtener el nombre de la orden (ej. S00007)
+async function getOrderName(orderId: number) {
+  const config = getOdooConfig();
+  const uid = await authenticateOdoo();
+  const orders = await rpcCall('object', 'execute_kw', [
+    config.db, uid, config.password, 'sale.order', 'read',
+    [[orderId], ['name']]
+  ]);
+  return orders && orders.length > 0 ? orders[0].name : '';
 }
 
 export async function postInvoice(invoiceId: number) {
